@@ -74,6 +74,9 @@ export type Progress = {
   courseId: string;
   completedLessons: string[];
   completed: boolean;
+  startedAt?: Timestamp;
+  lastUpdatedAt?: Timestamp;
+  completedAt?: Timestamp;
 };
 
 export type Comment = {
@@ -84,3 +87,5 @@ export type Comment = {
     text: string;
     createdAt: Timestamp;
 }
+
+    

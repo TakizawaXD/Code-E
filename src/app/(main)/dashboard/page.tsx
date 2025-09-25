@@ -1,23 +1,60 @@
 
 "use client";
 
-import { useUser } from "@/firebase";
+import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CourseCard } from "@/components/course-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Award, BookOpen } from "lucide-react";
+import { Award, BookOpen, Loader2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import type { Course } from "@/lib/types";
+import type { Course, Progress } from "@/lib/types";
 import { courses as allCourses } from "@/lib/data";
 import { useMemo } from "react";
+import { collection, query } from "firebase/firestore";
 
 export default function DashboardPage() {
-    const { user } = useUser();
+    const { user, isUserLoading } = useUser();
+    const firestore = useFirestore();
+
+    const progressQuery = useMemoFirebase(() => {
+        if (!user || !firestore) return null;
+        return collection(firestore, `users/${user.uid}/progress`);
+    }, [firestore, user]);
+
+    const { data: progressData, isLoading: isProgressLoading } = useCollection<Progress>(progressQuery);
+
+    const { coursesInProgress, completedCourses } = useMemo(() => {
+        if (!progressData) return { coursesInProgress: [], completedCourses: [] };
+
+        const inProgress: (Course & { progress: number })[] = [];
+        const completed: Course[] = [];
+
+        progressData.forEach(progressItem => {
+            const course = allCourses.find(c => c.id === progressItem.courseId);
+            if (!course) return;
+
+            if (progressItem.completed) {
+                completed.push(course);
+            } else {
+                const totalLessons = course.modules.reduce((acc, mod) => acc + mod.lessons.length, 0);
+                const progressPercentage = totalLessons > 0 
+                    ? Math.round((progressItem.completedLessons.length / totalLessons) * 100) 
+                    : 0;
+                inProgress.push({ ...course, progress: progressPercentage });
+            }
+        });
+
+        return { coursesInProgress: inProgress, completedCourses: completed };
+    }, [progressData]);
     
-    // Mock data for demonstration, this should come from user progress in a real DB
-    const coursesInProgress = useMemo(() => allCourses.slice(0, 2), []);
-    const completedCourses = useMemo(() => allCourses.slice(2, 3), []);
+    if (isUserLoading || isProgressLoading) {
+        return (
+            <div className="container py-8 text-center flex justify-center items-center h-64">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        );
+    }
     
     if (!user) {
         return <div className="container py-8 text-center">Inicia sesión para ver tu panel.</div>;
@@ -71,7 +108,7 @@ export default function DashboardPage() {
                     <section className="mt-6">
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {coursesInProgress.map((course) => (
-                                <CourseCard key={course.id} course={course} progress={Math.floor(Math.random() * 50) + 20} />
+                                <CourseCard key={course.id} course={course} progress={course.progress} />
                             ))}
                         </div>
                         {coursesInProgress.length === 0 && <p className="text-muted-foreground mt-4">Aún no has comenzado ningún curso.</p>}
@@ -95,3 +132,5 @@ export default function DashboardPage() {
         </div>
     );
 }
+
+    

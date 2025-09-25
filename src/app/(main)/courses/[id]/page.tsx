@@ -4,7 +4,8 @@
 import { notFound, useSearchParams, useRouter } from "next/navigation";
 import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
-import { useFirebase, useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { useFirebase, useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from "@/firebase";
+import { setDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { courses as allCourses } from "@/lib/data";
 import type { Course, Lesson, CourseModule, Progress } from "@/lib/types";
 import {
@@ -26,16 +27,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { QuizComponent } from "@/components/quiz";
 import { Badge } from "@/components/ui/badge";
-import { collection, query, orderBy } from "firebase/firestore";
+import { collection, query, where, doc, getDocs, serverTimestamp } from "firebase/firestore";
 import { CommentSection } from "@/components/comment-section";
-
-// Mock progress data since we are not using Firestore
-const mockProgress: Progress = {
-  id: "mock-progress",
-  courseId: "web-react",
-  completedLessons: [],
-  completed: false,
-};
 
 function getNextLesson(course: Course, currentModuleId: string, currentLessonId: string): { moduleId: string; lessonId: string } | null {
   const currentModuleIndex = course.modules.findIndex(m => m.id === currentModuleId);
@@ -68,11 +61,18 @@ export default function CourseDetailPage({
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useUser();
+  const firestore = useFirestore();
 
   const course = useMemo(() => allCourses.find(c => c.id === id), [id]);
 
-  // Using local state for progress
-  const [progress, setProgress] = useState<Progress>(mockProgress);
+  const progressQuery = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return query(collection(firestore, `users/${user.uid}/progress`), where("courseId", "==", id));
+  }, [firestore, user, id]);
+
+  const { data: progressData } = useCollection<Progress>(progressQuery);
+  const progress = useMemo(() => progressData?.[0], [progressData]);
+
 
   const [currentLesson, setCurrentLesson] = useState<{
     moduleId: string;
@@ -135,20 +135,39 @@ export default function CourseDetailPage({
     router.push(newUrl, { scroll: false });
   };
   
-  const handleMarkAsCompleted = () => {
-    if (!user || !course || !currentLesson) return;
+  const handleMarkAsCompleted = async () => {
+    if (!user || !course || !currentLesson || !firestore) return;
 
     const nextLesson = getNextLesson(course, currentLesson.moduleId, currentLesson.lessonId);
     const newCompletedLessons = Array.from(new Set([...completedLessons, currentLesson.lessonId]));
-
     const isCourseComplete = !nextLesson;
 
-    setProgress(prev => ({
-        ...prev,
-        completedLessons: newCompletedLessons,
-        completed: isCourseComplete,
-    }));
+    const progressRef = collection(firestore, `users/${user.uid}/progress`);
 
+    // Check if progress document exists
+    const q = query(progressRef, where("courseId", "==", course.id));
+    const querySnapshot = await getDocs(q);
+
+    let progressDocRef;
+    if (querySnapshot.empty) {
+        // Create new progress document if it doesn't exist
+        progressDocRef = doc(progressRef);
+        setDocumentNonBlocking(progressDocRef, {
+            courseId: course.id,
+            completedLessons: newCompletedLessons,
+            completed: isCourseComplete,
+            startedAt: serverTimestamp(),
+        }, { merge: true });
+    } else {
+        // Update existing progress document
+        progressDocRef = querySnapshot.docs[0].ref;
+        setDocumentNonBlocking(progressDocRef, {
+            completedLessons: newCompletedLessons,
+            completed: isCourseComplete,
+            lastUpdatedAt: serverTimestamp(),
+            ...(isCourseComplete && { completedAt: serverTimestamp() })
+        }, { merge: true });
+    }
 
     if (nextLesson) {
       handleSetLesson(nextLesson.moduleId, nextLesson.lessonId);
@@ -321,3 +340,5 @@ export default function CourseDetailPage({
     </div>
   );
 }
+
+    
