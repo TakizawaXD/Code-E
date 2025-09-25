@@ -1,3 +1,4 @@
+
 "use client"
 
 import Image from "next/image";
@@ -35,6 +36,7 @@ export function CourseCard({ course, className, progress }: CourseCardProps) {
               width={600}
               height={400}
               className="object-cover w-full h-48"
+              data-ai-hint={`${course.pathId} course`}
             />
             <Badge className="absolute top-3 right-3">{course.pathId}</Badge>
           </div>
