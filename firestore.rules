@@ -1,34 +1,40 @@
+/**
+ * @file Firestore Security Rules
+ * @description This ruleset enforces a strict user-ownership model for user-specific data and allows public read access with owner-only writes for forum threads and posts.
+ *
+ * Data Structure:
+ * - /learningPaths/{learningPathId}: Public data about learning paths.
+ * - /courses/{courseId}: Public data about courses.
+ * - /courses/{courseId}/modules/{moduleId}: Public data about course modules.
+ * - /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}: Public data about lessons.
+ * - /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}/comments/{commentId}: Comments for lessons.
+ * - /users/{userId}: Private user profile information.
+ * - /users/{userId}/progress/{progressId}: Private user course progress.
+ * - /users/{userId}/notifications/{notificationId}: Private user notifications.
+ * - /users/{userId}/gamification/{statsId}: Private user gamification stats.
+ * - /badges/{badgeId}: Public data about badges.
+ * - /users/{userId}/badges/{userBadgeId}: Private data about user-earned badges.
+ * - /forumThreads/{threadId}: Public forum threads with owner-only writes.
+ * - /forumThreads/{threadId}/posts/{postId}: Public forum posts with owner-only writes.
+ *
+ * Key Security Decisions:
+ * - User data is strictly controlled by the owning user.
+ * - Forum threads and posts are publicly readable but only writable by the author.
+ * - Listing of user-specific collections is allowed only for the owning user.
+ *
+ * Denormalization for Authorization:
+ * - ForumThread and ForumPost documents must have an authorId field to enforce owner-only writes.
+ */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Checks if the current user is signed in.
-     */
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    /**
-     * @description Checks if the current user is the owner of the resource.
-     */
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-
-    /**
-     * @description Checks if the current user is the owner of the resource and the resource exists.
-     */
-    function isExistingOwner(userId) {
-      return isOwner(userId) && exists(resource);
-    }
-
-    /**
-     * @description Stores all learning paths.
+     * @description Allows anyone to read learning paths.
      * @path /learningPaths/{learningPathId}
-     * @allow (get, list)
-     * @deny (create, update, delete)
-     * @principle Allows public read access to learning paths.
+     * @allow (get, list): Any user can read learning paths.
+     * @deny (create, update, delete): No one can create, update, or delete learning paths.
+     * @principle Public read-only access for learning paths.
      */
     match /learningPaths/{learningPathId} {
       allow get, list: if true;
@@ -36,11 +42,11 @@ service cloud.firestore {
     }
 
     /**
-     * @description Stores all courses.
+     * @description Allows anyone to read courses.
      * @path /courses/{courseId}
-     * @allow (get, list)
-     * @deny (create, update, delete)
-     * @principle Allows public read access to courses.
+     * @allow (get, list): Any user can read courses.
+     * @deny (create, update, delete): No one can create, update, or delete courses.
+     * @principle Public read-only access for courses.
      */
     match /courses/{courseId} {
       allow get, list: if true;
@@ -48,11 +54,11 @@ service cloud.firestore {
     }
 
     /**
-     * @description Stores modules for a specific course.
+     * @description Allows anyone to read course modules.
      * @path /courses/{courseId}/modules/{moduleId}
-     * @allow (get, list)
-     * @deny (create, update, delete)
-     * @principle Allows public read access to course modules.
+     * @allow (get, list): Any user can read course modules.
+     * @deny (create, update, delete): No one can create, update, or delete course modules.
+     * @principle Public read-only access for course modules.
      */
     match /courses/{courseId}/modules/{moduleId} {
       allow get, list: if true;
@@ -60,11 +66,11 @@ service cloud.firestore {
     }
 
     /**
-     * @description Stores lessons for a specific module.
+     * @description Allows anyone to read lessons.
      * @path /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}
-     * @allow (get, list)
-     * @deny (create, update, delete)
-     * @principle Allows public read access to lessons.
+     * @allow (get, list): Any user can read lessons.
+     * @deny (create, update, delete): No one can create, update, or delete lessons.
+     * @principle Public read-only access for lessons.
      */
     match /courses/{courseId}/modules/{moduleId}/lessons/{lessonId} {
       allow get, list: if true;
@@ -72,76 +78,89 @@ service cloud.firestore {
     }
 
     /**
-     * @description Stores comments for a specific lesson.
+     * @description Allows anyone to read comments, but only the author can modify them.
      * @path /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}/comments/{commentId}
-     * @allow (get, list)
-     * @deny (create, update, delete)
-     * @principle Allows public read access to comments.
+     * @allow (get, list): Any user can read comments.
+     * @allow (create): Any authenticated user can create a comment.
+     * @allow (update, delete): Only the comment's author can update or delete it.
+     * @deny: For all other cases, deny access.
+     * @principle Public read, owner-only write for comments.
      */
     match /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}/comments/{commentId} {
-      allow get, list, create, update, delete: if true;
+        allow get, list: if true;
+        allow create: if isSignedIn();
+        allow update, delete: if isExistingOwner(request.auth.uid, resource.data.userId);
     }
 
     /**
-     * @description Stores user profile information.
+     * @description Controls access to user profile information.
      * @path /users/{userId}
-     * @allow (get, create, update, delete)
-     * @deny (list)
-     * @principle Enforces document ownership for writes; prevents listing of all users.
+     * @allow (get, list): Only the user can read their own profile.
+     * @allow (create): A user can create their profile if the userId matches their auth UID.
+     * @allow (update, delete): Only the user can update or delete their own profile.
+     * @deny: For all other cases, deny access.
+     * @principle Enforces document ownership for user profiles.
      */
     match /users/{userId} {
       allow get: if isOwner(userId);
       allow list: if false;
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId) && exists(resource);
+      allow update: if isExistingOwner(userId, userId);
+      allow delete: if isExistingOwner(userId, userId);
     }
 
     /**
-     * @description Tracks a user's progress in courses.
+     * @description Controls access to user course progress.
      * @path /users/{userId}/progress/{progressId}
-     * @allow (get, create, update, delete, list)
-     * @principle Enforces document ownership for writes.
+     * @allow (get, list): Only the user can read their own progress.
+     * @allow (create, update, delete): Only the user can create, update, or delete their own progress.
+     * @deny: For all other cases, deny access.
+     * @principle Enforces document ownership for user progress.
      */
     match /users/{userId}/progress/{progressId} {
       allow get, list: if isOwner(userId);
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId) && exists(resource);
-      allow delete: if isOwner(userId) && exists(resource);
+      allow update: if isExistingOwner(userId, userId);
+      allow delete: if isExistingOwner(userId, userId);
     }
 
     /**
-     * @description Stores notifications for a user.
+     * @description Controls access to user notifications.
      * @path /users/{userId}/notifications/{notificationId}
-     * @allow (get, create, update, delete, list)
-     * @principle Enforces document ownership for writes.
+     * @allow (get, list): Only the user can read their own notifications.
+     * @allow (create, update, delete): Only the user can create, update, or delete their own notifications.
+     * @deny: For all other cases, deny access.
+     * @principle Enforces document ownership for user notifications.
      */
     match /users/{userId}/notifications/{notificationId} {
       allow get, list: if isOwner(userId);
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId) && exists(resource);
-      allow delete: if isOwner(userId) && exists(resource);
+      allow update: if isExistingOwner(userId, userId);
+      allow delete: if isExistingOwner(userId, userId);
     }
 
     /**
-     * @description Stores a user's gamification stats. Should be a single doc.
+     * @description Controls access to user gamification stats.
      * @path /users/{userId}/gamification/{statsId}
-     * @allow (get, create, update, delete, list)
-     * @principle Enforces document ownership for writes.
+     * @allow (get, list): Only the user can read their own gamification stats.
+     * @allow (create, update, delete): Only the user can create, update, or delete their own gamification stats.
+     * @deny: For all other cases, deny access.
+     * @principle Enforces document ownership for user gamification stats.
      */
     match /users/{userId}/gamification/{statsId} {
-      allow get, list: if isOwner(userId);
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId) && exists(resource);
-      allow delete: if isOwner(userId) && exists(resource);
+      allow update: if isExistingOwner(userId, userId);
+      allow delete: if isExistingOwner(userId, userId);
     }
 
     /**
-     * @description Stores all available badges in the platform.
+     * @description Allows anyone to read badges.
      * @path /badges/{badgeId}
-     * @allow (get, list)
-     * @deny (create, update, delete)
-     * @principle Allows public read access to badges.
+     * @allow (get, list): Any user can read badges.
+     * @deny (create, update, delete): No one can create, update, or delete badges.
+     * @principle Public read-only access for badges.
      */
     match /badges/{badgeId} {
       allow get, list: if true;
@@ -149,40 +168,63 @@ service cloud.firestore {
     }
 
     /**
-     * @description Stores the badges a user has earned.
+     * @description Controls access to user badges.
      * @path /users/{userId}/badges/{userBadgeId}
-     * @allow (get, create, update, delete, list)
-     * @principle Enforces document ownership for writes.
+     * @allow (get, list): Only the user can read their own badges.
+     * @allow (create, update, delete): Only the user can create, update, or delete their own badges.
+     * @deny: For all other cases, deny access.
+     * @principle Enforces document ownership for user badges.
      */
     match /users/{userId}/badges/{userBadgeId} {
       allow get, list: if isOwner(userId);
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId) && exists(resource);
-      allow delete: if isOwner(userId) && exists(resource);
+      allow update: if isExistingOwner(userId, userId);
+      allow delete: if isExistingOwner(userId, userId);
     }
 
     /**
-     * @description Stores all forum discussion threads.
+     * @description Allows anyone to read forum threads, but only the author can modify them.
      * @path /forumThreads/{threadId}
-     * @allow (get, list)
-     * @deny (create, update, delete)
-     * @principle Allows public read access to forum threads.
+     * @allow (get, list): Any user can read forum threads.
+     * @allow (create): Any authenticated user can create a forum thread if authorId matches their UID.
+     * @allow (update, delete): Only the thread's author can update or delete it.
+     * @deny: For all other cases, deny access.
+     * @principle Public read, owner-only write for forum threads.
      */
     match /forumThreads/{threadId} {
       allow get, list: if true;
-      allow create, update, delete: if false;
+      allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
+      allow update: if isExistingOwner(request.auth.uid, resource.data.authorId);
+      allow delete: if isExistingOwner(request.auth.uid, resource.data.authorId);
     }
 
     /**
-     * @description Stores all posts within a specific forum thread.
+     * @description Allows anyone to read forum posts, but only the author can modify them.
      * @path /forumThreads/{threadId}/posts/{postId}
-     * @allow (get, list)
-     * @deny (create, update, delete)
-     * @principle Allows public read access to forum posts.
+     * @allow (get, list): Any user can read forum posts.
+     * @allow (create): Any authenticated user can create a forum post if authorId matches their UID.
+     * @allow (update, delete): Only the post's author can update or delete it.
+     * @deny: For all other cases, deny access.
+     * @principle Public read, owner-only write for forum posts.
      */
     match /forumThreads/{threadId}/posts/{postId} {
       allow get, list: if true;
-      allow create, update, delete: if false;
+      allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
+      allow update: if isExistingOwner(request.auth.uid, resource.data.authorId);
+      allow delete: if isExistingOwner(request.auth.uid, resource.data.authorId);
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isExistingOwner(authId, resourceAuthorId) {
+        return isSignedIn() && isOwner(authId) && resource.data.authorId == resourceAuthorId && resource != null;
     }
   }
 }
