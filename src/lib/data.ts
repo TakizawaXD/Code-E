@@ -42,45 +42,82 @@ export const learningPaths: LearningPath[] = [
 ];
 
 const courseData: Omit<Course, 'modules'>[] = [
-  // Programación
-  { id: 'prog-python', pathId: 'programacion', title: 'Ejercicios Prácticos de Python', description: 'Fortalece tus habilidades en Python con una serie de ejercicios desde nivel principiante hasta experto.', instructor: 'Ricardo Ortiz', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=ricardoortiz', imageUrl: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1032&q=80'},
-  { id: 'prog-javascript', pathId: 'programacion', title: 'Ejercicios Prácticos de JavaScript', description: 'Aplica tus conocimientos de JavaScript en desafíos prácticos para el navegador y más allá.', instructor: 'Ana García', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=anagarcia', imageUrl: 'https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
-  { id: 'prog-java', pathId: 'programacion', title: 'Ejercicios Prácticos de Java', description: 'Desde conceptos básicos hasta aplicaciones de escritorio, fortalece tu dominio de Java.', instructor: 'Carlos Villa', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=carlosvilla', imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
-  { id: 'prog-cpp', pathId: 'programacion', title: 'Ejercicios Prácticos de C++', description: 'Domina la gestión de memoria y la programación orientada a objetos con C++.', instructor: 'Sofia Romano', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=sofiaromano', imageUrl: 'https://images.unsplash.com/photo-1598662768283-35a1a47b1c47?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
-
-  // Desarrollo Web
-  { id: 'web-react', pathId: 'desarrollo-web', title: 'React: De Cero a Experto', description: 'Aprende a construir aplicaciones web modernas con la librería más popular del mercado.', instructor: 'Juan Pérez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=juanperez', imageUrl: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
-  { id: 'web-node', pathId: 'desarrollo-web', title: 'Backend con Node.js y Express', description: 'Crea APIs RESTful robustas y escalables para tus aplicaciones web.', instructor: 'Pedro Ramirez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=pedroramirez', imageUrl: 'https://images.unsplash.com/photo-1629654291663-b91ad427698f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
-  { id: 'web-typescript', pathId: 'desarrollo-web', title: 'TypeScript para Desarrollo Frontend', description: 'Añade tipado estático a tus proyectos de JavaScript para construir aplicaciones más robustas.', instructor: 'Clara Pons', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=clarapons', imageUrl: 'https://images.unsplash.com/photo-1618335436825-d4f08964391a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
-  { id: 'web-php', pathId: 'desarrollo-web', title: 'PHP y Laravel para Backend', description: 'Construye aplicaciones web completas con el framework PHP más popular.', instructor: 'Sergio Ramos', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=sergioramos', imageUrl: 'https://images.unsplash.com/photo-1599507593499-a3f7d7d97667?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1073&q=80'},
-
-  // IA y Data Science
-  { id: 'ia-datascience-python', pathId: 'ia-datascience', title: 'Python para Data Science', description: 'Domina Pandas, NumPy y Matplotlib para el análisis y visualización de datos.', instructor: 'Carlos Sánchez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=carlossanchez', imageUrl: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
-  { id: 'ia-ml', pathId: 'ia-datascience', title: 'Fundamentos de Machine Learning', description: 'Entiende los algoritmos clave del Machine Learning y cómo aplicarlos a problemas reales.', instructor: 'Laura Martínez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=lauramartinez', imageUrl: 'https://images.unsplash.com/photo-1620712943543-95f135346a50?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
-  { id: 'ia-r', pathId: 'ia-datascience', title: 'Análisis de Datos con R', description: 'Realiza análisis estadísticos y visualizaciones avanzadas con R y Tidyverse.', instructor: 'Diana Franco', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=dianafranco', imageUrl: 'https://images.unsplash.com/photo-1543286386-2e6593068625?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
-  { id: 'ia-sql', pathId: 'ia-datascience', title: 'SQL para Data Science', description: 'Domina las consultas SQL para extraer, transformar y analizar datos desde bases de datos relacionales.', instructor: 'Alberto Núñez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=albertonunez', imageUrl: 'https://images.unsplash.com/photo-1529078155227-5425278b67f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+    // Programación
+    { id: 'prog-python', pathId: 'programacion', title: 'Ejercicios Prácticos de Python', description: 'Fortalece tus habilidades en Python con una serie de ejercicios desde nivel principiante hasta experto. Proyecto Final Sugerido: Crea una herramienta CLI (Command Line Interface) que organice archivos de un directorio en subcarpetas según su tipo (ej. imágenes, documentos, etc.).', instructor: 'Ricardo Ortiz', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=ricardoortiz', imageUrl: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1032&q=80'},
+    { id: 'prog-javascript', pathId: 'programacion', title: 'Ejercicios Prácticos de JavaScript', description: 'Aplica tus conocimientos de JavaScript en desafíos prácticos para el navegador y más allá. Proyecto Final Sugerido: Desarrolla una extensión de navegador simple, como un bloqueador de distracciones que oculte ciertos elementos de una página.', instructor: 'Ana García', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=anagarcia', imageUrl: 'https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+    { id: 'prog-java', pathId: 'programacion', title: 'Ejercicios Prácticos de Java', description: 'Desde conceptos básicos hasta aplicaciones de escritorio, fortalece tu dominio de Java. Proyecto Final Sugerido: Construye una aplicación de consola para gestionar un inventario de una tienda, permitiendo agregar, eliminar y buscar productos.', instructor: 'Carlos Villa', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=carlosvilla', imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+    { id: 'prog-cpp', pathId: 'programacion', title: 'Ejercicios Prácticos de C++', description: 'Domina la gestión de memoria y la programación orientada a objetos con C++. Proyecto Final Sugerido: Crea una simulación de un sistema de partículas simple donde cada partícula tiene posición y velocidad, y rebotan en los bordes de la pantalla.', instructor: 'Sofia Romano', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=sofiaromano', imageUrl: 'https://images.unsplash.com/photo-1598662768283-35a1a47b1c47?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
   
-  // Diseño de Producto y UX
-  { id: 'ux-investigacion', pathId: 'diseno-ux', title: 'Investigación de Usuarios', description: 'Aprende a entender a tus usuarios para diseñar mejores productos.', instructor: 'David Gómez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=davidgomez', imageUrl: 'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80' },
-  { id: 'ux-figma', pathId: 'diseno-ux', title: 'Diseño de Interfaces con Figma', description: 'Domina la herramienta líder para el diseño de interfaces de usuario.', instructor: 'Beatriz Rico', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=beatrizrico', imageUrl: 'https://images.unsplash.com/photo-1611262588024-d12430b98920?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80' },
-
-  // Cloud y DevOps
-  { id: 'cloud-aws', pathId: 'cloud-devops', title: 'Introducción a AWS', description: 'Conoce los servicios fundamentales de Amazon Web Services.', instructor: 'Elena Fernández', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=elenafernandez', imageUrl: 'https://images.unsplash.com/photo-1582102759419-7b97c88d0a84?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-  { id: 'cloud-docker', pathId: 'cloud-devops', title: 'Docker para Desarrolladores', description: 'Conteneriza tus aplicaciones y simplifica el despliegue.', instructor: 'Marcos Luna', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=marcosluna', imageUrl: 'https://images.unsplash.com/photo-1622359990261-3f48a74d7543?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
+    // Desarrollo Web
+    { id: 'web-react', pathId: 'desarrollo-web', title: 'React: De Cero a Experto', description: 'Aprende a construir aplicaciones web modernas con la librería más popular del mercado. Proyecto Final Sugerido: Crea un clon de la página principal de un servicio como Netflix o Spotify, consumiendo datos de una API pública para mostrar el contenido.', instructor: 'Juan Pérez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=juanperez', imageUrl: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+    { id: 'web-node', pathId: 'desarrollo-web', title: 'Backend con Node.js y Express', description: 'Crea APIs RESTful robustas y escalables para tus aplicaciones web. Proyecto Final Sugerido: Desarrolla una API para un blog que permita operaciones CRUD (Crear, Leer, Actualizar, Borrar) para posts y comentarios.', instructor: 'Pedro Ramirez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=pedroramirez', imageUrl: 'https://images.unsplash.com/photo-1629654291663-b91ad427698f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+    { id: 'web-typescript', pathId: 'desarrollo-web', title: 'TypeScript para Desarrollo Frontend', description: 'Añade tipado estático a tus proyectos de JavaScript para construir aplicaciones más robustas. Proyecto Final Sugerido: Refactoriza una aplicación de JavaScript existente (como una To-Do list) a TypeScript, definiendo interfaces y tipos para todos los datos.', instructor: 'Clara Pons', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=clarapons', imageUrl: 'https://images.unsplash.com/photo-1618335436825-d4f08964391a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+    { id: 'web-php', pathId: 'desarrollo-web', title: 'PHP y Laravel para Backend', description: 'Construye aplicaciones web completas con el framework PHP más popular. Proyecto Final Sugerido: Crea un sistema de gestión de contenido (CMS) básico para un portafolio personal, con un panel de administración para gestionar los proyectos.', instructor: 'Sergio Ramos', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=sergioramos', imageUrl: 'https://images.unsplash.com/photo-1599507593499-a3f7d7d97667?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1073&q=80'},
   
-  // Desarrollo Móvil
-  { id: 'movil-swift', pathId: 'desarrollo-movil', title: 'Swift y SwiftUI: De Cero a App Store', description: 'Aprende a crear apps nativas para iOS con el lenguaje y framework modernos de Apple.', instructor: 'Lucía Jiménez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=luciajimenez', imageUrl: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80'},
-  { id: 'movil-kotlin', pathId: 'desarrollo-movil', title: 'Android con Kotlin: Curso Completo', description: 'Crea aplicaciones Android robustas y modernas utilizando el lenguaje preferido por Google.', instructor: 'Mateo Rojas', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=mateorojas', imageUrl: 'https://images.unsplash.com/photo-1614332287897-c283fa3c8c4c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
-  { id: 'movil-flutter', pathId: 'desarrollo-movil', title: 'Flutter: Apps para iOS y Android', description: 'Crea apps nativas para ambas plataformas con un solo código base.', instructor: 'Lucía Jiménez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=luciajimenez', imageUrl: 'https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-  { id: 'movil-dart', pathId: 'desarrollo-movil', title: 'Fundamentos de Dart para Flutter', description: 'Domina el lenguaje de programación Dart, la base para construir aplicaciones con Flutter.', instructor: 'Andrea Lezama', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=andrealezama', imageUrl: 'https://images.unsplash.com/photo-1617042375876-a13e36732a04?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+    // IA y Data Science
+    { id: 'ia-datascience-python', pathId: 'ia-datascience', title: 'Python para Data Science', description: 'Domina Pandas, NumPy y Matplotlib para el análisis y visualización de datos. Proyecto Final Sugerido: Analiza un conjunto de datos público (ej. sobre películas o deportes) para extraer y visualizar 3 insights interesantes.', instructor: 'Carlos Sánchez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=carlossanchez', imageUrl: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+    { id: 'ia-ml', pathId: 'ia-datascience', title: 'Fundamentos de Machine Learning', description: 'Entiende los algoritmos clave del Machine Learning y cómo aplicarlos a problemas reales. Proyecto Final Sugerido: Entrena un modelo de regresión para predecir el precio de una casa basándote en sus características (tamaño, habitaciones, etc.).', instructor: 'Laura Martínez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=lauramartinez', imageUrl: 'https://images.unsplash.com/photo-1620712943543-95f135346a50?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+    { id: 'ia-r', pathId: 'ia-datascience', title: 'Análisis de Datos con R', description: 'Realiza análisis estadísticos y visualizaciones avanzadas con R y Tidyverse. Proyecto Final Sugerido: Crea un informe en R Markdown que analice las tendencias de un conjunto de datos sobre salud pública.', instructor: 'Diana Franco', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=dianafranco', imageUrl: 'https://images.unsplash.com/photo-1543286386-2e6593068625?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+    { id: 'ia-sql', pathId: 'ia-datascience', title: 'SQL para Data Science', description: 'Domina las consultas SQL para extraer, transformar y analizar datos desde bases de datos relacionales. Proyecto Final Sugerido: Diseña y pobla una base de datos para una tienda online y escribe 5 consultas complejas para obtener reportes de ventas.', instructor: 'Alberto Núñez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=albertonunez', imageUrl: 'https://images.unsplash.com/photo-1529078155227-5425278b67f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+    
+    // Diseño de Producto y UX
+    { id: 'ux-investigacion', pathId: 'diseno-ux', title: 'Investigación de Usuarios', description: 'Aprende a entender a tus usuarios para diseñar mejores productos. Proyecto Final Sugerido: Realiza un estudio de usabilidad completo para una aplicación móvil existente, identificando 5 puntos de fricción y proponiendo soluciones.', instructor: 'David Gómez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=davidgomez', imageUrl: 'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80' },
+    { id: 'ux-figma', pathId: 'diseno-ux', title: 'Diseño de Interfaces con Figma', description: 'Domina la herramienta líder para el diseño de interfaces de usuario. Proyecto Final Sugerido: Diseña un prototipo interactivo de alta fidelidad para una nueva aplicación de viajes, incluyendo el flujo de búsqueda y reserva.', instructor: 'Beatriz Rico', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=beatrizrico', imageUrl: 'https://images.unsplash.com/photo-1611262588024-d12430b98920?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80' },
+  
+    // Cloud y DevOps
+    { id: 'cloud-aws', pathId: 'cloud-devops', title: 'Introducción a AWS', description: 'Conoce los servicios fundamentales de Amazon Web Services. Proyecto Final Sugerido: Despliega una aplicación web estática en un bucket de S3, configúrala para ser servida a través de CloudFront y asígnale un dominio.', instructor: 'Elena Fernández', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=elenafernandez', imageUrl: 'https://images.unsplash.com/photo-1582102759419-7b97c88d0a84?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
+    { id: 'cloud-docker', pathId: 'cloud-devops', title: 'Docker para Desarrolladores', description: 'Conteneriza tus aplicaciones y simplifica el despliegue. Proyecto Final Sugerido: Crea un Dockerfile para una aplicación Node.js y un archivo docker-compose.yml para levantar la aplicación junto a una base de datos MongoDB.', instructor: 'Marcos Luna', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=marcosluna', imageUrl: 'https://images.unsplash.com/photo-1622359990261-3f48a74d7543?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
+    
+    // Desarrollo Móvil
+    { id: 'movil-swift', pathId: 'desarrollo-movil', title: 'Swift y SwiftUI: De Cero a App Store', description: 'Aprende a crear apps nativas para iOS con el lenguaje y framework modernos de Apple. Proyecto Final Sugerido: Crea una aplicación de lista de recetas que obtenga los datos de una API pública y los muestre en una interfaz limpia con SwiftUI.', instructor: 'Lucía Jiménez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=luciajimenez', imageUrl: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80'},
+    { id: 'movil-kotlin', pathId: 'desarrollo-movil', title: 'Android con Kotlin: Curso Completo', description: 'Crea aplicaciones Android robustas y modernas utilizando el lenguaje preferido por Google. Proyecto Final Sugerido: Desarrolla una aplicación de diario personal que guarde las entradas en una base de datos local (Room).', instructor: 'Mateo Rojas', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=mateorojas', imageUrl: 'https://images.unsplash.com/photo-1614332287897-c283fa3c8c4c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+    { id: 'movil-flutter', pathId: 'desarrollo-movil', title: 'Flutter: Apps para iOS y Android', description: 'Crea apps nativas para ambas plataformas con un solo código base. Proyecto Final Sugerido: Construye una aplicación de pronóstico del tiempo que use la geolocalización del dispositivo y consuma una API del clima.', instructor: 'Lucía Jiménez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=luciajimenez', imageUrl: 'https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
+    { id: 'movil-dart', pathId: 'desarrollo-movil', title: 'Fundamentos de Dart para Flutter', description: 'Domina el lenguaje de programación Dart, la base para construir aplicaciones con Flutter. Proyecto Final Sugerido: Crea una librería en Dart que gestione un sistema de puntuación para un juego, con funciones para añadir puntos, reiniciar y obtener el puntaje más alto.', instructor: 'Andrea Lezama', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=andrealezama', imageUrl: 'https://images.unsplash.com/photo-1617042375876-a13e36732a04?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+  
+    // Blockchain y Web3
+    { id: 'web3-solidity', pathId: 'blockchain-web3', title: 'Smart Contracts con Solidity', description: 'Programa contratos inteligentes para la blockchain de Ethereum. Proyecto Final Sugerido: Crea un contrato inteligente para un sistema de votación simple donde se puedan registrar candidatos y emitir votos.', instructor: 'Adrián Navarro', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=adriannavarro', imageUrl: 'https://images.unsplash.com/photo-1640118591547-906514188b6f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1167&q=80' },
+    { id: 'web3-rust', pathId: 'blockchain-web3', title: 'Desarrollo en Solana con Rust', description: 'Crea aplicaciones descentralizadas de alto rendimiento en la blockchain de Solana. Proyecto Final Sugerido: Construye un programa en Solana que funcione como un libro de visitas descentralizado en la blockchain.', instructor: 'Daniel Solis', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=danielsolis', imageUrl: 'https://images.unsplash.com/photo-1642159829394-11648e285094?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+  
+    // Ciberseguridad
+    { id: 'cyber-intro', pathId: 'ciberseguridad', title: 'Fundamentos de Ciberseguridad', description: 'Aprende los conceptos básicos para proteger la información. Proyecto Final Sugerido: Realiza un análisis de vulnerabilidades en una máquina virtual de prueba (como Metasploitable) y documenta los hallazgos en un informe.', instructor: 'Miguel Romero', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=miguelromero', imageUrl: 'https://images.unsplash.com/photo-1544890225-2f3faec4cd60?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1025&q=80' },
+  ];
 
-  // Blockchain y Web3
-  { id: 'web3-solidity', pathId: 'blockchain-web3', title: 'Smart Contracts con Solidity', description: 'Programa contratos inteligentes para la blockchain de Ethereum.', instructor: 'Adrián Navarro', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=adriannavarro', imageUrl: 'https://images.unsplash.com/photo-1640118591547-906514188b6f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1167&q=80' },
-  { id: 'web3-rust', pathId: 'blockchain-web3', title: 'Desarrollo en Solana con Rust', description: 'Crea aplicaciones descentralizadas de alto rendimiento en la blockchain de Solana.', instructor: 'Daniel Solis', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=danielsolis', imageUrl: 'https://images.unsplash.com/photo-1642159829394-11648e285094?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
-
-  // Ciberseguridad
-  { id: 'cyber-intro', pathId: 'ciberseguridad', title: 'Fundamentos de Ciberseguridad', description: 'Aprende los conceptos básicos para proteger la información.', instructor: 'Miguel Romero', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=miguelromero', imageUrl: 'https://images.unsplash.com/photo-1544890225-2f3faec4cd60?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1025&q=80' },
-];
+  const pythonReactQuiz: Lesson = {
+    id: 'web-react-l1',
+    title: '¿Qué es React?',
+    duration: '10 min',
+    difficulty: 'Fácil',
+    order: 1,
+    content: '<h1>Introducción a React</h1><p>React es una librería de JavaScript para construir interfaces de usuario. En esta lección, aprenderás los conceptos fundamentales de React, incluyendo componentes, JSX y el DOM virtual. Prepárate para el cuestionario al final.</p>',
+    quiz: {
+      id: 'react-quiz-1',
+      title: 'Cuestionario de React Básico',
+      questions: [
+        {
+          id: 'q1',
+          question: '¿Qué es JSX?',
+          options: [
+            'Un lenguaje de programación diferente',
+            'Una extensión de la sintaxis de JavaScript',
+            'Una librería de CSS',
+            'Una base de datos'
+          ],
+          correctAnswer: 1
+        },
+        {
+          id: 'q2',
+          question: '¿Qué método se usa para renderizar un componente de React en el DOM?',
+          options: [
+            'ReactDOM.render()',
+            'React.mount()',
+            'Component.display()',
+            'ReactDOM.attach()'
+          ],
+          correctAnswer: 0
+        }
+      ]
+    }
+  };
 
 const pythonModules: CourseModule[] = [
     {
@@ -88,7 +125,15 @@ const pythonModules: CourseModule[] = [
         title: 'Principiante',
         order: 1,
         lessons: [
-            { id: 'py-b1', title: '¡Hola, mundo!', duration: '5 min', difficulty: 'Fácil', content: '<h1>¡Hola, mundo!</h1><p>Tu primer programa en cualquier lenguaje de programación. Escribe un script que imprima el texto "¡Hola, mundo!" en la consola. Te familiarizarás con la función `print()`.</p>', order: 1 },
+            { id: 'py-b1', title: '¡Hola, mundo!', duration: '5 min', difficulty: 'Fácil', content: '<h1>¡Hola, mundo!</h1><p>Tu primer programa en cualquier lenguaje de programación. Escribe un script que imprima el texto "¡Hola, mundo!" en la consola. Te familiarizarás con la función `print()`.</p>', order: 1, 
+                quiz: {
+                    id: 'python-quiz-1',
+                    title: 'Cuestionario de "Hola, Mundo"',
+                    questions: [
+                        { id: 'q1', question: '¿Qué función se utiliza para imprimir texto en la consola en Python?', options: ['display()', 'log()', 'print()', 'write()'], correctAnswer: 2 }
+                    ]
+                }
+            },
             { id: 'py-b2', title: 'Función de Suma', duration: '5 min', difficulty: 'Fácil', content: '<h1>Función de Suma</h1><p>Aprende a definir funciones. Crea una función que acepte dos números como argumentos y devuelva su suma. Practicarás la definición de funciones, parámetros y el `return`.</p>', order: 2 },
             { id: 'py-b3', title: 'Saludo a Usuario', duration: '5 min', difficulty: 'Fácil', content: '<h1>Saludo a Usuario</h1><p>Interactúa con el usuario. Escribe un script que solicite el nombre del usuario usando la función `input()` y luego imprima un saludo personalizado, como "Hola, [nombre]".</p>', order: 3 },
             { id: 'py-b4', title: 'Número Par o Impar', duration: '5 min', difficulty: 'Fácil', content: '<h1>Número Par o Impar</h1><p>Introduce la lógica condicional. Escribe un programa que pida un número y determine si es par o impar, utilizando el operador módulo (`%`) y una declaración `if-else`.</p>', order: 4 },
@@ -194,11 +239,22 @@ export const courses: Course[] = courseData.map(course => {
     case 'prog-javascript':
       modules = javascriptModules;
       break;
+    case 'web-react':
+        modules = [
+            {
+                id: 'react-m1',
+                title: 'Fundamentos de React',
+                order: 1,
+                lessons: [
+                    pythonReactQuiz,
+                    { id: 'react-l2', title: 'Componentes y Props', duration: '15 min', difficulty: 'Fácil', content: '<h1>Componentes y Props</h1><p>Aprende a crear componentes reutilizables y a pasar datos entre ellos usando props.</p>', order: 2 },
+                ]
+            }
+        ]
+        break;
     default:
       modules = genericModules(course.id, course.title);
       break;
   }
   return { ...course, modules };
 });
-
-    
