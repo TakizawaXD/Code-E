@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Book, BrainCircuit, Blocks, Briefcase, BookText, Cloud, Code, Database, Film, Landmark, Laptop, LineChart, Paintbrush, PenTool, Shield, Smartphone, TrendingUp, Users } from "lucide-react";
+import { ArrowRight, Book, BrainCircuit, Blocks, Briefcase, BookText, Cloud, Code, Database, Film, Landmark, Laptop, LineChart, Paintbrush, PenTool, Shield, Smartphone, TrendingUp, Users, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CourseCard } from "@/components/course-card";
@@ -44,6 +44,7 @@ const learningCategories = [
     { name: "Liderazgo y Habilidades Blandas", paths: 10, icon: <Users /> },
     { name: "Contenido Audiovisual", paths: 7, icon: <Film /> },
     { name: "Programación", paths: 12, icon: <Laptop /> },
+    { name: "Startups", paths: 8, icon: <Rocket /> },
 ]
 
 function LearningCategories() {
@@ -58,7 +59,7 @@ function LearningCategories() {
                         </p>
                     </div>
                 </div>
-                <div className="mx-auto grid grid-cols-2 gap-4 py-12 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 lg:gap-6">
+                <div className="mx-auto grid grid-cols-2 gap-4 py-12 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-6">
                     {learningCategories.map((category) => (
                         <Link key={category.name} href="/paths">
                             <Card className="h-full transform transition-all duration-300 hover:scale-105 hover:shadow-lg flex flex-col items-center justify-center p-4 text-center">
