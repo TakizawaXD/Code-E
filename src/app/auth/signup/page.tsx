@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useAuth, useFirestore } from "@/firebase";
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
-import { doc } from "firebase/firestore";
+import { doc, serverTimestamp } from "firebase/firestore";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -97,10 +97,10 @@ export default function SignupPage() {
       await sendEmailVerification(user);
 
       // Create user profile in Firestore
-      await setDocumentNonBlocking(doc(firestore, "users", user.uid), {
+      setDocumentNonBlocking(doc(firestore, "users", user.uid), {
         name: values.fullName,
         email: values.email,
-        createdAt: new Date(),
+        createdAt: serverTimestamp(),
       }, {});
 
       toast({

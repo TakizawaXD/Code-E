@@ -1,22 +1,29 @@
 
 "use client";
 
-import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from "@/firebase";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CourseCard } from "@/components/course-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Award, BookOpen, Download, Loader2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import type { Course, Progress } from "@/lib/types";
+import type { Course, Progress, UserProfile } from "@/lib/types";
 import { courses as allCourses } from "@/lib/data";
 import { useMemo } from "react";
-import { collection, query } from "firebase/firestore";
+import { collection, query, doc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
+
+    const userProfileQuery = useMemoFirebase(() => {
+        if (!user || !firestore) return null;
+        return doc(firestore, `users/${user.uid}`);
+    }, [firestore, user]);
+
+    const { data: userProfile } = useDoc<UserProfile>(userProfileQuery);
 
     const progressQuery = useMemoFirebase(() => {
         if (!user || !firestore) return null;
@@ -61,19 +68,20 @@ export default function DashboardPage() {
         return <div className="container py-8 text-center">Inicia sesión para ver tu panel.</div>;
     }
 
-    const userInitial = user.displayName ? user.displayName.charAt(0) : user.email?.charAt(0).toUpperCase();
+    const displayName = user.displayName || userProfile?.name || user.email;
+    const userInitial = displayName ? displayName.charAt(0).toUpperCase() : '?';
 
     return (
         <div className="container py-8 md:py-12">
             <header className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
                 <div className="flex items-center gap-4">
                     <Avatar className="h-20 w-20">
-                        {user.photoURL && <AvatarImage src={user.photoURL} alt={user.displayName || "User"} />}
+                        {user.photoURL && <AvatarImage src={user.photoURL} alt={displayName || "User"} />}
                         <AvatarFallback className="text-3xl">{userInitial}</AvatarFallback>
                     </Avatar>
                     <div>
                         <p className="text-sm text-muted-foreground">Bienvenido de nuevo,</p>
-                        <h1 className="text-3xl font-bold tracking-tight font-headline">{user.displayName || user.email}</h1>
+                        <h1 className="text-3xl font-bold tracking-tight font-headline">{displayName}</h1>
                     </div>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
