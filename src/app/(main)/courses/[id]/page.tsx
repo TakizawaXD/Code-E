@@ -53,11 +53,10 @@ function getNextLesson(course: Course, currentModuleId: string, currentLessonId:
 }
 
 export default function CourseDetailPage({
-  params,
+  params: { id },
 }: {
   params: { id: string };
 }) {
-  const { id } = params;
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useUser();
