@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CourseCard } from "@/components/course-card";
 import { courses as allCourses, learningPaths as allLearningPaths } from "@/lib/data";
+import { cn } from "@/lib/utils";
 
 function PopularCourses() {
     // Taking the first 3 courses as "popular"
@@ -94,18 +95,23 @@ function CodeExamples() {
                 </div>
                 <div className="mx-auto grid grid-cols-1 gap-6 py-12 sm:grid-cols-2 lg:grid-cols-3">
                     {codeExamples.map((example) => (
-                        <Card key={example.language}>
-                            <CardHeader>
-                                <CardTitle className="capitalize">{example.language}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <pre className="bg-secondary p-4 rounded-md overflow-x-auto">
-                                    <code className={`language-${example.language}`}>
+                        <div key={example.language} className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden">
+                            <div className="flex items-center justify-between bg-muted px-4 py-2 border-b">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                                </div>
+                                <span className="text-sm font-medium text-muted-foreground capitalize">{example.language}</span>
+                            </div>
+                            <div className="p-4 bg-zinc-900">
+                                <pre className="text-sm text-white font-mono overflow-x-auto">
+                                    <code>
                                         {example.code}
                                     </code>
                                 </pre>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
                     ))}
                 </div>
             </div>
