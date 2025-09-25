@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -6,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useAuth, useFirestore } from "@/firebase";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import { doc } from "firebase/firestore";
 
 import { Button } from "@/components/ui/button";
@@ -92,6 +93,9 @@ export default function SignupPage() {
       // Update Firebase Auth profile
       await updateProfile(user, { displayName: values.fullName });
 
+      // Send verification email
+      await sendEmailVerification(user);
+
       // Create user profile in Firestore
       await setDocumentNonBlocking(doc(firestore, "users", user.uid), {
         name: values.fullName,
@@ -101,7 +105,7 @@ export default function SignupPage() {
 
       toast({
         title: "¡Cuenta creada!",
-        description: "Tu cuenta ha sido creada exitosamente.",
+        description: "Tu cuenta ha sido creada. Revisa tu correo para verificar tu cuenta.",
       });
 
       router.push("/dashboard");

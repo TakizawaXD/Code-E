@@ -6,12 +6,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CourseCard } from "@/components/course-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Award, BookOpen, Loader2 } from "lucide-react";
+import { Award, BookOpen, Download, Loader2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import type { Course, Progress } from "@/lib/types";
 import { courses as allCourses } from "@/lib/data";
 import { useMemo } from "react";
 import { collection, query } from "firebase/firestore";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
     const { user, isUserLoading } = useUser();
@@ -115,22 +116,28 @@ export default function DashboardPage() {
                     </section>
                 </TabsContent>
                 <TabsContent value="certificates">
-                    <section className="mt-6">
-                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                            {completedCourses.map((course) => (
-                                <Card key={course.id} className="flex flex-col items-center justify-center p-6 text-center">
+                <section className="mt-6">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        {completedCourses.map((course) => (
+                            <Card key={course.id} className="flex flex-col justify-between overflow-hidden">
+                                <CardContent className="p-6 text-center flex flex-col items-center justify-center flex-grow">
                                     <Award className="w-16 h-16 text-yellow-500 mb-4" />
-                                    <p className="font-semibold">Certificado de Finalización</p>
+                                    <p className="font-semibold text-lg">Certificado de Finalización</p>
                                     <p className="text-muted-foreground text-sm mt-1">{course.title}</p>
-                                </Card>
-                            ))}
-                        </div>
-                        {completedCourses.length === 0 && <p className="text-muted-foreground mt-4">No has completado ningún curso todavía.</p>}
-                    </section>
+                                </CardContent>
+                                <CardHeader className="p-0">
+                                    <Button variant="secondary" className="w-full rounded-t-none">
+                                        <Download className="mr-2 h-4 w-4" />
+                                        Descargar Certificado
+                                    </Button>
+                                </CardHeader>
+                            </Card>
+                        ))}
+                    </div>
+                    {completedCourses.length === 0 && <p className="text-muted-foreground mt-4">No has completado ningún curso todavía.</p>}
+                </section>
                 </TabsContent>
             </Tabs>
         </div>
     );
 }
-
-    
