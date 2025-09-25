@@ -58,7 +58,7 @@ function getNextLesson(course: Course, currentModuleId: string, currentLessonId:
 }
 
 export default function CourseDetailPage({
-  params,
+  params: { id },
 }: {
   params: { id: string };
 }) {
@@ -66,7 +66,7 @@ export default function CourseDetailPage({
   const searchParams = useSearchParams();
   const { user } = useUser();
 
-  const course = useMemo(() => allCourses.find(c => c.id === params.id), [params.id]);
+  const course = useMemo(() => allCourses.find(c => c.id === id), [id]);
 
   // Using local state for progress
   const [progress, setProgress] = useState<Progress>(mockProgress);
@@ -128,7 +128,7 @@ export default function CourseDetailPage({
 
   const handleSetLesson = (moduleId: string, lessonId: string) => {
     setCurrentLesson({ moduleId, lessonId });
-    const newUrl = `/courses/${params.id}?module=${moduleId}&lesson=${lessonId}`;
+    const newUrl = `/courses/${id}?module=${moduleId}&lesson=${lessonId}`;
     router.push(newUrl, { scroll: false });
   };
   
@@ -314,3 +314,5 @@ export default function CourseDetailPage({
     </div>
   );
 }
+
+    
