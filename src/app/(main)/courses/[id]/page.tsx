@@ -1,3 +1,4 @@
+
 "use client";
 
 import { notFound, useSearchParams, useRouter } from "next/navigation";
@@ -34,10 +35,12 @@ import {
   MessageSquare,
   ArrowLeft,
   ArrowRight,
+  BarChart3,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { QuizComponent } from "@/components/quiz";
 import { addDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { Badge } from "@/components/ui/badge";
 
 function getNextLesson(course: Course, currentModuleId: string, currentLessonId: string): { moduleId: string; lessonId: string } | null {
   const currentModuleIndex = course.modules.findIndex(m => m.id === currentModuleId);
@@ -256,25 +259,27 @@ export default function CourseDetailPage({
 
   const instructorAvatar = { imageUrl: course?.instructorAvatarUrl, name: course?.instructor };
 
+  const getDifficultyBadge = (difficulty: 'Fácil' | 'Medio' | 'Difícil' | undefined) => {
+    switch (difficulty) {
+        case 'Fácil':
+            return <Badge variant="secondary" className="bg-green-100 text-green-800">Fácil</Badge>;
+        case 'Medio':
+            return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Medio</Badge>;
+        case 'Difícil':
+            return <Badge variant="secondary" className="bg-red-100 text-red-800">Difícil</Badge>;
+        default:
+            return null;
+    }
+  };
+
   return (
     <div className="container mx-auto py-8">
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <div className="aspect-video w-full bg-secondary rounded-lg flex items-center justify-center relative overflow-hidden">
-             {lesson?.videoUrl ? (
-              <iframe
-                src={lesson.videoUrl}
-                title={lesson.title}
-                className="absolute top-0 left-0 w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            ) : <PlayCircle className="w-20 h-20 text-muted-foreground" />}
-          </div>
-          
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold font-headline">{lesson?.title || course.title}</h1>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
+                {lesson?.difficulty && getDifficultyBadge(lesson.difficulty)}
                 <Button variant="outline" onClick={handleMarkAsCompleted} disabled={completedLessons.has(lesson?.id || "")}>
                     <CheckCircle2 className="mr-2"/>
                     Marcar como completada
@@ -284,19 +289,25 @@ export default function CourseDetailPage({
           
           <Separator />
           
-           {lesson?.content && <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: lesson.content }} />}
+           {lesson?.content ? (
+                <Card>
+                    <CardContent className="prose dark:prose-invert max-w-none pt-6" dangerouslySetInnerHTML={{ __html: lesson.content }} />
+                </Card>
+           ) : null}
 
           {lesson?.quiz ? (
              <QuizComponent quiz={lesson.quiz} />
           ) : (
-             <Card>
-                <CardHeader>
-                    <CardTitle>Contenido de la Lección</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-muted-foreground">{lesson?.content ? "" : "El contenido de esta lección estará disponible pronto."}</p>
-                </CardContent>
-            </Card>
+             !lesson?.content && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Contenido de la Lección</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground">El contenido de esta lección estará disponible pronto.</p>
+                    </CardContent>
+                </Card>
+             )
           )}
 
           <Separator />
@@ -376,9 +387,18 @@ export default function CourseDetailPage({
                                 <span className="font-normal text-sm text-left">
                                   {lessonItem.title}
                                 </span>
-                                <span className="text-xs text-muted-foreground">
-                                  {lessonItem.duration}
-                                </span>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                    <span>{lessonItem.duration}</span>
+                                    {lessonItem.difficulty && (
+                                        <>
+                                            <span className="text-muted-foreground/50">·</span>
+                                            <div className="flex items-center gap-1">
+                                                <BarChart3 className="w-3 h-3" />
+                                                <span>{lessonItem.difficulty}</span>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
                               </div>
                             </Button>
                           </li>
@@ -395,3 +415,5 @@ export default function CourseDetailPage({
     </div>
   );
 }
+
+    

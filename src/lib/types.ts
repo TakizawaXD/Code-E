@@ -1,3 +1,4 @@
+
 import { FieldValue } from "firebase/firestore";
 
 export type NavItem = {
@@ -23,8 +24,8 @@ export type Lesson = {
   id: string;
   title: string;
   duration: string;
-  videoUrl?: string;
-  content?: string;
+  content: string; // Changed from optional to required
+  difficulty: 'Fácil' | 'Medio' | 'Difícil';
   quiz?: Quiz;
   order: number;
 };
@@ -73,3 +74,5 @@ export type Progress = {
   completedLessons: string[];
   completed: boolean;
 };
+
+    

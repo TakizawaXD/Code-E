@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "User": {
@@ -114,22 +115,22 @@
           "type": "string",
           "description": "The title of the lesson."
         },
-        "videoUrl": {
+        "content": {
           "type": "string",
-          "description": "The URL of the video content for the lesson.",
-          "format": "uri"
+          "description": "A description of what the lesson entails, including exercises. Supports HTML."
         },
-        "description": {
+        "difficulty": {
           "type": "string",
-          "description": "A description of what the video entails."
+          "description": "The difficulty of the lesson.",
+          "enum": ["Fácil", "Medio", "Difícil"]
         }
       },
       "required": [
         "id",
         "courseId",
         "title",
-        "videoUrl",
-        "description"
+        "content",
+        "difficulty"
       ]
     },
     "Comment": {
@@ -724,3 +725,5 @@
     "reasoning": "The Firestore structure is designed to ensure Authorization Independence, DBAC, and support secure list operations (QAPs). It leverages structural segregation and denormalization strategies. User-owned data follows a hierarchical path structure for simplified security rules. Collaborative data is managed through membership maps (denormalized). Explicit state modeling is used for clarity. The structure is optimized for a functional application, prioritizing data relationships and access control.\n\nSpecifically:\n\n*   **/users/{userId}**: Stores user profiles. Authentication relies on `request.auth.uid`.\n*   **/learningPaths/{learningPathId}**: Stores learning paths. Courses are subcollections to maintain a clear hierarchy.\n*   **/learningPaths/{learningPathId}/courses/{courseId}**: Stores courses within learning paths. Lessons are nested for easy retrieval.\n*   **/learningPaths/{learningPathId}/courses/{courseId}/lessons/{lessonId}**: Stores lessons. Comments and Exercises are subcollections.\n*   **/learningPaths/{learningPathId}/courses/{courseId}/lessons/{lessonId}/comments/{commentId}**: Comments on lessons. Includes `userId` to associate the comment with a user.\n*   **/learningPaths/{learningPathId}/courses/{courseId}/lessons/{lessonId}/exercises/{exerciseId}**: Exercises related to lessons.\n*   **/users/{userId}/progress/{progressId}**: Tracks user progress in courses. The path-based ownership simplifies security rules.\n*   **/users/{userId}/certificates/{certificateId}**: Stores certificates earned by users. Again, path-based ownership is used.\n*   **/users/{userId}/payments/{paymentId}**: Records payments made by users.\n*   **/courses/{courseId}/exams/{examId}**: Stores exams for each course. Exam questions are subcollections.\n*   **/courses/{courseId}/exams/{examId}/examQuestions/{examQuestionId}**: Stores questions within each exam.\n*   **/users/{userId}/userExamAnswers/{userExamAnswerId}**: Stores the answers provided by a user for an exam question.\n\nThis structure maintains Authorization Independence by relying on path-based ownership and avoids `get()` calls in security rules. It adheres to DBAC principles, and QAPs are addressed through structural segregation, ensuring secure `list` operations. The data model supports the application's core features, including user authentication, course listings, video playback, user dashboards, notifications, learning paths, and payments."
   }
 }
+
+    
