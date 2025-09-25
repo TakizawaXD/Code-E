@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Book, Briefcase, Cloud, Code, Database, Film, Landmark, Laptop, LineChart, PenTool, Shield, Smartphone, Users } from "lucide-react";
+import { ArrowRight, Book, BrainCircuit, Blocks, Briefcase, BookText, Cloud, Code, Database, Film, Landmark, Laptop, LineChart, Paintbrush, PenTool, Shield, Smartphone, TrendingUp, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CourseCard } from "@/components/course-card";
@@ -64,7 +64,7 @@ function LearningCategories() {
                             <Card className="h-full transform transition-all duration-300 hover:scale-105 hover:shadow-lg flex flex-col items-center justify-center p-4 text-center">
                                 <div className="mb-3 text-primary">{category.icon}</div>
                                 <CardTitle className="text-base font-semibold">{category.name}</CardTitle>
-                                <CardDescription className="text-sm mt-1">{category.paths} rutas</CardDescription>
+
                             </Card>
                         </Link>
                     ))}
@@ -168,5 +168,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-    
