@@ -1,0 +1,726 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user in the Code-E platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user.",
+          "format": "uuid"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The first name of the user."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The last name of the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the user.",
+          "format": "email"
+        },
+        "registrationDate": {
+          "type": "string",
+          "description": "The date and time the user registered.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "registrationDate"
+      ]
+    },
+    "Course": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Course",
+      "type": "object",
+      "description": "Represents a course offered on the Code-E platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the course.",
+          "format": "uuid"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the course."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the course content."
+        },
+        "learningPathId": {
+          "type": "string",
+          "description": "Reference to LearningPath. (Relationship: LearningPath 1:N Course)"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "learningPathId"
+      ]
+    },
+    "LearningPath": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "LearningPath",
+      "type": "object",
+      "description": "Represents a learning path that categorizes courses.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the learning path.",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the learning path."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the learning path."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description"
+      ]
+    },
+    "Lesson": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Lesson",
+      "type": "object",
+      "description": "Represents a lesson within a course.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the lesson.",
+          "format": "uuid"
+        },
+        "courseId": {
+          "type": "string",
+          "description": "Reference to Course. (Relationship: Course 1:N Lesson)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the lesson."
+        },
+        "videoUrl": {
+          "type": "string",
+          "description": "The URL of the video content for the lesson.",
+          "format": "uri"
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of what the video entails."
+        }
+      },
+      "required": [
+        "id",
+        "courseId",
+        "title",
+        "videoUrl",
+        "description"
+      ]
+    },
+    "Comment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Comment",
+      "type": "object",
+      "description": "Represents a comment on a lesson.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the comment.",
+          "format": "uuid"
+        },
+        "lessonId": {
+          "type": "string",
+          "description": "Reference to Lesson. (Relationship: Lesson 1:N Comment)"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Comment)"
+        },
+        "text": {
+          "type": "string",
+          "description": "The text content of the comment."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "The date and time the comment was posted.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "lessonId",
+        "userId",
+        "text",
+        "timestamp"
+      ]
+    },
+    "Progress": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Progress",
+      "type": "object",
+      "description": "Represents a user's progress in a course.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the progress entry.",
+          "format": "uuid"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Progress)"
+        },
+        "courseId": {
+          "type": "string",
+          "description": "Reference to Course. (Relationship: Course 1:N Progress)"
+        },
+        "lastLessonCompletedId": {
+          "type": "string",
+          "description": "Reference to Lesson. The last lesson the user completed in the course. (Relationship: Lesson 1:N Progress)"
+        },
+        "completed": {
+          "type": "boolean",
+          "description": "Indicates whether the user has completed the course."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "courseId",
+        "completed"
+      ]
+    },
+    "Certificate": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Certificate",
+      "type": "object",
+      "description": "Represents a certificate awarded to a user for completing a course.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the certificate.",
+          "format": "uuid"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Certificate)"
+        },
+        "courseId": {
+          "type": "string",
+          "description": "Reference to Course. (Relationship: Course 1:N Certificate)"
+        },
+        "issueDate": {
+          "type": "string",
+          "description": "The date the certificate was issued.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "courseId",
+        "issueDate"
+      ]
+    },
+    "Payment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Payment",
+      "type": "object",
+      "description": "Represents a payment transaction.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the payment.",
+          "format": "uuid"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Payment)"
+        },
+        "amount": {
+          "type": "number",
+          "description": "The amount of the payment."
+        },
+        "date": {
+          "type": "string",
+          "description": "The date of the payment.",
+          "format": "date-time"
+        },
+        "paymentMethod": {
+          "type": "string",
+          "description": "The method of payment (e.g., credit card, PayPal)."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "amount",
+        "date",
+        "paymentMethod"
+      ]
+    },
+    "Exercise": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Exercise",
+      "type": "object",
+      "description": "Represents an exercise or problem for a lesson.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the exercise.",
+          "format": "uuid"
+        },
+        "lessonId": {
+          "type": "string",
+          "description": "Reference to Lesson. (Relationship: Lesson 1:N Exercise)"
+        },
+        "question": {
+          "type": "string",
+          "description": "The question or problem text."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of exercise (e.g., multiple choice, coding challenge)."
+        },
+        "correctAnswer": {
+          "type": "string",
+          "description": "The correct answer for the exercise."
+        }
+      },
+      "required": [
+        "id",
+        "lessonId",
+        "question",
+        "type",
+        "correctAnswer"
+      ]
+    },
+    "UserAnswer": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserAnswer",
+      "type": "object",
+      "description": "Represents a user's answer to an exercise.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user answer.",
+          "format": "uuid"
+        },
+        "exerciseId": {
+          "type": "string",
+          "description": "Reference to Exercise. (Relationship: Exercise 1:N UserAnswer)"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N UserAnswer)"
+        },
+        "answer": {
+          "type": "string",
+          "description": "The user's answer to the exercise."
+        },
+        "isCorrect": {
+          "type": "boolean",
+          "description": "Indicates whether the user's answer is correct."
+        }
+      },
+      "required": [
+        "id",
+        "exerciseId",
+        "userId",
+        "answer",
+        "isCorrect"
+      ]
+    },
+    "Exam": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Exam",
+      "type": "object",
+      "description": "Represents an exam for a course.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the exam.",
+          "format": "uuid"
+        },
+        "courseId": {
+          "type": "string",
+          "description": "Reference to Course. (Relationship: Course 1:N Exam)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the exam."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the exam."
+        }
+      },
+      "required": [
+        "id",
+        "courseId",
+        "title",
+        "description"
+      ]
+    },
+    "ExamQuestion": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ExamQuestion",
+      "type": "object",
+      "description": "Represents a question in an exam.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the exam question.",
+          "format": "uuid"
+        },
+        "examId": {
+          "type": "string",
+          "description": "Reference to Exam. (Relationship: Exam 1:N ExamQuestion)"
+        },
+        "question": {
+          "type": "string",
+          "description": "The question text."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of question (e.g., multiple choice, true/false)."
+        },
+        "options": {
+          "type": "array",
+          "description": "Array of possible answers for multiple choice questions.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "correctAnswer": {
+          "type": "string",
+          "description": "The correct answer to the question."
+        }
+      },
+      "required": [
+        "id",
+        "examId",
+        "question",
+        "type",
+        "correctAnswer"
+      ]
+    },
+    "UserExamAnswer": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserExamAnswer",
+      "type": "object",
+      "description": "Represents a user's answer to a question in an exam.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user exam answer.",
+          "format": "uuid"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N UserExamAnswer)"
+        },
+        "examQuestionId": {
+          "type": "string",
+          "description": "Reference to ExamQuestion. (Relationship: ExamQuestion 1:N UserExamAnswer)"
+        },
+        "answer": {
+          "type": "string",
+          "description": "The user's answer to the question."
+        },
+        "isCorrect": {
+          "type": "boolean",
+          "description": "Indicates whether the user's answer is correct."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "examQuestionId",
+        "answer",
+        "isCorrect"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles. The 'userId' is used for path-based access control.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/learningPaths/{learningPathId}",
+        "definition": {
+          "entityName": "LearningPath",
+          "schema": {
+            "$ref": "#/backend/entities/LearningPath"
+          },
+          "description": "Stores learning paths.",
+          "params": [
+            {
+              "name": "learningPathId",
+              "description": "The unique identifier for the learning path."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/learningPaths/{learningPathId}/courses/{courseId}",
+        "definition": {
+          "entityName": "Course",
+          "schema": {
+            "$ref": "#/backend/entities/Course"
+          },
+          "description": "Stores courses within learning paths.",
+          "params": [
+            {
+              "name": "learningPathId",
+              "description": "The unique identifier for the learning path."
+            },
+            {
+              "name": "courseId",
+              "description": "The unique identifier for the course."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/learningPaths/{learningPathId}/courses/{courseId}/lessons/{lessonId}",
+        "definition": {
+          "entityName": "Lesson",
+          "schema": {
+            "$ref": "#/backend/entities/Lesson"
+          },
+          "description": "Stores lessons within courses.",
+          "params": [
+            {
+              "name": "learningPathId",
+              "description": "The unique identifier for the learning path."
+            },
+            {
+              "name": "courseId",
+              "description": "The unique identifier for the course."
+            },
+            {
+              "name": "lessonId",
+              "description": "The unique identifier for the lesson."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/learningPaths/{learningPathId}/courses/{courseId}/lessons/{lessonId}/comments/{commentId}",
+        "definition": {
+          "entityName": "Comment",
+          "schema": {
+            "$ref": "#/backend/entities/Comment"
+          },
+          "description": "Stores comments on lessons.",
+          "params": [
+            {
+              "name": "learningPathId",
+              "description": "The unique identifier for the learning path."
+            },
+            {
+              "name": "courseId",
+              "description": "The unique identifier for the course."
+            },
+            {
+              "name": "lessonId",
+              "description": "The unique identifier for the lesson."
+            },
+            {
+              "name": "commentId",
+              "description": "The unique identifier for the comment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/learningPaths/{learningPathId}/courses/{courseId}/lessons/{lessonId}/exercises/{exerciseId}",
+        "definition": {
+          "entityName": "Exercise",
+          "schema": {
+            "$ref": "#/backend/entities/Exercise"
+          },
+          "description": "Stores exercises related to lessons.",
+          "params": [
+            {
+              "name": "learningPathId",
+              "description": "The unique identifier for the learning path."
+            },
+            {
+              "name": "courseId",
+              "description": "The unique identifier for the course."
+            },
+            {
+              "name": "lessonId",
+              "description": "The unique identifier for the lesson."
+            },
+            {
+              "name": "exerciseId",
+              "description": "The unique identifier for the exercise."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/progress/{progressId}",
+        "definition": {
+          "entityName": "Progress",
+          "schema": {
+            "$ref": "#/backend/entities/Progress"
+          },
+          "description": "Stores user progress in courses. Path-based ownership for simplified security rules.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "progressId",
+              "description": "The unique identifier for the progress entry."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/certificates/{certificateId}",
+        "definition": {
+          "entityName": "Certificate",
+          "schema": {
+            "$ref": "#/backend/entities/Certificate"
+          },
+          "description": "Stores certificates earned by users. Path-based ownership.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "certificateId",
+              "description": "The unique identifier for the certificate."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/payments/{paymentId}",
+        "definition": {
+          "entityName": "Payment",
+          "schema": {
+            "$ref": "#/backend/entities/Payment"
+          },
+          "description": "Stores payments made by users. Path-based ownership.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "paymentId",
+              "description": "The unique identifier for the payment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/courses/{courseId}/exams/{examId}",
+        "definition": {
+          "entityName": "Exam",
+          "schema": {
+            "$ref": "#/backend/entities/Exam"
+          },
+          "description": "Stores exams for each course.",
+          "params": [
+            {
+              "name": "courseId",
+              "description": "The unique identifier for the course."
+            },
+            {
+              "name": "examId",
+              "description": "The unique identifier for the exam."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/courses/{courseId}/exams/{examId}/examQuestions/{examQuestionId}",
+        "definition": {
+          "entityName": "ExamQuestion",
+          "schema": {
+            "$ref": "#/backend/entities/ExamQuestion"
+          },
+          "description": "Stores questions within each exam.",
+          "params": [
+            {
+              "name": "courseId",
+              "description": "The unique identifier for the course."
+            },
+            {
+              "name": "examId",
+              "description": "The unique identifier for the exam."
+            },
+            {
+              "name": "examQuestionId",
+              "description": "The unique identifier for the exam question."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/userExamAnswers/{userExamAnswerId}",
+        "definition": {
+          "entityName": "UserExamAnswer",
+          "schema": {
+            "$ref": "#/backend/entities/UserExamAnswer"
+          },
+          "description": "Stores the answers provided by a user for an exam question.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "userExamAnswerId",
+              "description": "The unique identifier for the user exam answer."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure Authorization Independence, DBAC, and support secure list operations (QAPs). It leverages structural segregation and denormalization strategies. User-owned data follows a hierarchical path structure for simplified security rules. Collaborative data is managed through membership maps (denormalized). Explicit state modeling is used for clarity. The structure is optimized for a functional application, prioritizing data relationships and access control.\n\nSpecifically:\n\n*   **/users/{userId}**: Stores user profiles. Authentication relies on `request.auth.uid`.\n*   **/learningPaths/{learningPathId}**: Stores learning paths. Courses are subcollections to maintain a clear hierarchy.\n*   **/learningPaths/{learningPathId}/courses/{courseId}**: Stores courses within learning paths. Lessons are nested for easy retrieval.\n*   **/learningPaths/{learningPathId}/courses/{courseId}/lessons/{lessonId}**: Stores lessons. Comments and Exercises are subcollections.\n*   **/learningPaths/{learningPathId}/courses/{courseId}/lessons/{lessonId}/comments/{commentId}**: Comments on lessons. Includes `userId` to associate the comment with a user.\n*   **/learningPaths/{learningPathId}/courses/{courseId}/lessons/{lessonId}/exercises/{exerciseId}**: Exercises related to lessons.\n*   **/users/{userId}/progress/{progressId}**: Tracks user progress in courses. The path-based ownership simplifies security rules.\n*   **/users/{userId}/certificates/{certificateId}**: Stores certificates earned by users. Again, path-based ownership is used.\n*   **/users/{userId}/payments/{paymentId}**: Records payments made by users.\n*   **/courses/{courseId}/exams/{examId}**: Stores exams for each course. Exam questions are subcollections.\n*   **/courses/{courseId}/exams/{examId}/examQuestions/{examQuestionId}**: Stores questions within each exam.\n*   **/users/{userId}/userExamAnswers/{userExamAnswerId}**: Stores the answers provided by a user for an exam question.\n\nThis structure maintains Authorization Independence by relying on path-based ownership and avoids `get()` calls in security rules. It adheres to DBAC principles, and QAPs are addressed through structural segregation, ensuring secure `list` operations. The data model supports the application's core features, including user authentication, course listings, video playback, user dashboards, notifications, learning paths, and payments."
+  }
+}
