@@ -5,8 +5,8 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
-import { useFirebase, useUser, useFirestore, addDocumentNonBlocking } from "@/firebase";
-import { collection, serverTimestamp } from "firebase/firestore";
+import { useFirebase, useUser, useFirestore } from "@/firebase";
+import { collection, serverTimestamp, addDoc } from "firebase/firestore";
 import {
   Form,
   FormControl,
@@ -59,7 +59,7 @@ export default function NewThreadPage() {
         postCount: 1, // The initial post counts as 1
       };
       
-      const docRef = await addDocumentNonBlocking(threadsRef, newThread);
+      const docRef = await addDoc(threadsRef, newThread);
 
       toast({
         title: "¡Discusión creada!",

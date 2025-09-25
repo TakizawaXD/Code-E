@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useFirebase, useUser, useDoc, useCollection, useFirestore, useMemoFirebase, addDocumentNonBlocking } from "@/firebase";
-import { doc, collection, query, orderBy, serverTimestamp, updateDoc } from "firebase/firestore";
+import { useFirebase, useUser, useDoc, useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { doc, collection, query, orderBy, serverTimestamp, updateDoc, addDoc } from "firebase/firestore";
 import { notFound, useRouter } from "next/navigation";
 import type { ForumThread, ForumPost } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -57,7 +57,7 @@ export default function ThreadPage({ params }: { params: { id: string } }) {
                 createdAt: now,
             };
 
-            await addDocumentNonBlocking(postsRef, postData);
+            await addDoc(postsRef, postData);
             
             // Update thread metadata
             await updateDoc(threadRef, {
