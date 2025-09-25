@@ -66,7 +66,7 @@ export type Notification = {
   id: string;
   title: string;
   description: string;
-  date: Date;
+  date: Timestamp;
 };
 
 export type Progress = {
@@ -87,5 +87,3 @@ export type Comment = {
     text: string;
     createdAt: Timestamp;
 }
-
-    

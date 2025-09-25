@@ -27,7 +27,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { QuizComponent } from "@/components/quiz";
 import { Badge } from "@/components/ui/badge";
-import { collection, query, where, doc, getDocs, serverTimestamp } from "firebase/firestore";
+import { collection, query, where, doc, getDocs, serverTimestamp, addDoc } from "firebase/firestore";
 import { CommentSection } from "@/components/comment-section";
 
 function getNextLesson(course: Course, currentModuleId: string, currentLessonId: string): { moduleId: string; lessonId: string } | null {
@@ -137,38 +137,47 @@ export default function CourseDetailPage({
   
   const handleMarkAsCompleted = async () => {
     if (!user || !course || !currentLesson || !firestore) return;
-
+  
     const nextLesson = getNextLesson(course, currentLesson.moduleId, currentLesson.lessonId);
     const newCompletedLessons = Array.from(new Set([...completedLessons, currentLesson.lessonId]));
     const isCourseComplete = !nextLesson;
-
+  
     const progressRef = collection(firestore, `users/${user.uid}/progress`);
-
+  
     // Check if progress document exists
     const q = query(progressRef, where("courseId", "==", course.id));
     const querySnapshot = await getDocs(q);
-
+  
     let progressDocRef;
     if (querySnapshot.empty) {
-        // Create new progress document if it doesn't exist
-        progressDocRef = doc(progressRef);
-        setDocumentNonBlocking(progressDocRef, {
-            courseId: course.id,
-            completedLessons: newCompletedLessons,
-            completed: isCourseComplete,
-            startedAt: serverTimestamp(),
-        }, { merge: true });
+      // Create new progress document if it doesn't exist
+      progressDocRef = doc(progressRef);
+      setDocumentNonBlocking(progressDocRef, {
+        courseId: course.id,
+        completedLessons: newCompletedLessons,
+        completed: isCourseComplete,
+        startedAt: serverTimestamp(),
+      }, { merge: true });
     } else {
-        // Update existing progress document
-        progressDocRef = querySnapshot.docs[0].ref;
-        setDocumentNonBlocking(progressDocRef, {
-            completedLessons: newCompletedLessons,
-            completed: isCourseComplete,
-            lastUpdatedAt: serverTimestamp(),
-            ...(isCourseComplete && { completedAt: serverTimestamp() })
-        }, { merge: true });
+      // Update existing progress document
+      progressDocRef = querySnapshot.docs[0].ref;
+      setDocumentNonBlocking(progressDocRef, {
+        completedLessons: newCompletedLessons,
+        completed: isCourseComplete,
+        lastUpdatedAt: serverTimestamp(),
+        ...(isCourseComplete && { completedAt: serverTimestamp() })
+      }, { merge: true });
     }
-
+  
+    if (isCourseComplete) {
+      const notificationsRef = collection(firestore, `users/${user.uid}/notifications`);
+      addDocumentNonBlocking(notificationsRef, {
+        title: `¡Curso completado!`,
+        description: `Has completado "${course.title}". ¡Tu certificado ya está disponible!`,
+        date: serverTimestamp(),
+      });
+    }
+  
     if (nextLesson) {
       handleSetLesson(nextLesson.moduleId, nextLesson.lessonId);
     }
@@ -340,5 +349,3 @@ export default function CourseDetailPage({
     </div>
   );
 }
-
-    

@@ -1,17 +1,11 @@
-import Link from "next/link";
-import {
-  Bell,
-  Menu,
-  Search,
-} from "lucide-react";
 
+"use client";
+
+import Link from "next/link";
+import { Bell, Menu, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,12 +17,26 @@ import {
 import { MainNav } from "@/components/layout/main-nav";
 import { UserNav } from "@/components/layout/user-nav";
 import { CodeELogo } from "@/components/icons";
-import { notifications } from "@/lib/data";
+import { useFirebase, useUser, useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import type { Notification } from "@/lib/types";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { collection, query, orderBy } from "firebase/firestore";
 
 export function Header() {
+  const { user } = useUser();
+  const firestore = useFirestore();
+
+  const notificationsQuery = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return query(collection(firestore, `users/${user.uid}/notifications`), orderBy("date", "desc"));
+  }, [firestore, user]);
+
+  const { data: notifications, isLoading: isLoadingNotifications } = useCollection<Notification>(notificationsQuery);
+  const hasUnread = notifications && notifications.length > 0;
+
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
@@ -53,22 +61,28 @@ export function Header() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative">
                   <Bell className="h-5 w-5" />
-                   <span className="absolute top-1 right-1 flex h-2 w-2">
+                   {hasUnread && <span className="absolute top-1 right-1 flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                  </span>
+                  </span>}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-80">
                 <DropdownMenuLabel>Notificaciones</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {notifications.map((notification) => (
-                  <DropdownMenuItem key={notification.id} className="flex flex-col items-start gap-1 py-2">
-                      <p className="font-medium">{notification.title}</p>
-                      <p className="text-xs text-muted-foreground">{notification.description}</p>
-                      <p className="text-xs text-muted-foreground/80 mt-1">{formatDistanceToNow(notification.date, { addSuffix: true, locale: es })}</p>
-                  </DropdownMenuItem>
-                ))}
+                 {isLoadingNotifications ? (
+                  <DropdownMenuItem>Cargando...</DropdownMenuItem>
+                 ) : notifications && notifications.length > 0 ? (
+                  notifications.map((notification) => (
+                    <DropdownMenuItem key={notification.id} className="flex flex-col items-start gap-1 py-2">
+                        <p className="font-medium">{notification.title}</p>
+                        <p className="text-xs text-muted-foreground">{notification.description}</p>
+                        <p className="text-xs text-muted-foreground/80 mt-1">{formatDistanceToNow(notification.date.toDate(), { addSuffix: true, locale: es })}</p>
+                    </DropdownMenuItem>
+                  ))
+                ) : (
+                  <DropdownMenuItem>No tienes notificaciones.</DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -116,5 +130,3 @@ export function Header() {
     </header>
   );
 }
-
-    

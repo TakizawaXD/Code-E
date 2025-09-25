@@ -92,6 +92,17 @@
             "createdAt": { "type": "string", "format": "date-time" }
         },
         "required": [ "userId", "userName", "text", "createdAt" ]
+    },
+    "Notification": {
+      "title": "Notification",
+      "type": "object",
+      "description": "Represents a notification for a user.",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "description", "date"]
     }
   },
   "auth": {
@@ -127,6 +138,10 @@
     "/users/{userId}/progress/{progressId}": {
       "schema": { "$ref": "#/entities/Progress" },
       "description": "Tracks a user's progress in courses."
+    },
+    "/users/{userId}/notifications/{notificationId}": {
+        "schema": { "$ref": "#/entities/Notification" },
+        "description": "Stores notifications for a user."
     }
   }
 }
