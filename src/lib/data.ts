@@ -1,4 +1,4 @@
-import type { LearningPath, User, Notification, Course, CourseModule, Lesson } from "@/lib/types";
+import type { Notification } from "@/lib/types";
 
 // This file now only contains types and potentially non-user-specific, non-db data.
 // All user, course, and learning path data will be fetched from Firestore.

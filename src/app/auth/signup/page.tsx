@@ -6,8 +6,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useAuth, useFirestore } from "@/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc } from "firebase/firestore";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -88,6 +88,9 @@ export default function SignupPage() {
         values.password
       );
       const user = userCredential.user;
+
+      // Update Firebase Auth profile
+      await updateProfile(user, { displayName: values.fullName });
 
       // Create user profile in Firestore
       await setDocumentNonBlocking(doc(firestore, "users", user.uid), {
