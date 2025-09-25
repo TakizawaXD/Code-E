@@ -15,7 +15,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import React from "react";
-import { Code, BrainCircuit, PenTool, Cloud, Users, Briefcase, BookText, Shield, Smartphone, Blocks, Landmark, Paintbrush, TrendingUp, Film, Laptop } from "lucide-react";
+import { Code, BrainCircuit, PenTool, Cloud, Users, Briefcase, BookText, Shield, Smartphone, Blocks, Landmark, Paintbrush, TrendingUp, Film, Laptop, Rocket } from "lucide-react";
 
 const mainNavItems: NavItem[] = [
   { title: "Rutas de Aprendizaje", href: "/paths" },
@@ -78,7 +78,7 @@ export function MainNav() {
           </NavigationMenuItem>
           {mainNavItems.map((item) => (
             <NavigationMenuItem key={item.href}>
-              <Link href={item.href} passHref>
+              <Link href={item.href} legacyBehavior passHref>
                 <NavigationMenuLink
                   className={cn(navigationMenuTriggerStyle(), pathname === item.href ? "text-primary" : "text-muted-foreground")}
                 >
@@ -124,4 +124,3 @@ const ListItem = React.forwardRef<
   )
 })
 ListItem.displayName = "ListItem"
-
