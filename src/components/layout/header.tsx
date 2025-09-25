@@ -1,11 +1,8 @@
 import Link from "next/link";
 import {
   Bell,
-  Home,
   Menu,
   Search,
-  BookOpenCheck,
-  GraduationCap,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,6 +26,7 @@ import { CodeELogo } from "@/components/icons";
 import { notifications } from "@/lib/data";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Header() {
   return (
@@ -50,6 +48,7 @@ export function Header() {
             />
           </div>
           <nav className="flex items-center space-x-2">
+            <ThemeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative">
