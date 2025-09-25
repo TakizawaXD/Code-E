@@ -3,37 +3,29 @@
 
 import { CourseCard } from "@/components/course-card";
 import { Button } from "@/components/ui/button";
-import { useFirebase, useCollection, useMemoFirebase } from "@/firebase";
-import { collection, query, where, orderBy, limit } from 'firebase/firestore';
+import { courses as allCourses, learningPaths as allLearningPaths } from "@/lib/data";
 import type { Course, LearningPath } from "@/lib/types";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
-
 
 function PathCourses({ pathId }: { pathId: string }) {
-    const { firestore } = useFirebase();
-    const coursesQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'courses'), where('pathId', '==', pathId), limit(4)): null, [firestore, pathId]);
-    const { data: courses, isLoading } = useCollection<Course>(coursesQuery);
+    const courses = allCourses.filter(c => c.pathId === pathId).slice(0, 4);
 
-    if (isLoading) {
-        return <p>Cargando cursos...</p>;
+    if (courses.length === 0) {
+        return <p>No hay cursos disponibles en esta ruta.</p>;
     }
 
     return (
          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {courses?.map((course) => (
+              {courses.map((course) => (
                 <CourseCard key={course.id} course={course} />
               ))}
         </div>
     );
 }
 
-
 export default function PathsPage() {
-    const { firestore } = useFirebase();
-    const pathsQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'learningPaths'), orderBy('title')) : null, [firestore]);
-    const { data: learningPaths, isLoading } = useCollection<LearningPath>(pathsQuery);
+    const learningPaths = allLearningPaths;
 
   return (
     <div className="container py-8 md:py-12">
@@ -47,7 +39,7 @@ export default function PathsPage() {
       </header>
       
       <div className="space-y-16">
-        {isLoading && <p>Cargando rutas de aprendizaje...</p>}
+        {learningPaths.length === 0 && <p>No se encontraron rutas de aprendizaje.</p>}
         {learningPaths?.map((path) => (
           <section key={path.id} className="border-b last:border-b-0 pb-12 last:pb-0">
             <div className="mb-6">

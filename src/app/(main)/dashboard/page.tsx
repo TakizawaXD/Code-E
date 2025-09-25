@@ -1,62 +1,26 @@
+
 "use client";
 
-import { useUser, useFirebase, useCollection, useMemoFirebase } from "@/firebase";
+import { useUser } from "@/firebase";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CourseCard } from "@/components/course-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Award, BookOpen } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { collection, query, where, doc } from 'firebase/firestore';
-import type { Course, Progress } from "@/lib/types";
-import { useDoc } from "@/firebase/firestore/use-doc";
-import { useEffect, useMemo, useState } from "react";
-
-function CourseCardFromRef({ courseRef }: { courseRef: any }) {
-    const { data: course } = useDoc<Course>(courseRef);
-    if (!course) return null;
-    return <CourseCard course={course} />;
-}
+import type { Course } from "@/lib/types";
+import { courses as allCourses } from "@/lib/data";
+import { useMemo } from "react";
 
 export default function DashboardPage() {
     const { user } = useUser();
-    const { firestore } = useFirebase();
-    const [coursesInProgress, setCoursesInProgress] = useState<Course[]>([]);
-    const [completedCourses, setCompletedCourses] = useState<Course[]>([]);
-
-    const progressQuery = useMemoFirebase(
-        () => user ? collection(firestore, 'users', user.uid, 'progress') : null,
-        [user, firestore]
-    );
-    const { data: progresses, isLoading: progressLoading } = useCollection<Progress>(progressQuery);
-
-    useEffect(() => {
-        if (progresses) {
-            const inProgressProms: any[] = [];
-            const completedProms: any[] = [];
-
-            progresses.forEach(p => {
-                const courseRef = doc(firestore, 'courses', p.courseId);
-                if (p.completed) {
-                    completedProms.push(courseRef);
-                } else {
-                    inProgressProms.push(courseRef);
-                }
-            });
-            // This is not ideal, but for now we will just load them one by one.
-            // A better solution would be to use a query with 'in' operator,
-            // or denormalize course data into the progress document.
-             Promise.all(inProgressProms.map(ref => useDoc(ref).data)).then(results => {
-                 setCoursesInProgress(results.filter(c => c) as Course[]);
-             });
-              Promise.all(completedProms.map(ref => useDoc(ref).data)).then(results => {
-                 setCompletedCourses(results.filter(c => c) as Course[]);
-             });
-        }
-    }, [progresses, firestore]);
+    
+    // Mock data for demonstration
+    const coursesInProgress: Course[] = useMemo(() => allCourses.slice(0, 4), []);
+    const completedCourses: Course[] = useMemo(() => allCourses.slice(4, 6), []);
     
     if (!user) {
-        return <div>Inicia sesión para ver tu panel.</div>;
+        return <div className="container py-8 text-center">Inicia sesión para ver tu panel.</div>;
     }
 
     const userInitial = user.displayName ? user.displayName.charAt(0) : user.email?.charAt(0).toUpperCase();
@@ -110,6 +74,7 @@ export default function DashboardPage() {
                                 <CourseCard key={course.id} course={course} progress={Math.floor(Math.random() * 50) + 20} />
                             ))}
                         </div>
+                        {coursesInProgress.length === 0 && <p className="text-muted-foreground mt-4">Aún no has comenzado ningún curso.</p>}
                     </section>
                 </TabsContent>
                 <TabsContent value="certificates">
@@ -123,6 +88,7 @@ export default function DashboardPage() {
                                 </Card>
                             ))}
                         </div>
+                        {completedCourses.length === 0 && <p className="text-muted-foreground mt-4">No has completado ningún curso todavía.</p>}
                     </section>
                 </TabsContent>
             </Tabs>

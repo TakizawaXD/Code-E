@@ -3,31 +3,23 @@
 
 import { useMemo } from "react";
 import { CourseCard } from "@/components/course-card";
-import { useFirebase, useCollection, useMemoFirebase } from "@/firebase";
-import { collection, query, orderBy, where } from 'firebase/firestore';
+import { courses as allCourses, learningPaths as allLearningPaths } from "@/lib/data";
 import type { Course, LearningPath } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
 
 export default function CoursesPage() {
-    const { firestore } = useFirebase();
     const searchParams = useSearchParams();
     const pathFilter = searchParams.get('path');
     
-    const pathsQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'learningPaths'), orderBy('title')) : null, [firestore]);
-    const { data: learningPaths, isLoading: pathsLoading } = useCollection<LearningPath>(pathsQuery);
-
-    const coursesQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
+    const learningPaths = allLearningPaths;
+    const courses = useMemo(() => {
         if (pathFilter) {
-            return query(collection(firestore, 'courses'), where('pathId', '==', pathFilter), orderBy('title'));
+            return allCourses.filter(c => c.pathId === pathFilter);
         }
-        return query(collection(firestore, 'courses'), orderBy('title'));
-    }, [firestore, pathFilter]);
-    const { data: courses, isLoading: coursesLoading } = useCollection<Course>(coursesQuery);
+        return allCourses;
+    }, [pathFilter]);
 
     const coursesByPath = useMemo(() => {
-        if (!courses || !learningPaths) return {};
-        
         return courses.reduce((acc, course) => {
             const path = learningPaths.find(p => p.id === course.pathId);
             if (path) {
@@ -40,12 +32,6 @@ export default function CoursesPage() {
         }, {} as { [key: string]: LearningPath & { courses: Course[] } });
 
     }, [courses, learningPaths]);
-
-    const isLoading = pathsLoading || coursesLoading;
-
-    if (isLoading) {
-        return <div className="container py-8 md:py-12 text-center">Cargando...</div>;
-    }
     
     const pathsToRender = pathFilter ? (learningPaths?.filter(p => p.id === pathFilter) || []) : (learningPaths || []);
 
@@ -77,7 +63,7 @@ export default function CoursesPage() {
                     </section>
                 )) : (
                     <div className="text-center py-10">
-                        <p className="text-muted-foreground">No se encontraron cursos. Intenta ejecutar el script de inicialización para poblar la base de datos.</p>
+                        <p className="text-muted-foreground">No se encontraron cursos que coincidan con tu búsqueda.</p>
                     </div>
                 )}
             </div>

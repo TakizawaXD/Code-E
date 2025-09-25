@@ -45,7 +45,7 @@ export type Course = {
   instructor: string;
   instructorAvatarUrl: string;
   imageUrl: string;
-  // modules field is not stored in the course document, it's a subcollection
+  modules: CourseModule[];
   pathId: string;
 };
 
