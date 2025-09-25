@@ -12,139 +12,82 @@ const db = getFirestore(firebaseApp);
 // --- DATA TO SEED ---
 
 const learningPaths = [
-    { id: 'frontend', title: 'Desarrollo Frontend', description: 'Conviértete en un experto del lado del cliente, dominando HTML, CSS, JavaScript y frameworks modernos como React.' },
-    { id: 'backend', title: 'Desarrollo Backend', description: 'Construye la lógica del servidor, bases de datos y APIs que potencian las aplicaciones web y móviles.' },
-    { id: 'fullstack', title: 'Desarrollo Full-Stack', description: 'Domina tanto el frontend como el backend para construir aplicaciones web completas de principio a fin.' },
-    { id: 'datascience', title: 'Ciencia de Datos', description: 'Aprende a analizar datos, construir modelos de machine learning y extraer insights valiosos para la toma de decisiones.' },
+    { id: 'desarrollo-web', title: 'Desarrollo Web', description: 'Conviértete en un experto del lado del cliente y del servidor, dominando frameworks y lenguajes modernos.' },
+    { id: 'ia-datascience', title: 'Inteligencia Artificial y Data Science', description: 'Aprende a analizar datos, construir modelos de machine learning y extraer insights valiosos.' },
+    { id: 'diseno-ux', title: 'Diseño de Producto y UX', description: 'Crea productos digitales intuitivos, atractivos y que los usuarios amen desde el primer clic.' },
+    { id: 'cloud-devops', title: 'Cloud Computing y DevOps', description: 'Despliega, gestiona y escala aplicaciones de forma eficiente en la nube con prácticas de DevOps.' },
+    { id: 'recursos-humanos', title: 'Recursos Humanos', description: 'Moderniza la gestión del talento con herramientas digitales y estrategias innovadoras.' },
+    { id: 'negocios', title: 'Negocios', description: 'Adquiere habilidades en gestión, estrategia y finanzas para liderar en el mundo empresarial.' },
+    { id: 'english-academy', title: 'English Academy', description: 'Mejora tu inglés profesional para comunicarte en un mercado laboral globalizado.' },
+    { id: 'ciberseguridad', title: 'Ciberseguridad', description: 'Protege sistemas, redes y datos de ataques digitales y conviértete en un guardián digital.' },
+    { id: 'desarrollo-movil', title: 'Desarrollo Móvil', description: 'Crea aplicaciones impactantes para iOS y Android y llega a millones de usuarios.' },
+    { id: 'blockchain-web3', title: 'Blockchain y Web3', description: 'Explora el futuro del internet con aplicaciones descentralizadas, NFTs y contratos inteligentes.' },
+    { id: 'finanzas-inversiones', title: 'Finanzas e Inversiones', description: 'Toma el control de tus finanzas personales y aprende a invertir de manera inteligente.' },
+    { id: 'diseno-grafico', title: 'Diseño Gráfico y Arte Digital', description: 'Comunica ideas visualmente a través de la ilustración, la fotografía y el branding.' },
+    { id: 'marketing-digital', title: 'Marketing Digital', description: 'Domina estrategias de SEO, SEM, redes sociales y contenido para hacer crecer negocios en línea.' },
+    { id: 'habilidades-blandas', title: 'Liderazgo y Habilidades Blandas', description: 'Desarrolla la comunicación, el liderazgo y la inteligencia emocional para destacar profesionalmente.' },
+    { id: 'contenido-audiovisual', title: 'Contenido Audiovisual', description: 'Aprende a producir, grabar y editar videos y podcasts de alta calidad.' },
+    { id: 'programacion', title: 'Programación', description: 'Domina los lenguajes y la lógica de programación que son la base de toda la tecnología.' },
+    { id: 'startups', title: 'Startups', description: 'Lanza y haz crecer tu propio negocio tecnológico, desde la idea hasta la financiación.' },
 ];
 
 const courses = [
-  // Frontend
-  {
-    id: 'react-desde-cero',
-    pathId: 'frontend',
-    title: 'React: De Cero a Experto',
-    description: 'Aprende a construir aplicaciones web modernas y reactivas con la librería más popular del mercado.',
-    instructor: 'Juan Pérez',
-    instructorAvatarUrl: 'https://i.pravatar.cc/150?u=juanperez',
-    imageUrl: 'https://picsum.photos/seed/react/600/400',
-  },
-  {
-    id: 'javascript-moderno',
-    pathId: 'frontend',
-    title: 'JavaScript Moderno: Guía Definitiva',
-    description: 'Domina las últimas características de JavaScript (ES6+) y escribe código más limpio y eficiente.',
-    instructor: 'Maria García',
-    instructorAvatarUrl: 'https://i.pravatar.cc/150?u=mariagarcia',
-    imageUrl: 'https://picsum.photos/seed/javascript/600/400',
-  },
-  {
-    id: 'css-avanzado',
-    pathId: 'frontend',
-    title: 'CSS Avanzado y SASS',
-    description: 'Lleva tus habilidades de CSS al siguiente nivel con Flexbox, Grid, animaciones y preprocesadores como SASS.',
-    instructor: 'Carlos Rodríguez',
-    instructorAvatarUrl: 'https://i.pravatar.cc/150?u=carlosrodriguez',
-    imageUrl: 'https://picsum.photos/seed/css/600/400',
-  },
-  // Backend
-  {
-    id: 'nodejs-master',
-    pathId: 'backend',
-    title: 'Node.js: De Cero a Maestro',
-    description: 'Construye APIs RESTful rápidas y escalables utilizando Node.js, Express y MongoDB.',
-    instructor: 'Ana López',
-    instructorAvatarUrl: 'https://i.pravatar.cc/150?u=analopez',
-    imageUrl: 'https://picsum.photos/seed/nodejs/600/400',
-  },
-  {
-    id: 'python-apis',
-    pathId: 'backend',
-    title: 'APIs con Python, FastAPI y Docker',
-    description: 'Crea APIs de alto rendimiento con Python y FastAPI, y aprende a contenerizarlas con Docker.',
-    instructor: 'Luis Martínez',
-    instructorAvatarUrl: 'https://i.pravatar.cc/150?u=luismartinez',
-    imageUrl: 'https://picsum.photos/seed/pythonapi/600/400',
-  },
-  // Full-Stack
-  {
-    id: 'fullstack-mearn',
-    pathId: 'fullstack',
-    title: 'Full-Stack con MERN (Mongo, Express, React, Node)',
-    description: 'Conviértete en un desarrollador Full-Stack creando una aplicación completa con el stack MERN.',
-    instructor: 'Elena Fernández',
-    instructorAvatarUrl: 'https://i.pravatar.cc/150?u=elenafernandez',
-    imageUrl: 'https://picsum.photos/seed/mern/600/400',
-  },
-  // Data Science
-  {
-    id: 'python-datascience',
-    pathId: 'datascience',
-    title: 'Python para Data Science',
-    description: 'Aprende a usar Pandas, NumPy y Matplotlib para el análisis y visualización de datos.',
-    instructor: 'David Gómez',
-    instructorAvatarUrl: 'https://i.pravatar.cc/150?u=davidgomez',
-    imageUrl: 'https://picsum.photos/seed/pyds/600/400',
-  },
+  // Desarrollo Web
+  { id: 'web-react', pathId: 'desarrollo-web', title: 'React: De Cero a Experto', description: 'Aprende a construir aplicaciones web modernas con React.', instructor: 'Juan Pérez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=juanperez', imageUrl: 'https://picsum.photos/seed/react/600/400' },
+  { id: 'web-vue', pathId: 'desarrollo-web', title: 'Vue.js para Principiantes', description: 'Iníciate en el desarrollo de interfaces con Vue.js.', instructor: 'Ana García', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=anagarcia', imageUrl: 'https://picsum.photos/seed/vue/600/400' },
+  // IA y Data Science
+  { id: 'ia-python', pathId: 'ia-datascience', title: 'Python para Data Science', description: 'Domina Pandas, NumPy y Matplotlib para el análisis de datos.', instructor: 'Carlos Sánchez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=carlossanchez', imageUrl: 'https://picsum.photos/seed/pyds/600/400' },
+  { id: 'ia-ml', pathId: 'ia-datascience', title: 'Fundamentos de Machine Learning', description: 'Entiende los algoritmos clave del Machine Learning.', instructor: 'Laura Martínez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=lauramartinez', imageUrl: 'https://picsum.photos/seed/ml/600/400' },
+  // Diseño de Producto y UX
+  { id: 'ux-investigacion', pathId: 'diseno-ux', title: 'Investigación de Usuarios', description: 'Aprende a entender a tus usuarios para diseñar mejores productos.', instructor: 'David Gómez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=davidgomez', imageUrl: 'https://picsum.photos/seed/uxr/600/400' },
+  // Cloud y DevOps
+  { id: 'cloud-aws', pathId: 'cloud-devops', title: 'Introducción a AWS', description: 'Conoce los servicios fundamentales de Amazon Web Services.', instructor: 'Elena Fernández', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=elenafernandez', imageUrl: 'https://picsum.photos/seed/aws/600/400' },
+  // Recursos Humanos
+  { id: 'rh-tech', pathId: 'recursos-humanos', title: 'Tech Recruiting', description: 'Aprende a reclutar el mejor talento para el sector tecnológico.', instructor: 'Sofia Díaz', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=sofiadiaz', imageUrl: 'https://picsum.photos/seed/recruiting/600/400' },
+  // Negocios
+  { id: 'negocios-finanzas', pathId: 'negocios', title: 'Finanzas para Emprendedores', description: 'Entiende los números de tu negocio para tomar mejores decisiones.', instructor: 'Javier Torres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=javiertorres', imageUrl: 'https://picsum.photos/seed/finance/600/400' },
+  // English Academy
+  { id: 'english-business', pathId: 'english-academy', title: 'Business English', description: 'Mejora tu vocabulario y fluidez para el entorno profesional.', instructor: 'Sarah Johnson', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=sarahjohnson', imageUrl: 'https://picsum.photos/seed/english/600/400' },
+  // Ciberseguridad
+  { id: 'cyber-intro', pathId: 'ciberseguridad', title: 'Fundamentos de Ciberseguridad', description: 'Aprende los conceptos básicos para proteger la información.', instructor: 'Miguel Romero', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=miguelromero', imageUrl: 'https://picsum.photos/seed/cyber/600/400' },
+  // Desarrollo Móvil
+  { id: 'movil-flutter', pathId: 'desarrollo-movil', title: 'Flutter: Apps para iOS y Android', description: 'Crea apps nativas para ambas plataformas con un solo código base.', instructor: 'Lucía Jiménez', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=luciajimenez', imageUrl: 'https://picsum.photos/seed/flutter/600/400' },
+  // Blockchain y Web3
+  { id: 'web3-solidity', pathId: 'blockchain-web3', title: 'Smart Contracts con Solidity', description: 'Programa contratos inteligentes para la blockchain de Ethereum.', instructor: 'Adrián Navarro', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=adriannavarro', imageUrl: 'https://picsum.photos/seed/solidity/600/400' },
+  // Finanzas e Inversiones
+  { id: 'fin-personal', pathId: 'finanzas-inversiones', title: 'Finanzas Personales 101', description: 'Organiza tu dinero, sal de deudas y empieza a invertir.', instructor: 'Verónica Cruz', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=veronicacruz', imageUrl: 'https://picsum.photos/seed/personalfin/600/400' },
+  // Diseño Gráfico
+  { id: 'dg-branding', pathId: 'diseno-grafico', title: 'Diseño de Marcas y Branding', description: 'Crea identidades visuales memorables y efectivas.', instructor: 'Óscar Vega', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=oscarvega', imageUrl: 'https://picsum.photos/seed/branding/600/400' },
+  // Marketing Digital
+  { id: 'mkt-seo', pathId: 'marketing-digital', title: 'SEO para Principiantes', description: 'Posiciona sitios web en los primeros lugares de Google.', instructor: 'Paula Reyes', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=paulareyes', imageUrl: 'https://picsum.photos/seed/seo/600/400' },
+  // Habilidades Blandas
+  { id: 'soft-comunicacion', pathId: 'habilidades-blandas', title: 'Comunicación Efectiva', description: 'Mejora tus habilidades para presentar, negociar e influir.', instructor: 'Fernando Morales', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=fernandomorales', imageUrl: 'https://picsum.photos/seed/softskills/600/400' },
+  // Contenido Audiovisual
+  { id: 'av-edicion', pathId: 'contenido-audiovisual', title: 'Edición de Video con DaVinci Resolve', description: 'Aprende a editar video como un profesional con software gratuito.', instructor: 'Isabel Castillo', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=isabelcastillo', imageUrl: 'https://picsum.photos/seed/videoedit/600/400' },
+  // Programación
+  { id: 'prog-python', pathId: 'programacion', title: 'Lógica de Programación con Python', description: 'Aprende a pensar como un programador resolviendo problemas reales.', instructor: 'Ricardo Ortiz', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=ricardoortiz', imageUrl: 'https://picsum.photos/seed/pythonlogic/600/400' },
+  // Startups
+  { id: 'startup-mvp', pathId: 'startups', title: 'Creación de un MVP', description: 'Construye y lanza el Producto Mínimo Viable de tu startup.', instructor: 'Mónica Herrera', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=monicaherrera', imageUrl: 'https://picsum.photos/seed/mvp/600/400' },
 ];
 
-const modulesAndLessons = {
-    'react-desde-cero': [
+const modulesAndLessons = courses.reduce((acc, course) => {
+    acc[course.id] = [
         {
-            id: 'react-modulo-1', title: 'Introducción a React', order: 1, lessons: [
-                { id: 'react-l1', title: '¿Qué es React?', duration: '10 min', difficulty: 'Fácil', content: '<h1>Conceptos Fundamentales</h1><p>En esta lección exploraremos la librería de React, su propósito y sus ventajas.</p>', order: 1 },
-                { id: 'react-l2', title: 'Componentes y Props', duration: '15 min', difficulty: 'Fácil', content: '<h1>Componentes</h1><p>Aprende a crear y componer componentes de React y a pasar datos mediante props.</p>', order: 2 },
-            ]
+            id: `${course.id}-m1`,
+            title: 'Módulo de Introducción',
+            order: 1,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `${course.id}-l${i + 1}`,
+                title: `Ejercicio Práctico ${i + 1}`,
+                duration: `${Math.floor(Math.random() * 15) + 5} min`,
+                difficulty: i < 3 ? 'Fácil' : i < 7 ? 'Medio' : 'Difícil',
+                content: `<h1>Contenido del Ejercicio ${i + 1}</h1><p>Esta es la descripción del ejercicio práctico número ${i + 1} para el curso "${course.title}". Aquí desarrollarás una habilidad clave.</p><p>¡Manos a la obra!</p>`,
+                order: i + 1,
+            })),
         },
-        {
-            id: 'react-modulo-2', title: 'Estado y Ciclo de Vida', order: 2, lessons: [
-                { id: 'react-l3', title: 'El Hook `useState`', duration: '20 min', difficulty: 'Medio', content: '<h1>Manejando el estado</h1><p>Descubre cómo manejar el estado local de un componente con el hook `useState`.</p>', order: 1 },
-            ]
-        }
-    ],
-    'javascript-moderno': [
-        {
-            id: 'js-modulo-1', title: 'Fundamentos de ES6+', order: 1, lessons: [
-                { id: 'js-l1', title: 'Variables y Destructuring', duration: '12 min', difficulty: 'Fácil', content: '<h1>let, const y destructuring</h1><p>Entiende las nuevas formas de declarar variables y el destructuring de objetos y arrays.</p>', order: 1 },
-            ]
-        }
-    ],
-    'css-avanzado': [
-        {
-            id: 'css-modulo-1', title: 'Flexbox', order: 1, lessons: [
-                { id: 'css-l1', title: 'Introducción a Flexbox', duration: '18 min', difficulty: 'Fácil', content: '<h1>Flexbox Básico</h1><p>Aprende los fundamentos de Flexbox para crear layouts flexibles y modernos.</p>', order: 1 },
-            ]
-        }
-    ],
-    'nodejs-master': [
-        {
-            id: 'node-modulo-1', title: 'Introducción a Node.js', order: 1, lessons: [
-                { id: 'node-l1', title: '¿Qué es Node.js?', duration: '10 min', difficulty: 'Fácil', content: '<h1>Node.js</h1><p>Explora el entorno de ejecución de JavaScript del lado del servidor.</p>', order: 1 },
-            ]
-        }
-    ],
-    'python-apis': [
-         {
-            id: 'pyapi-modulo-1', title: 'Fundamentos de FastAPI', order: 1, lessons: [
-                { id: 'pyapi-l1', title: 'Tu primera API', duration: '15 min', difficulty: 'Fácil', content: '<h1>Hola Mundo con FastAPI</h1><p>Crea tu primer endpoint con el framework de Python más rápido.</p>', order: 1 },
-            ]
-        }
-    ],
-    'fullstack-mearn': [
-        {
-            id: 'mern-modulo-1', title: 'Configurando el Entorno', order: 1, lessons: [
-                { id: 'mern-l1', title: 'Estructura del Proyecto', duration: '10 min', difficulty: 'Fácil', content: '<h1>Proyecto MERN</h1><p>Organiza tu proyecto para un desarrollo eficiente.</p>', order: 1 },
-            ]
-        }
-    ],
-    'python-datascience': [
-         {
-            id: 'pyds-modulo-1', title: 'Análisis con Pandas', order: 1, lessons: [
-                { id: 'pyds-l1', title: 'Introducción a DataFrames', duration: '20 min', difficulty: 'Fácil', content: '<h1>Pandas DataFrames</h1><p>Aprende a manipular y analizar datos tabulares con la librería Pandas.</p>', order: 1 },
-            ]
-        }
-    ],
-};
+    ];
+    return acc;
+}, {} as Record<string, any>);
 
 
 // Main function to seed the data
@@ -157,7 +100,7 @@ async function seedDatabase() {
         console.log('Seeding learning paths...');
         learningPaths.forEach(path => {
             const pathRef = doc(db, 'learningPaths', path.id);
-            batch.set(pathRef, path);
+            batch.set(pathRef, { title: path.title, description: path.description });
         });
         console.log(`${learningPaths.length} learning paths added to batch.`);
 
@@ -167,20 +110,23 @@ async function seedDatabase() {
         let totalLessons = 0;
 
         courses.forEach(course => {
-            const courseRef = doc(db, 'courses', course.id);
-            batch.set(courseRef, course);
+            const { id, ...courseData } = course;
+            const courseRef = doc(db, 'courses', id);
+            batch.set(courseRef, courseData);
 
-            const courseModules = modulesAndLessons[course.id as keyof typeof modulesAndLessons];
+            const courseModules = modulesAndLessons[id as keyof typeof modulesAndLessons];
             if (courseModules) {
-                courseModules.forEach(module => {
+                courseModules.forEach((module: any) => {
                     totalModules++;
-                    const moduleRef = doc(db, 'courses', course.id, 'modules', module.id);
-                    batch.set(moduleRef, { title: module.title, order: module.order });
+                    const { id: moduleId, lessons, ...moduleData } = module;
+                    const moduleRef = doc(db, 'courses', id, 'modules', moduleId);
+                    batch.set(moduleRef, moduleData);
 
-                    module.lessons.forEach(lesson => {
+                    lessons.forEach((lesson: any) => {
                         totalLessons++;
-                        const lessonRef = doc(db, 'courses', course.id, 'modules', module.id, 'lessons', lesson.id);
-                        batch.set(lessonRef, lesson);
+                        const { id: lessonId, ...lessonData } = lesson;
+                        const lessonRef = doc(db, 'courses', id, 'modules', moduleId, 'lessons', lessonId);
+                        batch.set(lessonRef, lessonData);
                     });
                 });
             }
@@ -206,3 +152,5 @@ seedDatabase().then(() => {
 }).catch(() => {
     process.exit(1);
 });
+
+    
