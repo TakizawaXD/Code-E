@@ -79,6 +79,19 @@
         "completed": { "type": "boolean" }
       },
       "required": [ "courseId", "completedLessons", "completed" ]
+    },
+    "Comment": {
+        "title": "Comment",
+        "type": "object",
+        "description": "Represents a user comment on a lesson.",
+        "properties": {
+            "userId": { "type": "string" },
+            "userName": { "type": "string" },
+            "userAvatarUrl": { "type": "string", "format": "uri" },
+            "text": { "type": "string" },
+            "createdAt": { "type": "string", "format": "date-time" }
+        },
+        "required": [ "userId", "userName", "text", "createdAt" ]
     }
   },
   "auth": {
@@ -102,6 +115,10 @@
     "/courses/{courseId}/modules/{moduleId}/lessons/{lessonId}": {
       "schema": { "$ref": "#/entities/Lesson" },
       "description": "Stores lessons for a specific module."
+    },
+    "/courses/{courseId}/modules/{moduleId}/lessons/{lessonId}/comments/{commentId}": {
+        "schema": { "$ref": "#/entities/Comment" },
+        "description": "Stores comments for a specific lesson."
     },
     "/users/{userId}": {
       "schema": { "$ref": "#/entities/User" },

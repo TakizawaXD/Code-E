@@ -15,9 +15,9 @@ import { useMemo } from "react";
 export default function DashboardPage() {
     const { user } = useUser();
     
-    // Mock data for demonstration
-    const coursesInProgress: Course[] = useMemo(() => allCourses.slice(0, 4), []);
-    const completedCourses: Course[] = useMemo(() => allCourses.slice(4, 6), []);
+    // Mock data for demonstration, this should come from user progress in a real DB
+    const coursesInProgress = useMemo(() => allCourses.slice(0, 2), []);
+    const completedCourses = useMemo(() => allCourses.slice(2, 3), []);
     
     if (!user) {
         return <div className="container py-8 text-center">Inicia sesión para ver tu panel.</div>;

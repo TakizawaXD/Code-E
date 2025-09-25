@@ -21,23 +21,9 @@ function PopularCourses() {
 }
 
 const learningCategories = [
+    { name: "Programación", paths: 12, icon: <Laptop /> },
     { name: "Desarrollo Web", paths: 16, icon: <Code /> },
     { name: "Inteligencia Artificial y Data Science", paths: 6, icon: <BrainCircuit /> },
-    { name: "Diseño de Producto y UX", paths: 13, icon: <PenTool /> },
-    { name: "Cloud Computing y DevOps", paths: 9, icon: <Cloud /> },
-    { name: "Recursos Humanos", paths: 8, icon: <Users /> },
-    { name: "Negocios", paths: 11, icon: <Briefcase /> },
-    { name: "English Academy", paths: 7, icon: <BookText /> },
-    { name: "Ciberseguridad", paths: 5, icon: <Shield /> },
-    { name: "Desarrollo Móvil", paths: 9, icon: <Smartphone /> },
-    { name: "Blockchain y Web3", paths: 7, icon: <Blocks /> },
-    { name: "Finanzas e Inversiones", paths: 6, icon: <Landmark /> },
-    { name: "Diseño Gráfico y Arte Digital", paths: 7, icon: <Paintbrush /> },
-    { name: "Marketing Digital", paths: 15, icon: <TrendingUp /> },
-    { name: "Liderazgo y Habilidades Blandas", paths: 10, icon: <Users /> },
-    { name: "Contenido Audiovisual", paths: 7, icon: <Film /> },
-    { name: "Programación", paths: 12, icon: <Laptop /> },
-    { name: "Startups", paths: 8, icon: <Rocket /> },
 ]
 
 function LearningCategories() {
@@ -52,7 +38,7 @@ function LearningCategories() {
                         </p>
                     </div>
                 </div>
-                <div className="mx-auto grid grid-cols-2 gap-4 py-12 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-6">
+                <div className="mx-auto grid grid-cols-1 gap-4 py-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
                     {learningCategories.map((category) => (
                         <Link key={category.name} href="/paths">
                             <Card className="h-full transform transition-all duration-300 hover:scale-105 hover:shadow-lg flex flex-col items-center justify-center p-4 text-center">
