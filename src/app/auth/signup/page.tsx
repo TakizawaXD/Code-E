@@ -1,4 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useAuth, useFirestore } from "@/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,8 +19,23 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useToast } from "@/hooks/use-toast";
+import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+
+const formSchema = z.object({
+  fullName: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres." }),
+  email: z.string().email({ message: "Por favor, introduce un correo electrónico válido." }),
+  password: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres." }),
+});
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -42,6 +67,52 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export default function SignupPage() {
+  const auth = useAuth();
+  const firestore = useFirestore();
+  const router = useRouter();
+  const { toast } = useToast();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password
+      );
+      const user = userCredential.user;
+
+      // Create user profile in Firestore
+      await setDocumentNonBlocking(doc(firestore, "users", user.uid), {
+        name: values.fullName,
+        email: values.email,
+        createdAt: new Date(),
+      }, {});
+
+      toast({
+        title: "¡Cuenta creada!",
+        description: "Tu cuenta ha sido creada exitosamente.",
+      });
+
+      router.push("/dashboard");
+
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error al crear la cuenta",
+        description: error.message,
+      });
+    }
+  }
+
+
   return (
     <Card>
       <CardHeader className="text-center">
@@ -64,23 +135,52 @@ export default function SignupPage() {
                 <span className="bg-background px-2 text-muted-foreground">O continuar con</span>
             </div>
         </div>
-        <div className="grid gap-4">
-            <div className="grid gap-2">
-                <Label htmlFor="full-name">Nombre Completo</Label>
-                <Input id="full-name" placeholder="Tu Nombre" required />
-            </div>
-            <div className="grid gap-2">
-                <Label htmlFor="email">Correo Electrónico</Label>
-                <Input id="email" type="email" placeholder="nombre@ejemplo.com" required />
-            </div>
-            <div className="grid gap-2">
-                <Label htmlFor="password">Contraseña</Label>
-                <Input id="password" type="password" required />
-            </div>
-        </div>
+         <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+            <FormField
+              control={form.control}
+              name="fullName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nombre Completo</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Tu Nombre" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Correo Electrónico</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="nombre@ejemplo.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Contraseña</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full mt-2">Crear Cuenta</Button>
+          </form>
+        </Form>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
-        <Button className="w-full">Crear Cuenta</Button>
         <div className="text-center text-sm">
           ¿Ya tienes una cuenta?{" "}
           <Link href="/auth/login" className="font-medium text-primary hover:underline">

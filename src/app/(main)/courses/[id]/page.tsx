@@ -1,11 +1,23 @@
 "use client";
 
-import { notFound, useSearchParams } from "next/navigation";
+import { notFound, useSearchParams, useRouter } from "next/navigation";
 import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
-import { allCourses, user } from "@/lib/data";
-import type { Course, Lesson, CourseModule } from "@/lib/types";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
+import {
+  useFirebase,
+  useCollection,
+  useDoc,
+  useMemoFirebase,
+} from "@/firebase";
+import type { Course, Lesson, CourseModule, Progress } from "@/lib/types";
+import {
+  collection,
+  doc,
+  query,
+  where,
+  orderBy,
+  limit,
+} from "firebase/firestore";
 import {
   Accordion,
   AccordionContent,
@@ -25,50 +37,145 @@ import {
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { QuizComponent } from "@/components/quiz";
+import { addDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+
+function getNextLesson(course: Course, currentModuleId: string, currentLessonId: string): { moduleId: string; lessonId: string } | null {
+  const currentModuleIndex = course.modules.findIndex(m => m.id === currentModuleId);
+  if (currentModuleIndex === -1) return null;
+
+  const currentModule = course.modules[currentModuleIndex];
+  const currentLessonIndex = currentModule.lessons.findIndex(l => l.id === currentLessonId);
+  if (currentLessonIndex === -1) return null;
+
+  // Try to find the next lesson in the current module
+  if (currentLessonIndex < currentModule.lessons.length - 1) {
+    return { moduleId: currentModuleId, lessonId: currentModule.lessons[currentLessonIndex + 1].id };
+  }
+
+  // Try to find the first lesson in the next module
+  if (currentModuleIndex < course.modules.length - 1) {
+    const nextModule = course.modules[currentModuleIndex + 1];
+    if (nextModule.lessons.length > 0) {
+      return { moduleId: nextModule.id, lessonId: nextModule.lessons[0].id };
+    }
+  }
+
+  return null;
+}
 
 export default function CourseDetailPage({
   params,
 }: {
   params: { id: string };
 }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const course = allCourses.find((c) => c.id === params.id);
+  const { firestore, user } = useFirebase();
 
+  const courseRef = useMemoFirebase(
+    () => (firestore ? doc(firestore, "courses", params.id) : null),
+    [firestore, params.id]
+  );
+  const { data: course, isLoading: isCourseLoading } = useDoc<Course>(courseRef);
+
+  const modulesRef = useMemoFirebase(
+    () =>
+      course
+        ? query(collection(firestore, "courses", course.id, "modules"), orderBy("order"))
+        : null,
+    [firestore, course]
+  );
+  const { data: modules, isLoading: areModulesLoading } =
+    useCollection<CourseModule>(modulesRef);
+
+  const lessonsRefs = useMemo(
+    () =>
+      modules?.map((m) =>
+        query(collection(firestore, "courses", params.id, "modules", m.id, "lessons"), orderBy("order"))
+      ),
+    [modules, params.id]
+  );
+  
+  const lessonsData = lessonsRefs?.map(ref => useCollection<Lesson>(ref));
+  const areLessonsLoading = lessonsData?.some(l => l.isLoading);
+
+  const courseWithLessons = useMemo(() => {
+    if (!course || !modules || !lessonsData) return null;
+    
+    const lessonsAreLoaded = lessonsData.every(l => !l.isLoading && l.data);
+    if (!lessonsAreLoaded) return null;
+
+    const populatedModules = modules.map((module, index) => {
+      return {
+        ...module,
+        lessons: lessonsData[index].data || [],
+      };
+    });
+
+    return { ...course, modules: populatedModules };
+  }, [course, modules, lessonsData, areLessonsLoading]);
+
+  const progressRef = useMemoFirebase(
+    () =>
+      user && course
+        ? query(
+            collection(firestore, "users", user.uid, "progress"),
+            where("courseId", "==", course.id),
+            limit(1)
+          )
+        : null,
+    [user, course]
+  );
+  const { data: progressData, isLoading: isProgressLoading } =
+    useCollection<Progress>(progressRef);
+  const progress = progressData?.[0];
+  
   const [currentLesson, setCurrentLesson] = useState<{
     moduleId: string;
     lessonId: string;
   } | null>(null);
 
-  const { lesson, module, lessonIndex, moduleIndex, totalLessons, currentLessonIndex } = useMemo(() => {
-    if (!course || !currentLesson) {
-      return { lesson: null, module: null, lessonIndex: -1, moduleIndex: -1, totalLessons: 0, currentLessonIndex: -1 };
+  const { lesson, module, lessonIndex, moduleIndex, totalLessons, currentLessonFlatIndex } = useMemo(() => {
+    if (!courseWithLessons || !currentLesson) {
+      return { lesson: null, module: null, lessonIndex: -1, moduleIndex: -1, totalLessons: 0, currentLessonFlatIndex: -1 };
     }
 
-    const moduleIndex = course.modules.findIndex(
-      (m) => m.id === currentLesson.moduleId
-    );
-    const module = course.modules[moduleIndex];
-    const lessonIndex = module?.lessons.findIndex(
-      (l) => l.id === currentLesson.lessonId
-    );
-    const lesson = module?.lessons[lessonIndex];
+    let flatIndex = 0;
+    let currentLessonFlatIndex = -1;
+    let totalLessonsCount = 0;
+    
+    let foundModule = null;
+    let foundLesson = null;
+    let foundModuleIndex = -1;
+    let foundLessonIndex = -1;
 
-    let totalLessons = 0;
-    let lessonsSoFar = 0;
-    let currentLessonIdx = -1;
-
-    course.modules.forEach((mod, mIdx) => {
-      totalLessons += mod.lessons.length;
-      if (mIdx < moduleIndex) {
-        lessonsSoFar += mod.lessons.length;
-      } else if (mIdx === moduleIndex) {
-        lessonsSoFar += lessonIndex;
-        currentLessonIdx = lessonsSoFar;
+    for(let mIdx = 0; mIdx < courseWithLessons.modules.length; mIdx++) {
+      const mod = courseWithLessons.modules[mIdx];
+      totalLessonsCount += mod.lessons.length;
+      for(let lIdx = 0; lIdx < mod.lessons.length; lIdx++) {
+        const less = mod.lessons[lIdx];
+        if (mod.id === currentLesson.moduleId && less.id === currentLesson.lessonId) {
+          foundModule = mod;
+          foundLesson = less;
+          foundModuleIndex = mIdx;
+          foundLessonIndex = lIdx;
+          currentLessonFlatIndex = flatIndex;
+        }
+        flatIndex++;
       }
-    });
+    }
 
-    return { lesson, module, lessonIndex, moduleIndex, totalLessons, currentLessonIndex: currentLessonIdx };
-  }, [course, currentLesson]);
+    return { 
+      lesson: foundLesson, 
+      module: foundModule, 
+      lessonIndex: foundLessonIndex, 
+      moduleIndex: foundModuleIndex, 
+      totalLessons: totalLessonsCount, 
+      currentLessonFlatIndex 
+    };
+
+  }, [courseWithLessons, currentLesson]);
+
 
   useEffect(() => {
     const moduleId = searchParams.get("module");
@@ -76,68 +183,85 @@ export default function CourseDetailPage({
 
     if (moduleId && lessonId) {
       setCurrentLesson({ moduleId, lessonId });
-    } else if (course && course.modules.length > 0 && course.modules[0].lessons.length > 0) {
-      // Set the first lesson as default
-      setCurrentLesson({
-        moduleId: course.modules[0].id,
-        lessonId: course.modules[0].lessons[0].id,
-      });
+    } else if (courseWithLessons && courseWithLessons.modules.length > 0 && courseWithLessons.modules[0].lessons.length > 0) {
+      const firstLesson = courseWithLessons.modules[0].lessons[0];
+      handleSetLesson(courseWithLessons.modules[0].id, firstLesson.id);
     }
-  }, [searchParams, course]);
+  }, [searchParams, courseWithLessons]);
 
+  const completedLessons = useMemo(() => {
+    return new Set(progress?.completedLessons || []);
+  }, [progress]);
+  
+  const lastCompletedLessonIndex = useMemo(() => {
+    if (!courseWithLessons || !progress || progress.completedLessons.length === 0) return -1;
 
-  if (!course) {
-    notFound();
-  }
+    let flatIndex = -1;
+    let lastIndex = -1;
+    
+    for (const mod of courseWithLessons.modules) {
+        for (const less of mod.lessons) {
+            flatIndex++;
+            if (completedLessons.has(less.id)) {
+                lastIndex = flatIndex;
+            }
+        }
+    }
+    return lastIndex;
+  }, [courseWithLessons, progress, completedLessons]);
 
   const handleSetLesson = (moduleId: string, lessonId: string) => {
     setCurrentLesson({ moduleId, lessonId });
-    // Update URL without reloading the page
-    const newUrl = `/courses/${course.id}?module=${moduleId}&lesson=${lessonId}`;
-    window.history.pushState({ path: newUrl }, "", newUrl);
+    const newUrl = `/courses/${params.id}?module=${moduleId}&lesson=${lessonId}`;
+    router.push(newUrl, { scroll: false });
   };
   
-  const handleNextLesson = () => {
-    if (!course || !module || lessonIndex === -1) return;
+  const handleMarkAsCompleted = async () => {
+    if (!user || !firestore || !courseWithLessons || !currentLesson) return;
+
+    const nextLesson = getNextLesson(courseWithLessons, currentLesson.moduleId, currentLesson.lessonId);
     
-    if (lessonIndex < module.lessons.length - 1) {
-      handleSetLesson(module.id, module.lessons[lessonIndex + 1].id);
-    } else if (moduleIndex < course.modules.length - 1) {
-      const nextModule = course.modules[moduleIndex + 1];
-      if (nextModule.lessons.length > 0) {
-        handleSetLesson(nextModule.id, nextModule.lessons[0].id);
+    const newCompletedLessons = Array.from(new Set([...completedLessons, currentLesson.lessonId]));
+
+    if (progress) {
+      const progressDocRef = doc(firestore, "users", user.uid, "progress", progress.id);
+      await setDocumentNonBlocking(progressDocRef, { completedLessons: newCompletedLessons }, { merge: true });
+    } else {
+       const progressColRef = collection(firestore, "users", user.uid, "progress");
+       await addDocumentNonBlocking(progressColRef, {
+        courseId: courseWithLessons.id,
+        completedLessons: newCompletedLessons,
+        completed: false,
+       });
+    }
+
+    if (nextLesson) {
+      handleSetLesson(nextLesson.moduleId, nextLesson.lessonId);
+    } else {
+      // Last lesson completed
+      if (progress) {
+        const progressDocRef = doc(firestore, "users", user.uid, "progress", progress.id);
+        await setDocumentNonBlocking(progressDocRef, { completed: true }, { merge: true });
       }
     }
   };
 
-  const handlePrevLesson = () => {
-    if (!course || !module || lessonIndex === -1) return;
-
-    if (lessonIndex > 0) {
-      handleSetLesson(module.id, module.lessons[lessonIndex - 1].id);
-    } else if (moduleIndex > 0) {
-      const prevModule = course.modules[moduleIndex - 1];
-      if (prevModule.lessons.length > 0) {
-        handleSetLesson(prevModule.id, prevModule.lessons[prevModule.lessons.length - 1].id);
-      }
-    }
-  };
-
-  const instructorAvatar = PlaceHolderImages.find(
-    (img) => img.id === course.instructorAvatar
-  );
+  if (isCourseLoading || areModulesLoading || areLessonsLoading || isProgressLoading) {
+    return <div>Cargando...</div>;
+  }
   
-  const isFirstLesson = currentLessonIndex === 0;
-  const isLastLesson = currentLessonIndex === totalLessons - 1;
+  if (!courseWithLessons) {
+    notFound();
+  }
 
+  const instructorAvatar = { imageUrl: course?.instructorAvatarUrl, name: course?.instructor };
 
   return (
     <div className="container mx-auto py-8">
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           <div className="aspect-video w-full bg-secondary rounded-lg flex items-center justify-center relative overflow-hidden">
-            <PlayCircle className="w-20 h-20 text-muted-foreground" />
-             {lesson?.videoUrl && (
+             {lesson?.videoUrl ? (
               <iframe
                 src={lesson.videoUrl}
                 title={lesson.title}
@@ -145,24 +269,22 @@ export default function CourseDetailPage({
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               ></iframe>
-            )}
+            ) : <PlayCircle className="w-20 h-20 text-muted-foreground" />}
           </div>
           
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold font-headline">{lesson?.title || course.title}</h1>
             <div className="flex gap-2">
-              <Button variant="outline" size="icon" onClick={handlePrevLesson} disabled={isFirstLesson}>
-                <ArrowLeft />
-              </Button>
-              <Button variant="outline" size="icon" onClick={handleNextLesson} disabled={isLastLesson}>
-                <ArrowRight />
-              </Button>
+                <Button variant="outline" onClick={handleMarkAsCompleted} disabled={completedLessons.has(lesson?.id || "")}>
+                    <CheckCircle2 className="mr-2"/>
+                    Marcar como completada
+                </Button>
             </div>
           </div>
           
           <Separator />
           
-           {lesson?.content && <p className="text-muted-foreground">{lesson.content}</p>}
+           {lesson?.content && <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: lesson.content }} />}
 
           {lesson?.quiz ? (
              <QuizComponent quiz={lesson.quiz} />
@@ -172,7 +294,7 @@ export default function CourseDetailPage({
                     <CardTitle>Contenido de la Lección</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <p className="text-muted-foreground">{lesson?.content || "El contenido de esta lección estará disponible pronto."}</p>
+                    <p className="text-muted-foreground">{lesson?.content ? "" : "El contenido de esta lección estará disponible pronto."}</p>
                 </CardContent>
             </Card>
           )}
@@ -195,7 +317,7 @@ export default function CourseDetailPage({
              <div className="flex items-center gap-4 mb-4">
                 <Avatar>
                     <AvatarImage src={instructorAvatar?.imageUrl} alt={course.instructor} />
-                    <AvatarFallback>{course.instructor.charAt(0)}</AvatarFallback>
+                    <AvatarFallback>{course.instructor?.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div>
                     <p className="font-semibold">{course.instructor}</p>
@@ -207,13 +329,20 @@ export default function CourseDetailPage({
               collapsible
               defaultValue={currentLesson?.moduleId}
               className="w-full"
+              value={currentLesson?.moduleId}
             >
-              {course.modules.map((moduleItem, index) => (
+              {courseWithLessons.modules.map((moduleItem, moduleIndex) => {
+                let lessonFlatIndexOffset = 0;
+                for(let i = 0; i < moduleIndex; i++) {
+                    lessonFlatIndexOffset += courseWithLessons.modules[i].lessons.length;
+                }
+
+                return (
                 <AccordionItem value={moduleItem.id} key={moduleItem.id}>
                   <AccordionTrigger className="text-base font-semibold">
                     <div className="text-left">
                       <p className="text-sm text-muted-foreground">
-                        Sección {index + 1}
+                        Sección {moduleIndex + 1}
                       </p>
                       <p>{moduleItem.title}</p>
                     </div>
@@ -221,10 +350,10 @@ export default function CourseDetailPage({
                   <AccordionContent>
                     <ul className="space-y-1">
                       {moduleItem.lessons.map((lessonItem, lessonIndex) => {
-                        const isCompleted = false; // Logic to determine completion
-                        const isCurrent =
-                          currentLesson?.lessonId === lessonItem.id;
-                        const isLocked = false; // Logic to lock/unlock lessons
+                        const flatIndex = lessonFlatIndexOffset + lessonIndex;
+                        const isCompleted = completedLessons.has(lessonItem.id);
+                        const isCurrent = currentLesson?.lessonId === lessonItem.id;
+                        const isLocked = !isCompleted && flatIndex > lastCompletedLessonIndex + 1;
 
                         return (
                           <li key={lessonItem.id}>
@@ -258,7 +387,7 @@ export default function CourseDetailPage({
                     </ul>
                   </AccordionContent>
                 </AccordionItem>
-              ))}
+              )})}
             </Accordion>
           </div>
         </div>

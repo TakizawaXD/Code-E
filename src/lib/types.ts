@@ -1,3 +1,5 @@
+import { FieldValue } from "firebase/firestore";
+
 export type NavItem = {
   title: string;
   href: string;
@@ -24,12 +26,14 @@ export type Lesson = {
   videoUrl?: string;
   content?: string;
   quiz?: Quiz;
+  order: number;
 };
 
 export type CourseModule = {
   id:string;
   title: string;
   lessons: Lesson[];
+  order: number;
 };
 
 export type Course = {
@@ -37,8 +41,8 @@ export type Course = {
   title: string;
   description: string;
   instructor: string;
-  instructorAvatar: string;
-  imageId: string;
+  instructorAvatarUrl: string;
+  imageUrl: string;
   modules: CourseModule[];
   pathId: string;
 };
@@ -50,10 +54,10 @@ export type LearningPath = {
   courses: Course[];
 };
 
-export type User = {
+export type UserProfile = {
   name: string;
   email: string;
-  avatarId: string;
+  createdAt: FieldValue;
 };
 
 export type Notification = {
@@ -61,4 +65,11 @@ export type Notification = {
   title: string;
   description: string;
   date: Date;
+};
+
+export type Progress = {
+  id: string;
+  courseId: string;
+  completedLessons: string[];
+  completed: boolean;
 };

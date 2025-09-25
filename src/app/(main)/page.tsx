@@ -1,14 +1,36 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { learningPaths } from "@/lib/data";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CourseCard } from "@/components/course-card";
+import { useFirebase, useCollection, useMemoFirebase } from "@/firebase";
+import { collection, query, orderBy, limit } from 'firebase/firestore';
+import type { Course, LearningPath } from "@/lib/types";
+
+function PopularCourses() {
+    const { firestore } = useFirebase();
+    // This is a simplification. A real app might have a "popular" flag or count.
+    // Here we just take the first 3 courses from the first learning path.
+    const coursesQuery = useMemoFirebase(() => query(collection(firestore, 'learningPaths/frontend/courses'), limit(3)), [firestore]);
+    const { data: courses, isLoading } = useCollection<Course>(coursesQuery);
+
+    if (isLoading) return <p>Cargando cursos populares...</p>;
+
+    return (
+        <div className="mx-auto grid grid-cols-1 gap-6 py-12 sm:grid-cols-2 lg:grid-cols-3">
+            {courses?.map(course => <CourseCard key={course.id} course={course} />)}
+        </div>
+    );
+}
 
 export default function HomePage() {
-  const heroImage = PlaceHolderImages.find(img => img.id === 'course-react');
+  const { firestore } = useFirebase();
+  const pathsQuery = useMemoFirebase(() => query(collection(firestore, 'learningPaths'), orderBy('title')), [firestore]);
+  const { data: learningPaths, isLoading: pathsLoading } = useCollection<LearningPath>(pathsQuery);
+  const heroImage = "https://images.unsplash.com/photo-1558459654-c430be5b0a44?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwcm9ncmFtbWluZyUyMGFic3RyYWN0fGVufDB8fHx8MTc1ODc5MjAzN3ww&ixlib=rb-4.1.0&q=80&w=1080";
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -35,12 +57,12 @@ export default function HomePage() {
                 </div>
               </div>
               <Image
-                src={heroImage?.imageUrl ?? ''}
+                src={heroImage}
                 width="600"
                 height="400"
                 alt="Hero"
                 className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last lg:aspect-square"
-                data-ai-hint={heroImage?.imageHint}
+                data-ai-hint="programming abstract"
               />
             </div>
           </div>
@@ -57,7 +79,8 @@ export default function HomePage() {
               </div>
             </div>
             <div className="mx-auto grid grid-cols-1 gap-6 py-12 sm:grid-cols-2 lg:grid-cols-3">
-              {learningPaths.map((path) => (
+              {pathsLoading && <p>Cargando...</p>}
+              {learningPaths?.map((path) => (
                 <Link key={path.id} href="/paths">
                   <Card className="h-full transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
                     <CardHeader>
@@ -81,11 +104,7 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="mx-auto grid grid-cols-1 gap-6 py-12 sm:grid-cols-2 lg:grid-cols-3">
-                {learningPaths.slice(0, 1).flatMap(path => path.courses).map(course => (
-                    <CourseCard key={course.id} course={course} />
-                ))}
-            </div>
+            <PopularCourses />
             <div className="text-center">
                 <Button asChild variant="outline">
                     <Link href="/courses">Ver todos los cursos</Link>

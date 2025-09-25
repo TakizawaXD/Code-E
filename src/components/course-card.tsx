@@ -1,9 +1,9 @@
+"use client"
+
 import Image from "next/image";
 import Link from "next/link";
 import { Book, Clock } from "lucide-react";
-
 import type { Course } from "@/lib/types";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { cn } from "@/lib/utils";
 import {
   Card,
@@ -22,9 +22,7 @@ interface CourseCardProps {
 }
 
 export function CourseCard({ course, className, progress }: CourseCardProps) {
-  const courseImage = PlaceHolderImages.find((img) => img.id === course.imageId);
-  const instructorAvatar = PlaceHolderImages.find((img) => img.id === course.instructorAvatar);
-  const totalLessons = course.modules.reduce((acc, module) => acc + module.lessons.length, 0);
+  // const totalLessons = course.modules.reduce((acc, module) => acc + module.lessons.length, 0);
 
   return (
     <Card className={cn("flex flex-col h-full overflow-hidden transition-transform duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl", className)}>
@@ -32,12 +30,11 @@ export function CourseCard({ course, className, progress }: CourseCardProps) {
         <Link href={`/courses/${course.id}`} aria-label={course.title}>
           <div className="relative">
             <Image
-              src={courseImage?.imageUrl ?? ""}
-              alt={courseImage?.description ?? "Course thumbnail"}
+              src={course.imageUrl ?? ""}
+              alt={course.title ?? "Course thumbnail"}
               width={600}
               height={400}
               className="object-cover w-full h-48"
-              data-ai-hint={courseImage?.imageHint}
             />
             <Badge className="absolute top-3 right-3">{course.pathId}</Badge>
           </div>
@@ -49,7 +46,7 @@ export function CourseCard({ course, className, progress }: CourseCardProps) {
         </Link>
         <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
             <Avatar className="h-6 w-6">
-                <AvatarImage src={instructorAvatar?.imageUrl} alt={course.instructor} />
+                <AvatarImage src={course.instructorAvatarUrl} alt={course.instructor} />
                 <AvatarFallback>{course.instructor.charAt(0)}</AvatarFallback>
             </Avatar>
             <span>{course.instructor}</span>
@@ -63,7 +60,7 @@ export function CourseCard({ course, className, progress }: CourseCardProps) {
             </div>
         ) : (
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                {totalLessons > 0 && <span className="flex items-center gap-1.5"><Book className="h-4 w-4" /> {totalLessons} lecciones</span>}
+                {/* {totalLessons > 0 && <span className="flex items-center gap-1.5"><Book className="h-4 w-4" /> {totalLessons} lecciones</span>} */}
                 <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" /> 2h 30m</span>
             </div>
         )}
