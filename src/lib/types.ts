@@ -1,5 +1,6 @@
 
-import { FieldValue } from "firebase/firestore";
+
+import { FieldValue, Timestamp } from "firebase/firestore";
 
 export type NavItem = {
   title: string;
@@ -74,3 +75,14 @@ export type Progress = {
   completedLessons: string[];
   completed: boolean;
 };
+
+export type Comment = {
+    id: string;
+    userId: string;
+    userName: string;
+    userAvatarUrl: string;
+    text: string;
+    createdAt: Timestamp;
+}
+
+    

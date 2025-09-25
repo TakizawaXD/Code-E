@@ -4,7 +4,7 @@
 import { notFound, useSearchParams, useRouter } from "next/navigation";
 import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
-import { useFirebase, useUser } from "@/firebase";
+import { useFirebase, useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { courses as allCourses } from "@/lib/data";
 import type { Course, Lesson, CourseModule, Progress } from "@/lib/types";
 import {
@@ -26,6 +26,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { QuizComponent } from "@/components/quiz";
 import { Badge } from "@/components/ui/badge";
+import { collection, query, orderBy } from "firebase/firestore";
+import { CommentSection } from "@/components/comment-section";
 
 // Mock progress data since we are not using Firestore
 const mockProgress: Progress = {
@@ -58,10 +60,11 @@ function getNextLesson(course: Course, currentModuleId: string, currentLessonId:
 }
 
 export default function CourseDetailPage({
-  params: { id },
+  params,
 }: {
   params: { id: string };
 }) {
+  const { id } = params;
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useUser();
@@ -215,9 +218,13 @@ export default function CourseDetailPage({
             <h2 className="text-2xl font-bold flex items-center gap-2">
               <MessageSquare className="w-6 h-6" /> Comentarios
             </h2>
-            <div className="text-center text-muted-foreground border rounded-lg p-8">
-              La sección de comentarios estará disponible próximamente.
-            </div>
+             {course.id && currentLesson?.moduleId && currentLesson?.lessonId && (
+                <CommentSection 
+                    courseId={course.id} 
+                    moduleId={currentLesson.moduleId} 
+                    lessonId={currentLesson.lessonId}
+                />
+            )}
           </div>
         </div>
 
