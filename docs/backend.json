@@ -138,6 +138,35 @@
         "earnedAt": { "type": "string", "format": "date-time" }
       },
       "required": ["userId", "badgeId", "earnedAt"]
+    },
+    "ForumThread": {
+      "title": "ForumThread",
+      "type": "object",
+      "description": "Represents a discussion thread in the forum.",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "authorAvatarUrl": { "type": "string", "format": "uri" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "postCount": { "type": "number" },
+        "lastPostAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "content", "authorId", "authorName", "createdAt", "postCount"]
+    },
+    "ForumPost": {
+      "title": "ForumPost",
+      "type": "object",
+      "description": "Represents a single post or reply within a forum thread.",
+      "properties": {
+        "content": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "authorAvatarUrl": { "type": "string", "format": "uri" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["content", "authorId", "authorName", "createdAt"]
     }
   },
   "auth": {
@@ -189,6 +218,14 @@
     "/users/{userId}/badges/{userBadgeId}": {
         "schema": { "$ref": "#/entities/UserBadge" },
         "description": "Stores the badges a user has earned."
+    },
+    "/forumThreads/{threadId}": {
+      "schema": { "$ref": "#/entities/ForumThread" },
+      "description": "Stores all forum discussion threads."
+    },
+    "/forumThreads/{threadId}/posts/{postId}": {
+      "schema": { "$ref": "#/entities/ForumPost" },
+      "description": "Stores all posts within a specific forum thread."
     }
   }
 }

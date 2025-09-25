@@ -110,3 +110,25 @@ export type UserBadge = {
   badgeId: string;
   earnedAt: Timestamp;
 }
+
+// Forum Types
+export type ForumThread = {
+    id: string;
+    title: string;
+    content: string;
+    authorId: string;
+    authorName: string;
+    authorAvatarUrl?: string;
+    createdAt: Timestamp;
+    postCount: number;
+    lastPostAt: Timestamp;
+};
+
+export type ForumPost = {
+    id: string;
+    content: string;
+    authorId: string;
+    authorName: string;
+    authorAvatarUrl?: string;
+    createdAt: Timestamp;
+};
