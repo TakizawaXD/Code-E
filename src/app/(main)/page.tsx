@@ -8,14 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CourseCard } from "@/components/course-card";
 import { useFirebase, useCollection, useMemoFirebase } from "@/firebase";
-import { collection, query, orderBy, limit } from 'firebase/firestore';
+import { collection, query, orderBy, limit, where } from 'firebase/firestore';
 import type { Course, LearningPath } from "@/lib/types";
 
 function PopularCourses() {
     const { firestore } = useFirebase();
     // This is a simplification. A real app might have a "popular" flag or count.
-    // Here we just take the first 3 courses from the first learning path.
-    const coursesQuery = useMemoFirebase(() => query(collection(firestore, 'learningPaths/frontend/courses'), limit(3)), [firestore]);
+    // Here we just take the first 3 courses from the frontend learning path.
+    const coursesQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'courses'), where('pathId', '==', 'frontend'), limit(3)) : null, [firestore]);
     const { data: courses, isLoading } = useCollection<Course>(coursesQuery);
 
     if (isLoading) return <p>Cargando cursos populares...</p>;
@@ -78,7 +78,7 @@ function LearningCategories() {
 
 export default function HomePage() {
   const { firestore } = useFirebase();
-  const pathsQuery = useMemoFirebase(() => query(collection(firestore, 'learningPaths'), orderBy('title')), [firestore]);
+  const pathsQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'learningPaths'), orderBy('title')) : null, [firestore]);
   const { data: learningPaths, isLoading: pathsLoading } = useCollection<LearningPath>(pathsQuery);
   const heroImage = "https://images.unsplash.com/photo-1558459654-c430be5b0a44?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwcm9ncmFtbWluZyUyMGFic3RyYWN0fGVufDB8fHx8MTc1ODc5MjAzN3ww&ixlib=rb-4.1.0&q=80&w=1080";
 
@@ -152,7 +152,7 @@ export default function HomePage() {
             <div className="mx-auto grid grid-cols-1 gap-6 py-12 sm:grid-cols-2 lg:grid-cols-3">
               {pathsLoading && <p>Cargando...</p>}
               {learningPaths?.map((path) => (
-                <Link key={path.id} href="/paths">
+                <Link key={path.id} href={`/paths#${path.id}`}>
                   <Card className="h-full transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
                     <CardHeader>
                       <CardTitle>{path.title}</CardTitle>

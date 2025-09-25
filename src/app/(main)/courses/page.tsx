@@ -10,10 +10,10 @@ import type { Course, LearningPath } from "@/lib/types";
 export default function CoursesPage() {
     const { firestore } = useFirebase();
     
-    const pathsQuery = useMemoFirebase(() => query(collection(firestore, 'learningPaths'), orderBy('title')), [firestore]);
+    const pathsQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'learningPaths'), orderBy('title')) : null, [firestore]);
     const { data: learningPaths, isLoading: pathsLoading } = useCollection<LearningPath>(pathsQuery);
 
-    const coursesQuery = useMemoFirebase(() => query(collection(firestore, 'courses'), orderBy('title')), [firestore]);
+    const coursesQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'courses'), orderBy('title')) : null, [firestore]);
     const { data: courses, isLoading: coursesLoading } = useCollection<Course>(coursesQuery);
 
     const coursesByPath = useMemo(() => {

@@ -44,7 +44,7 @@ export type Course = {
   instructor: string;
   instructorAvatarUrl: string;
   imageUrl: string;
-  modules: CourseModule[];
+  // modules field is not stored in the course document, it's a subcollection
   pathId: string;
 };
 
@@ -52,7 +52,6 @@ export type LearningPath = {
   id: string;
   title: string;
   description: string;
-  courses: Course[];
 };
 
 export type UserProfile = {
@@ -74,5 +73,3 @@ export type Progress = {
   completedLessons: string[];
   completed: boolean;
 };
-
-    
