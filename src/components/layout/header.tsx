@@ -23,10 +23,14 @@ import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { collection, query, orderBy } from "firebase/firestore";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function Header() {
   const { user } = useUser();
   const firestore = useFirestore();
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const notificationsQuery = useMemoFirebase(() => {
     if (!user || !firestore) return null;
@@ -35,6 +39,12 @@ export function Header() {
 
   const { data: notifications, isLoading: isLoadingNotifications } = useCollection<Notification>(notificationsQuery);
   const hasUnread = notifications && notifications.length > 0;
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      router.push(`/courses?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
 
   return (
@@ -53,6 +63,9 @@ export function Header() {
             <Input
               placeholder="Buscar cursos..."
               className="pl-9"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearch}
             />
           </div>
           <nav className="flex items-center space-x-2">
@@ -77,7 +90,7 @@ export function Header() {
                     <DropdownMenuItem key={notification.id} className="flex flex-col items-start gap-1 py-2">
                         <p className="font-medium">{notification.title}</p>
                         <p className="text-xs text-muted-foreground">{notification.description}</p>
-                        <p className="text-xs text-muted-foreground/80 mt-1">{formatDistanceToNow(notification.date.toDate(), { addSuffix: true, locale: es })}</p>
+                        <p className="text-xs text-muted-foreground/80 mt-1">{notification.date && notification.date.toDate ? formatDistanceToNow(notification.date.toDate(), { addSuffix: true, locale: es }) : ''}</p>
                     </DropdownMenuItem>
                   ))
                 ) : (

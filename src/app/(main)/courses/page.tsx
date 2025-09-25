@@ -1,26 +1,40 @@
 
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, Suspense } from "react";
 import { CourseCard } from "@/components/course-card";
 import { courses as allCourses, learningPaths as allLearningPaths } from "@/lib/data";
 import type { Course, LearningPath } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
 
-export default function CoursesPage() {
+function CoursesContent() {
     const searchParams = useSearchParams();
     const pathFilter = searchParams.get('path');
+    const searchQuery = searchParams.get('q');
     
     const learningPaths = allLearningPaths;
-    const courses = useMemo(() => {
+    
+    const filteredCourses = useMemo(() => {
+        let courses = allCourses;
+
         if (pathFilter) {
-            return allCourses.filter(c => c.pathId === pathFilter);
+            courses = courses.filter(c => c.pathId === pathFilter);
         }
-        return allCourses;
-    }, [pathFilter]);
+
+        if (searchQuery) {
+            const lowercasedQuery = searchQuery.toLowerCase();
+            courses = courses.filter(c => 
+                c.title.toLowerCase().includes(lowercasedQuery) ||
+                c.description.toLowerCase().includes(lowercasedQuery) ||
+                c.instructor.toLowerCase().includes(lowercasedQuery)
+            );
+        }
+
+        return courses;
+    }, [pathFilter, searchQuery]);
 
     const coursesByPath = useMemo(() => {
-        return courses.reduce((acc, course) => {
+        return filteredCourses.reduce((acc, course) => {
             const path = learningPaths.find(p => p.id === course.pathId);
             if (path) {
                 if (!acc[path.id]) {
@@ -31,18 +45,31 @@ export default function CoursesPage() {
             return acc;
         }, {} as { [key: string]: LearningPath & { courses: Course[] } });
 
-    }, [courses, learningPaths]);
+    }, [filteredCourses, learningPaths]);
     
-    const pathsToRender = pathFilter ? (learningPaths?.filter(p => p.id === pathFilter) || []) : (learningPaths || []);
+    let pathsToRender;
+    if (pathFilter) {
+        pathsToRender = learningPaths?.filter(p => p.id === pathFilter) || [];
+    } else if (searchQuery) {
+        // If there's a search query, render all paths that have matching courses
+        pathsToRender = learningPaths?.filter(p => coursesByPath[p.id]?.courses.length > 0) || [];
+    } else {
+        pathsToRender = learningPaths || [];
+    }
+    
+    const pageTitle = searchQuery ? `Resultados para "${searchQuery}"` : "Catálogo de Cursos";
+    const pageDescription = searchQuery 
+        ? `Se encontraron ${filteredCourses.length} cursos.`
+        : "Explora nuestra completa colección de cursos. Hay algo para todos, sin importar tu nivel de experiencia.";
 
     return (
         <div className="container py-8 md:py-12">
             <header className="mb-8 md:mb-12 text-center">
                 <h1 className="text-4xl font-bold tracking-tight font-headline lg:text-5xl">
-                    Catálogo de Cursos
+                    {pageTitle}
                 </h1>
                 <p className="mt-3 text-lg text-muted-foreground max-w-2xl mx-auto">
-                    Explora nuestra completa colección de cursos. Hay algo para todos, sin importar tu nivel de experiencia.
+                    {pageDescription}
                 </p>
             </header>
 
@@ -68,5 +95,13 @@ export default function CoursesPage() {
                 )}
             </div>
         </div>
+    );
+}
+
+export default function CoursesPage() {
+    return (
+        <Suspense fallback={<div>Cargando...</div>}>
+            <CoursesContent />
+        </Suspense>
     );
 }
