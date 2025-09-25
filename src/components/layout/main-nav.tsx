@@ -1,32 +1,126 @@
+
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import type { NavItem } from "@/lib/types";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import React from "react";
+import { Code, BrainCircuit, PenTool, Cloud, Users, Briefcase, BookText, Shield, Smartphone, Blocks, Landmark, Paintbrush, TrendingUp, Film, Laptop } from "lucide-react";
+
+const mainNavItems: NavItem[] = [
+  { title: "Rutas de Aprendizaje", href: "/paths" },
+  { title: "Cursos", href: "/courses" },
+  { title: "Mi Panel", href: "/dashboard" },
+  { title: "Precios", href: "/pricing"},
+];
+
+const categories: { title: string; href: string; description: string, icon: React.ReactNode }[] = [
+  {
+    title: "Desarrollo Web",
+    href: "/paths",
+    description: "Conviértete en un desarrollador web Full-Stack.",
+    icon: <Code />
+  },
+  {
+    title: "Inteligencia Artificial",
+    href: "/paths",
+    description: "Domina el futuro con IA y Machine Learning.",
+    icon: <BrainCircuit />
+  },
+  {
+    title: "Diseño de Producto y UX",
+    href: "/paths",
+    description: "Crea productos que los usuarios amen.",
+    icon: <PenTool />
+  },
+  {
+    title: "Cloud Computing y DevOps",
+    href: "/paths",
+    description: "Despliega y escala aplicaciones en la nube.",
+    icon: <Cloud />
+  },
+];
+
 
 export function MainNav() {
   const pathname = usePathname();
-  const navItems: NavItem[] = [
-    { title: "Rutas de Aprendizaje", href: "/paths" },
-    { title: "Cursos", href: "/courses" },
-    { title: "Mi Panel", href: "/dashboard" },
-  ];
 
   return (
     <nav className="hidden items-center space-x-4 md:flex lg:space-x-6">
-      {navItems.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={cn(
-            "text-sm font-medium transition-colors hover:text-primary",
-            pathname === item.href ? "text-primary" : "text-muted-foreground"
-          )}
-        >
-          {item.title}
-        </Link>
-      ))}
+       <NavigationMenu>
+        <NavigationMenuList>
+           <NavigationMenuItem>
+            <NavigationMenuTrigger>Categorías</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                {categories.map((component) => (
+                  <ListItem
+                    key={component.title}
+                    title={component.title}
+                    href={component.href}
+                    icon={component.icon}
+                  >
+                    {component.description}
+                  </ListItem>
+                ))}
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          {mainNavItems.map((item) => (
+            <NavigationMenuItem key={item.href}>
+              <Link href={item.href} legacyBehavior passHref>
+                <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), pathname === item.href ? "text-primary" : "text-muted-foreground")}>
+                  {item.title}
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+          ))}
+        </NavigationMenuList>
+      </NavigationMenu>
     </nav>
   );
 }
+
+
+const ListItem = React.forwardRef<
+  React.ElementRef<"a">,
+  React.ComponentPropsWithoutRef<"a"> & { icon: React.ReactNode }
+>(({ className, title, children, icon, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <a
+          ref={ref}
+          className={cn(
+            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            className
+          )}
+          {...props}
+        >
+          <div className="flex items-center gap-3">
+            <div className="text-primary">{icon}</div>
+            <div>
+              <div className="text-sm font-medium leading-none">{title}</div>
+              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                {children}
+              </p>
+            </div>
+          </div>
+        </a>
+      </NavigationMenuLink>
+    </li>
+  )
+})
+ListItem.displayName = "ListItem"
+
+    

@@ -86,23 +86,28 @@ export function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left">
-                <nav className="grid gap-6 text-lg font-medium mt-8">
-                  <Link
+                <div className="p-4">
+                   <Link
                     href="/"
-                    className="flex items-center gap-2 text-lg font-semibold"
+                    className="flex items-center gap-2 text-lg font-semibold mb-8"
                   >
                     <CodeELogo className="h-6 w-auto" />
                   </Link>
-                  <Link href="/paths" className="text-muted-foreground hover:text-foreground">
-                    Rutas de Aprendizaje
-                  </Link>
-                  <Link href="/courses" className="text-muted-foreground hover:text-foreground">
-                    Cursos
-                  </Link>
-                  <Link href="/dashboard" className="text-muted-foreground hover:text-foreground">
-                    Mi Panel
-                  </Link>
-                </nav>
+                  <nav className="grid gap-6 text-base font-medium">
+                    <Link href="/paths" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                      Rutas de Aprendizaje
+                    </Link>
+                    <Link href="/courses" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                      Cursos
+                    </Link>
+                    <Link href="/dashboard" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                      Mi Panel
+                    </Link>
+                    <Link href="/pricing" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                      Precios
+                    </Link>
+                  </nav>
+                </div>
               </SheetContent>
             </Sheet>
           </nav>
@@ -111,3 +116,5 @@ export function Header() {
     </header>
   );
 }
+
+    
