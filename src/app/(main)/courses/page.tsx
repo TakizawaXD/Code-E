@@ -28,24 +28,18 @@ export default function CoursesPage() {
     const coursesByPath = useMemo(() => {
         if (!courses || !learningPaths) return {};
         
-        const pathsById = learningPaths.reduce((acc, path) => {
-            acc[path.id] = { ...path, courses: [] };
+        return courses.reduce((acc, course) => {
+            const path = learningPaths.find(p => p.id === course.pathId);
+            if (path) {
+                if (!acc[path.id]) {
+                    acc[path.id] = { ...path, courses: [] };
+                }
+                acc[path.id].courses.push(course);
+            }
             return acc;
         }, {} as { [key: string]: LearningPath & { courses: Course[] } });
 
-        courses.forEach(course => {
-            if (pathsById[course.pathId]) {
-                pathsById[course.pathId].courses.push(course);
-            }
-        });
-
-        // if there's a filter, only return that path
-        if (pathFilter && pathsById[pathFilter]) {
-            return { [pathFilter]: pathsById[pathFilter] };
-        }
-
-        return pathsById;
-    }, [courses, learningPaths, pathFilter]);
+    }, [courses, learningPaths]);
 
     const isLoading = pathsLoading || coursesLoading;
 
@@ -67,7 +61,7 @@ export default function CoursesPage() {
             </header>
 
             <div className="space-y-12">
-                {pathsToRender.map((path) => (
+                {pathsToRender.length > 0 ? pathsToRender.map((path) => (
                     <section key={path.id}>
                         <h2 className="text-2xl font-bold tracking-tight font-headline md:text-3xl border-b pb-2 mb-6">
                             {path.title}
@@ -81,7 +75,11 @@ export default function CoursesPage() {
                             <p className="text-muted-foreground">No hay cursos disponibles en esta ruta de aprendizaje por el momento.</p>
                         )}
                     </section>
-                ))}
+                )) : (
+                    <div className="text-center py-10">
+                        <p className="text-muted-foreground">No se encontraron cursos. Intenta ejecutar el script de inicialización para poblar la base de datos.</p>
+                    </div>
+                )}
             </div>
         </div>
     );
