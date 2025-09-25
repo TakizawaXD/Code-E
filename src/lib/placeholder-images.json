@@ -1,3 +1,52 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "course-react",
+      "description": "React Course Thumbnail",
+      "imageUrl": "https://images.unsplash.com/photo-1558459654-c430be5b0a44?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwcm9ncmFtbWluZyUyMGFic3RyYWN0fGVufDB8fHx8MTc1ODc5MjAzN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "programming abstract"
+    },
+    {
+      "id": "course-node",
+      "description": "Node.js Course Thumbnail",
+      "imageUrl": "https://images.unsplash.com/photo-1617240016072-d92174e44171?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzZXJ2ZXIlMjBjb2RlfGVufDB8fHx8MTc1ODc4Nzg2MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "server code"
+    },
+    {
+      "id": "course-js",
+      "description": "JavaScript Course Thumbnail",
+      "imageUrl": "https://images.unsplash.com/photo-1687603917313-ccae1a289a9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxqYXZhc2NyaXB0JTIwY29kZXxlbnwwfHx8fDE3NTg3NDIzNjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "javascript code"
+    },
+    {
+      "id": "course-css",
+      "description": "CSS Course Thumbnail",
+      "imageUrl": "https://images.unsplash.com/photo-1612544408664-5d919fe4d619?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxkZXNpZ24lMjBsYXlvdXR8ZW58MHx8fHwxNzU4ODEwNzY3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "design layout"
+    },
+    {
+      "id": "course-python",
+      "description": "Python Course Thumbnail",
+      "imageUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxkYXRhJTIwc2NpZW5jZXxlbnwwfHx8fDE3NTg2OTUwNTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "data science"
+    },
+    {
+      "id": "course-ai",
+      "description": "AI Course Thumbnail",
+      "imageUrl": "https://images.unsplash.com/photo-1716637644831-e046c73be197?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhcnRpZmljaWFsJTIwaW50ZWxsaWdlbmNlfGVufDB8fHx8MTc1ODc5NDU3Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "artificial intelligence"
+    },
+    {
+      "id": "avatar-1",
+      "description": "User Avatar 1",
+      "imageUrl": "https://images.unsplash.com/photo-1590086782792-42dd2350140d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NTg3ODg5NzR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "avatar-2",
+      "description": "User Avatar 2",
+      "imageUrl": "https://images.unsplash.com/photo-1525134479668-1bee5c7c6845?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx3b21hbiUyMHNtaWxpbmd8ZW58MHx8fHwxNzU4NzU5NDE0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman smiling"
+    }
+  ]
 }
