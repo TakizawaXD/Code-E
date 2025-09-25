@@ -37,7 +37,7 @@ const learningCategories = [
     { name: "Liderazgo y Habilidades Blandas", paths: 10, icon: <Lightbulb /> },
     { name: "Contenido Audiovisual", paths: 7, icon: <Video /> },
     { name: "Programación", paths: 12, icon: <Laptop /> },
-    { name: "Startups", paths: 10, icon: <Rocket /> },
+    { name: "Startups", paths: 10, icon: <Rocket /> }
 ]
 
 function LearningCategories() {
@@ -60,6 +60,52 @@ function LearningCategories() {
                                 <CardTitle className="text-sm font-semibold">{category.name}</CardTitle>
                             </Card>
                         </Link>
+                    ))}
+                </div>
+            </div>
+        </section>
+    )
+}
+
+const codeExamples = [
+    { language: 'ruby', code: 'puts "Hola Mundo"' },
+    { language: 'julia', code: 'println("Hola Mundo")' },
+    { language: 'r', code: 'print("Hola Mundo")' },
+    { language: 'go', code: 'package main\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hola Mundo")\n}' },
+    { language: 'perl', code: 'print "Hola Mundo\\n";' },
+    { language: 'lua', code: 'print("Hola Mundo")' },
+    { language: 'swift', code: 'print("Hola Mundo")' },
+    { language: 'kotlin', code: 'fun main() {\n    println("Hola Mundo")\n}' },
+    { language: 'php', code: '<?php\n  echo "Hola Mundo";\n?>' },
+    { language: 'scala', code: 'object HelloWorld {\n  def main(args: Array[String]): Unit = {\n    println("Hola Mundo")\n  }\n}' }
+];
+
+function CodeExamples() {
+    return (
+        <section className="w-full py-12 md:py-24 lg:py-32">
+            <div className="container px-4 md:px-6">
+                <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                    <div className="space-y-2">
+                        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl font-headline">Ejemplos de "Hola Mundo"</h2>
+                        <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                            Un primer paso en cualquier lenguaje de programación.
+                        </p>
+                    </div>
+                </div>
+                <div className="mx-auto grid grid-cols-1 gap-6 py-12 sm:grid-cols-2 lg:grid-cols-3">
+                    {codeExamples.map((example) => (
+                        <Card key={example.language}>
+                            <CardHeader>
+                                <CardTitle className="capitalize">{example.language}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <pre className="bg-secondary p-4 rounded-md overflow-x-auto">
+                                    <code className={`language-${example.language}`}>
+                                        {example.code}
+                                    </code>
+                                </pre>
+                            </CardContent>
+                        </Card>
                     ))}
                 </div>
             </div>
@@ -110,6 +156,8 @@ export default function HomePage() {
 
         <LearningCategories />
         
+        <CodeExamples />
+
         <section className="w-full py-12 md:py-24 lg:py-32 bg-secondary/50">
           <div className="container px-4 md:px-6">
              <div className="flex flex-col items-center justify-center space-y-4 text-center">
@@ -146,7 +194,7 @@ export default function HomePage() {
                   <Card className="h-full transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
                     <CardHeader>
                       <CardTitle>{path.title}</CardTitle>
-                      <CardDescription>{path.description}</CardDescription>
+                      <CardDescription>{path.description}</CardHeader>
                     </CardHeader>
                   </Card>
                 </Link>
@@ -159,3 +207,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+    
