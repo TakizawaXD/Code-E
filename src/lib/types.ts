@@ -4,14 +4,30 @@ export type NavItem = {
   disabled?: boolean;
 };
 
+export type QuizQuestion = {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+};
+
+export type Quiz = {
+  id: string;
+  title: string;
+  questions: QuizQuestion[];
+};
+
 export type Lesson = {
   id: string;
   title: string;
   duration: string;
+  videoUrl?: string;
+  content?: string;
+  quiz?: Quiz;
 };
 
 export type CourseModule = {
-  id: string;
+  id:string;
   title: string;
   lessons: Lesson[];
 };

@@ -37,6 +37,42 @@
       "imageHint": "artificial intelligence"
     },
     {
+      "id": "course-typescript",
+      "description": "TypeScript Course Thumbnail",
+      "imageUrl": "https://images.unsplash.com/photo-1629904853716-f0bc64219163?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "typescript code"
+    },
+    {
+      "id": "course-nextjs",
+      "description": "Next.js Course Thumbnail",
+      "imageUrl": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "nextjs logo"
+    },
+    {
+      "id": "course-sql",
+      "description": "SQL Course Thumbnail",
+      "imageUrl": "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "database technology"
+    },
+    {
+      "id": "course-docker",
+      "description": "Docker Course Thumbnail",
+      "imageUrl": "https://images.unsplash.com/photo-1605745341112-85968b19335b?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "container technology"
+    },
+    {
+      "id": "course-ml",
+      "description": "Machine Learning Course Thumbnail",
+      "imageUrl": "https://images.unsplash.com/photo-1555255707-c07969078b63?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "machine learning"
+    },
+    {
+      "id": "course-data-viz",
+      "description": "Data Visualization Course Thumbnail",
+      "imageUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "data visualization"
+    },
+    {
       "id": "avatar-1",
       "description": "User Avatar 1",
       "imageUrl": "https://images.unsplash.com/photo-1590086782792-42dd2350140d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NTg3ODg5NzR8MA&ixlib=rb-4.1.0&q=80&w=1080",
@@ -47,6 +83,18 @@
       "description": "User Avatar 2",
       "imageUrl": "https://images.unsplash.com/photo-1525134479668-1bee5c7c6845?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx3b21hbiUyMHNtaWxpbmd8ZW58MHx8fHwxNzU4NzU5NDE0fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "woman smiling"
+    },
+    {
+      "id": "avatar-3",
+      "description": "User Avatar 3",
+      "imageUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "man smiling"
+    },
+    {
+      "id": "avatar-4",
+      "description": "User Avatar 4",
+      "imageUrl": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "woman portrait"
     }
   ]
 }
