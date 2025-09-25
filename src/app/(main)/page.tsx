@@ -38,7 +38,7 @@ const learningCategories = [
     { name: "Contenido Audiovisual", paths: 7, icon: <Video /> },
     { name: "Programación", paths: 12, icon: <Laptop /> },
     { name: "Startups", paths: 10, icon: <Rocket /> }
-]
+];
 
 function LearningCategories() {
     return (
@@ -194,7 +194,7 @@ export default function HomePage() {
                   <Card className="h-full transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
                     <CardHeader>
                       <CardTitle>{path.title}</CardTitle>
-                      <CardDescription>{path.description}</CardHeader>
+                      <CardDescription>{path.description}</CardDescription>
                     </CardHeader>
                   </Card>
                 </Link>
