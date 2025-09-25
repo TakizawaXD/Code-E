@@ -86,4 +86,27 @@ export type Comment = {
     userAvatarUrl: string;
     text: string;
     createdAt: Timestamp;
+};
+
+// Gamification Types
+export type GamificationStats = {
+  id: string; // Should match userId
+  points: number;
+  currentStreak: number;
+  longestStreak: number;
+  lastStudiedDate: Timestamp | null;
+}
+
+export type Badge = {
+  id: string;
+  title: string;
+  description: string;
+  icon: string; // e.g., URL to an SVG or a Lucide icon name
+}
+
+export type UserBadge = {
+  id: string; // Auto-generated ID
+  userId: string;
+  badgeId: string;
+  earnedAt: Timestamp;
 }

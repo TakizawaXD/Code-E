@@ -176,6 +176,10 @@ export default function CourseDetailPage({
         date: serverTimestamp(),
       });
     }
+
+    // Placeholder for gamification logic
+    // const pointsForLesson = 10;
+    // updateGamificationStats(user.uid, pointsForLesson, isCourseComplete);
   
     if (nextLesson) {
       handleSetLesson(nextLesson.moduleId, nextLesson.lessonId);

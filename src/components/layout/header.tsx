@@ -127,6 +127,9 @@ export function Header() {
                     <Link href="/courses" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
                       Cursos
                     </Link>
+                     <Link href="/community" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                      Comunidad
+                    </Link>
                     <Link href="/dashboard" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
                       Mi Panel
                     </Link>

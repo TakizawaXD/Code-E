@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -19,6 +20,7 @@ import { Code, BrainCircuit, PenTool, Cloud, Users, Briefcase, BookText, Shield,
 const mainNavItems: NavItem[] = [
   { title: "Rutas de Aprendizaje", href: "/paths" },
   { title: "Cursos", href: "/courses" },
+  { title: "Comunidad", href: "/community" },
   { title: "Mi Panel", href: "/dashboard" },
   { title: "Precios", href: "/pricing"},
 ];

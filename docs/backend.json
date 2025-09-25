@@ -104,6 +104,40 @@
         "date": { "type": "string", "format": "date-time" }
       },
       "required": ["title", "description", "date"]
+    },
+    "GamificationStats": {
+      "title": "GamificationStats",
+      "type": "object",
+      "description": "Tracks a user's points and study streaks.",
+      "properties": {
+        "points": { "type": "number" },
+        "currentStreak": { "type": "number" },
+        "longestStreak": { "type": "number" },
+        "lastStudiedDate": { "type": "string", "format": "date-time" }
+      },
+      "required": ["points", "currentStreak", "longestStreak"]
+    },
+    "Badge": {
+      "title": "Badge",
+      "type": "object",
+      "description": "Represents an unlockable achievement.",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "icon": { "type": "string" }
+      },
+      "required": ["title", "description", "icon"]
+    },
+    "UserBadge": {
+      "title": "UserBadge",
+      "type": "object",
+      "description": "Links a user to a badge they have earned.",
+      "properties": {
+        "userId": { "type": "string" },
+        "badgeId": { "type": "string" },
+        "earnedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "badgeId", "earnedAt"]
     }
   },
   "auth": {
@@ -143,6 +177,18 @@
     "/users/{userId}/notifications/{notificationId}": {
         "schema": { "$ref": "#/entities/Notification" },
         "description": "Stores notifications for a user."
+    },
+    "/users/{userId}/gamification/{statsId}": {
+        "schema": { "$ref": "#/entities/GamificationStats" },
+        "description": "Stores a user's gamification stats. Should be a single doc."
+    },
+    "/badges/{badgeId}": {
+        "schema": { "$ref": "#/entities/Badge" },
+        "description": "Stores all available badges in the platform."
+    },
+    "/users/{userId}/badges/{userBadgeId}": {
+        "schema": { "$ref": "#/entities/UserBadge" },
+        "description": "Stores the badges a user has earned."
     }
   }
 }
