@@ -161,32 +161,31 @@ async function seedDatabase() {
         });
         console.log(`${learningPaths.length} learning paths added to batch.`);
 
-        // 2. Seed Courses
-        console.log('Seeding courses...');
+        // 2. Seed Courses, Modules, and Lessons
+        console.log('Seeding courses, modules, and lessons...');
+        let totalModules = 0;
+        let totalLessons = 0;
+
         courses.forEach(course => {
             const courseRef = doc(db, 'courses', course.id);
             batch.set(courseRef, course);
+
+            const courseModules = modulesAndLessons[course.id as keyof typeof modulesAndLessons];
+            if (courseModules) {
+                courseModules.forEach(module => {
+                    totalModules++;
+                    const moduleRef = doc(db, 'courses', course.id, 'modules', module.id);
+                    batch.set(moduleRef, { title: module.title, order: module.order });
+
+                    module.lessons.forEach(lesson => {
+                        totalLessons++;
+                        const lessonRef = doc(db, 'courses', course.id, 'modules', module.id, 'lessons', lesson.id);
+                        batch.set(lessonRef, lesson);
+                    });
+                });
+            }
         });
         console.log(`${courses.length} courses added to batch.`);
-
-        // 3. Seed Modules and Lessons
-        console.log('Seeding modules and lessons...');
-        let totalModules = 0;
-        let totalLessons = 0;
-        for (const courseId in modulesAndLessons) {
-            const courseModules = modulesAndLessons[courseId as keyof typeof modulesAndLessons];
-            courseModules.forEach(module => {
-                totalModules++;
-                const moduleRef = doc(db, 'courses', courseId, 'modules', module.id);
-                batch.set(moduleRef, { title: module.title, order: module.order });
-
-                module.lessons.forEach(lesson => {
-                    totalLessons++;
-                    const lessonRef = doc(db, 'courses', courseId, 'modules', module.id, 'lessons', lesson.id);
-                    batch.set(lessonRef, lesson);
-                });
-            });
-        }
         console.log(`${totalModules} modules and ${totalLessons} lessons added to batch.`);
 
 
