@@ -30,6 +30,8 @@ export type Lesson = {
   difficulty: 'Fácil' | 'Medio' | 'Difícil';
   quiz?: Quiz;
   order: number;
+  imageUrl?: string;
+  youtubeVideoId?: string;
 };
 
 export type CourseModule = {
@@ -60,6 +62,8 @@ export type UserProfile = {
   name: string;
   email: string;
   createdAt: FieldValue;
+  points?: number;
+  avatarUrl?: string;
 };
 
 export type Notification = {

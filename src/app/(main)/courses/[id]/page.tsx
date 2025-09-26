@@ -23,6 +23,7 @@ import {
   Lock,
   MessageSquare,
   BarChart3,
+  Youtube,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { QuizComponent } from "@/components/quiz";
@@ -209,9 +210,9 @@ export default function CourseDetailPage({
     <div className="container mx-auto py-8">
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold font-headline">{lesson?.title || course.title}</h1>
-            <div className="flex gap-2 items-center">
+          <div className="flex justify-between items-start flex-wrap gap-4">
+            <h1 className="text-2xl font-bold font-headline animate-in fade-in slide-in-from-top-4 duration-500">{lesson?.title || course.title}</h1>
+            <div className="flex gap-2 items-center animate-in fade-in slide-in-from-top-4 duration-500">
                 {lesson?.difficulty && getDifficultyBadge(lesson.difficulty)}
                 <Button variant="outline" onClick={handleMarkAsCompleted} disabled={completedLessons.has(lesson?.id || "")}>
                     <CheckCircle2 className="mr-2"/>
@@ -221,27 +222,54 @@ export default function CourseDetailPage({
           </div>
           
           <Separator />
-          
-           {lesson?.content ? (
-                <Card>
-                    <CardContent className="prose dark:prose-invert max-w-none pt-6" dangerouslySetInnerHTML={{ __html: lesson.content }} />
-                </Card>
-           ) : null}
 
-          {lesson?.quiz ? (
-             <QuizComponent quiz={lesson.quiz} />
-          ) : (
-             !lesson?.content && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Contenido de la Lección</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-muted-foreground">El contenido de esta lección estará disponible pronto.</p>
-                    </CardContent>
-                </Card>
-             )
-          )}
+          <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
+            {lesson?.imageUrl && (
+              <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+                <Image
+                  src={lesson.imageUrl}
+                  alt={lesson.title}
+                  fill
+                  className="object-cover"
+                  data-ai-hint="lesson topic"
+                />
+              </div>
+            )}
+
+            {lesson?.youtubeVideoId && (
+              <div className="aspect-video w-full">
+                <iframe
+                  className="w-full h-full rounded-lg"
+                  src={`https://www.youtube.com/embed/${lesson.youtubeVideoId}`}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            )}
+
+            {lesson?.content ? (
+                  <Card>
+                      <CardContent className="prose dark:prose-invert max-w-none pt-6" dangerouslySetInnerHTML={{ __html: lesson.content }} />
+                  </Card>
+            ) : null}
+
+            {lesson?.quiz ? (
+              <QuizComponent quiz={lesson.quiz} />
+            ) : (
+              !lesson?.content && !lesson.imageUrl && !lesson.youtubeVideoId && (
+                  <Card>
+                      <CardHeader>
+                          <CardTitle>Contenido de la Lección</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                          <p className="text-muted-foreground">El contenido de esta lección estará disponible pronto.</p>
+                      </CardContent>
+                  </Card>
+              )
+            )}
+          </div>
 
           <Separator />
 
@@ -332,6 +360,15 @@ export default function CourseDetailPage({
                                             <div className="flex items-center gap-1">
                                                 <BarChart3 className="w-3 h-3" />
                                                 <span>{lessonItem.difficulty}</span>
+                                            </div>
+                                        </>
+                                    )}
+                                     {lessonItem.youtubeVideoId && (
+                                        <>
+                                            <span className="text-muted-foreground/50">·</span>
+                                            <div className="flex items-center gap-1">
+                                                <Youtube className="w-3 h-3 text-red-500" />
+                                                <span>Video</span>
                                             </div>
                                         </>
                                     )}
