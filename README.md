@@ -163,3 +163,5 @@ A continuación se detalla la estructura de tablas y relaciones para la base de 
     ```
 
 Ahora, la aplicación Next.js debería poder comunicarse con tu API de Flask local.
+
+URL: https://codeeapp.netlify.app/
