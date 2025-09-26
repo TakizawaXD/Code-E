@@ -88,6 +88,8 @@ He aquí un diagrama de alto nivel que ilustra la arquitectura de Code-E:
 
 A continuación se detalla la estructura de tablas y relaciones para la base de datos MySQL. Para ver el script SQL completo para la creación de estas tablas, consulta el archivo `docs/schema.sql`.
 
+![Diagrama de la Base de Datos](https://github.com/TakizawaXD/Code-E/blob/main/img/diagram-export-26-9-2025-9_22_24-a.-m..png?raw=true)
+
 -   **`users`**: Almacena la información de los usuarios.
     -   `id` (PK), `name`, `username`, `email`, `password_hash`, `created_at`
 -   **`learning_paths`**: Agrupa los cursos en rutas de aprendizaje.
