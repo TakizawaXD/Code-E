@@ -62,7 +62,7 @@ function ForumList() {
 
                             </Avatar>
                             <div>
-                                <Link href={`/community/_threads/${thread.id}`}>
+                                <Link href={`/community/thread/${thread.id}`}>
                                     <h3 className="font-semibold text-lg hover:underline">{thread.title}</h3>
                                 </Link>
                                 <p className="text-sm text-muted-foreground">
