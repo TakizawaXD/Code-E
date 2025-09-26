@@ -59,9 +59,10 @@ function ForumList() {
                             <Avatar>
                                 <AvatarImage src={thread.authorAvatarUrl} alt={thread.authorName} />
                                 <AvatarFallback>{thread.authorName?.charAt(0).toUpperCase()}</AvatarFallback>
+
                             </Avatar>
                             <div>
-                                <Link href={`/community/threads/${thread.id}`}>
+                                <Link href={`/community/_threads/${thread.id}`}>
                                     <h3 className="font-semibold text-lg hover:underline">{thread.title}</h3>
                                 </Link>
                                 <p className="text-sm text-muted-foreground">
