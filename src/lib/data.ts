@@ -66,7 +66,7 @@ const courseData: Omit<Course, 'modules'>[] = [
   
     // Cloud y DevOps
     { id: 'cloud-aws', pathId: 'cloud-devops', title: 'Introducción a AWS', description: 'Fácil: Configura un bucket de S3 y sube un archivo HTML estático. Fácil: Crea una instancia de EC2 y conéctate a ella vía SSH. Intermedio: Utiliza IAM para crear un usuario con permisos limitados a un bucket de S3 específico. Intermedio: Implementa una función AWS Lambda simple que reciba un nombre y devuelva un saludo, y configura un API Gateway para invocarla a través de una URL. Avanzado: Desarrolla un pipeline de CI/CD para una aplicación web estática, utilizando servicios como CodeCommit, CodeBuild y S3.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=elenafernandez', imageUrl: 'https://images.unsplash.com/photo-1582102759419-7b97c88d0a84?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-    { id: 'cloud-docker', pathId: 'cloud-devops', title: 'Docker para Desarrolladores', description: 'Fácil: Escribe un Dockerfile para una aplicación Node.js simple y construye la imagen. Fácil: Crea un contenedor a partir de una imagen de Nginx y accede a la página web en tu navegador. Intermedio: Utiliza docker-compose para orquestar una aplicación de dos servicios: un servidor Node.js y una base de datos PostgreSQL. Intermedio: Implementa un Docker volumen para persistir los datos de la base de datos de un contenedor. Avanzado: Conteneriza una aplicación React con un Dockerfile multi-etapa para optimizar el tamaño de la imagen final.', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=marcosluna', imageUrl: 'https://images.unsplash.com/photo-1622359990261-3f48a74d7543?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
+    { id: 'cloud-docker', pathId: 'cloud-devops', title: 'Docker para Desarrolladores', description: 'Fácil: Escribe un Dockerfile para una aplicación Node.js simple y construye la imagen. Fácil: Crea un contenedor a partir de una imagen de Nginx y accede a la página web en tu navegador. Intermedio: Utiliza docker-compose para orquestar una aplicación de dos servicios: un servidor Node.js y una base de datos PostgreSQL. Intermedio: Implementa un Docker volumen para persistir los datos de la base de datos de un contenedor. Avanzado: Conteneriza una aplicación React con un Dockerfile multi-etapa para optimizar el tamaño de la imagen final.', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=marcosluna', imageUrl: 'https://images.unsplash.com/photo-1622359990261-3f48a74d7543?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%D%3D&auto=format&fit=crop&w=1170&q=80' },
     
     // Desarrollo Móvil
     { id: 'movil-swift', pathId: 'desarrollo-movil', title: 'Swift y SwiftUI: De Cero a App Store', description: 'Fácil: Crea una interfaz de usuario con SwiftUI que muestre un texto y un botón que cambie el texto al ser presionado. Fácil: Diseña una lista de elementos (por ejemplo, nombres) y hazla navegable para mostrar una pantalla de detalles para cada elemento. Intermedio: Implementa la gestión del estado para una aplicación simple de contador de pasos, utilizando @State y @Binding. Intermedio: Realiza una llamada a una API REST para obtener datos y mostrarlos en una lista en tu interfaz de usuario. Avanzado: Crea un sistema de navegación completo con pestañas (TabView) y vistas de detalle, y maneja el estado de la aplicación entre pantallas.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=luciajimenez', imageUrl: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80'},
@@ -75,11 +75,11 @@ const courseData: Omit<Course, 'modules'>[] = [
     { id: 'movil-dart', pathId: 'desarrollo-movil', title: 'Fundamentos de Dart para Flutter', description: 'Fácil: Declara variables, usa operadores básicos y define una función simple que no retorne un valor. Fácil: Escribe una función que tome una lista de números y devuelva una nueva lista con los números pares. Intermedio: Crea una clase Persona con un constructor, y métodos getter y setter para sus propiedades. Intermedio: Implementa una clase abstracta Animal con un método abstracto y una clase Perro que herede de ella. Avanzado: Trabaja con Futures y async/await para simular una operación asíncrona, como una llamada a una API, y maneja los errores.', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=andrealezama', imageUrl: 'https://images.unsplash.com/photo-1617042375876-a13e36732a04?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
   
     // Blockchain y Web3
-    { id: 'web3-solidity', pathId: 'blockchain-web3', title: 'Smart Contracts con Solidity', description: 'Fácil: Escribe un contrato inteligente simple que almacene un número y tenga funciones para leer y actualizar ese número. Fácil: Crea un contrato de votación que permita a los usuarios votar una sola vez y muestre el conteo de votos. Intermedio: Desarrolla un contrato ERC-20 (Token estándar) básico que permita a los usuarios acuñar (mint) y transferir tokens. Intermedio: Implementa un modificador (modifier) para restringir el acceso a una función solo al propietario del contrato. Avanzado: Crea un contrato de subasta que use require para validar que las pujas sean mayores que la anterior y maneje el reembolso de los fondos.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=adriannavarro', imageUrl: 'https://images.unsplash.com/photo-1640118591547-906514188b6f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1167&q=80' },
-    { id: 'web3-rust', pathId: 'blockchain-web3', title: 'Desarrollo en Solana con Rust', description: 'Fácil: Escribe un programa simple en Rust que imprima "Hola, Solana!". Fácil: Define una struct en Rust para representar una cuenta de programa en Solana, con un campo para un contador. Intermedio: Implementa una función que inicialice la cuenta de un programa con un valor inicial. Intermedio: Crea una instrucción para un programa de Solana que incremente el contador en una cuenta de programa específica. Avanzado: Desarrolla un programa más complejo que maneje múltiples cuentas y transacciones, utilizando cross-program invocations (invocaciones entre programas).', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=danielsolis', imageUrl: 'https://images.unsplash.com/photo-1642159829394-11648e285094?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+    { id: 'web3-solidity', pathId: 'blockchain-web3', title: 'Smart Contracts con Solidity', description: 'Fácil: Escribe un contrato inteligente simple que almacene un número y tenga funciones para leer y actualizar ese número. Fácil: Crea un contrato de votación que permita a los usuarios votar una sola vez y muestre el conteo de votos. Intermedio: Desarrolla un contrato ERC-20 (Token estándar) básico que permita a los usuarios acuñar (mint) y transferir tokens. Intermedio: Implementa un modificador (modifier) para restringir el acceso a una función solo al propietario del contrato. Avanzado: Crea un contrato de subasta que use require para validar que las pujas sean mayores que la anterior y maneje el reembolso de los fondos.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=adriannavarro', imageUrl: 'https://images.unsplash.com/photo-1640118591547-906514188b6f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%D%3D&auto=format&fit=crop&w=1167&q=80' },
+    { id: 'web3-rust', pathId: 'blockchain-web3', title: 'Desarrollo en Solana con Rust', description: 'Fácil: Escribe un programa simple en Rust que imprima "Hola, Solana!". Fácil: Define una struct en Rust para representar una cuenta de programa en Solana, con un campo para un contador. Intermedio: Implementa una función que inicialice la cuenta de un programa con un valor inicial. Intermedio: Crea una instrucción para un programa de Solana que incremente el contador en una cuenta de programa específica. Avanzado: Desarrolla un programa más complejo que maneje múltiples cuentas y transacciones, utilizando cross-program invocations (invocaciones entre programas).', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=danielsolis', imageUrl: 'https://images.unsplash.com/photo-1642159829394-11648e285094?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%D%3D&auto=format&fit=crop&w=1170&q=80'},
   
     // Ciberseguridad
-    { id: 'cyber-intro', pathId: 'ciberseguridad', title: 'Fundamentos de Ciberseguridad', description: 'Fácil: Investiga y explica la diferencia entre HTTP y HTTPS y por qué es importante para la seguridad web. Fácil: Identifica los 5 principales errores de configuración de seguridad en una red Wi-Fi doméstica. Intermedio: Describe y crea un ejemplo de cómo funciona un ataque de SQL Injection en una aplicación web. Intermedio: Investiga y explica los pasos de una cadena de ataque (kill chain) para una intrusión en una red corporativa. Avanzado: Diseña una estrategia de defensa a profundidad para una aplicación web, incluyendo capas como WAF, IDS/IPS, control de acceso y monitoreo.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=miguelromero', imageUrl: 'https://images.unsplash.com/photo-1544890225-2f3faec4cd60?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1025&q=80' },
+    { id: 'cyber-intro', pathId: 'ciberseguridad', title: 'Fundamentos de Ciberseguridad', description: 'Fácil: Investiga y explica la diferencia entre HTTP y HTTPS y por qué es importante para la seguridad web. Fácil: Identifica los 5 principales errores de configuración de seguridad en una red Wi-Fi doméstica. Intermedio: Describe y crea un ejemplo de cómo funciona un ataque de SQL Injection en una aplicación web. Intermedio: Investiga y explica los pasos de una cadena de ataque (kill chain) para una intrusión en una red corporativa. Avanzado: Diseña una estrategia de defensa a profundidad para una aplicación web, incluyendo capas como WAF, IDS/IPS, control de acceso y monitoreo.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=miguelromero', imageUrl: 'https://images.unsplash.com/photo-1544890225-2f3faec4cd60?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%D%3D&auto=format&fit=crop&w=1025&q=80' },
   ];
 
   const pythonReactQuiz: Lesson = {
@@ -138,10 +138,22 @@ const pythonModules: CourseModule[] = [
                     ]
                 }
             },
-            { id: 'py-b2', title: 'Función de Suma', duration: '5 min', difficulty: 'Fácil', content: '<h1>Función de Suma</h1><p>Aprende a definir funciones. Crea una función que acepte dos números como argumentos y devuelva su suma. Practicarás la definición de funciones, parámetros y el `return`.</p>', order: 2 },
-            { id: 'py-b3', title: 'Saludo a Usuario', duration: '5 min', difficulty: 'Fácil', content: '<h1>Saludo a Usuario</h1><p>Interactúa con el usuario. Escribe un script que solicite el nombre del usuario usando la función `input()` y luego imprima un saludo personalizado, como "Hola, [nombre]".</p>', order: 3 },
-            { id: 'py-b4', title: 'Número Par o Impar', duration: '5 min', difficulty: 'Fácil', content: '<h1>Número Par o Impar</h1><p>Introduce la lógica condicional. Escribe un programa que pida un número y determine si es par o impar, utilizando el operador módulo (`%`) y una declaración `if-else`.</p>', order: 4 },
-            { id: 'py-b5', title: 'Conversor de Temperatura', duration: '5 min', difficulty: 'Fácil', content: '<h1>Conversor de Temperatura</h1><p>Practica operaciones matemáticas. Crea un programa que convierta una temperatura de grados Celsius a Fahrenheit. La fórmula es: F = (C * 9/5) + 32.</p>', order: 5 },
+            { id: 'py-b2', title: 'Función de Suma', duration: '5 min', difficulty: 'Fácil', content: '<h1>Función de Suma</h1><p>Aprende a definir funciones. Crea una función que acepte dos números como argumentos y devuelva su suma. Practicarás la definición de funciones, parámetros y el `return`.</p>', order: 2,
+              imageUrl: "https://images.unsplash.com/photo-1509475826633-fed577a2c11b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYXRoJTIwZnVuY3Rpb258ZW58MHx8fHwxNzU4ODk5NTEyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "Z1Yd7upQsXY"
+            },
+            { id: 'py-b3', title: 'Saludo a Usuario', duration: '5 min', difficulty: 'Fácil', content: '<h1>Saludo a Usuario</h1><p>Interactúa con el usuario. Escribe un script que solicite el nombre del usuario usando la función `input()` y luego imprima un saludo personalizado, como "Hola, [nombre]".</p>', order: 3,
+              imageUrl: "https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxncmVldGluZ3xlbnwwfHx8fDE3NTg4OTk1ODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "AL3f4gHn9S0"
+            },
+            { id: 'py-b4', title: 'Número Par o Impar', duration: '5 min', difficulty: 'Fácil', content: '<h1>Número Par o Impar</h1><p>Introduce la lógica condicional. Escribe un programa que pida un número y determine si es par o impar, utilizando el operador módulo (`%`) y una declaración `if-else`.</p>', order: 4,
+              imageUrl: "https://images.unsplash.com/photo-1518676590629-3d9409584d95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxvZGQlMjBldmVufGVufDB8fHx8MTc1ODg5OTY2Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "c24l5dI-5gI"
+            },
+            { id: 'py-b5', title: 'Conversor de Temperatura', duration: '5 min', difficulty: 'Fácil', content: '<h1>Conversor de Temperatura</h1><p>Practica operaciones matemáticas. Crea un programa que convierta una temperatura de grados Celsius a Fahrenheit. La fórmula es: F = (C * 9/5) + 32.</p>', order: 5,
+              imageUrl: "https://images.unsplash.com/photo-1613416515891-1823927429b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0ZW1wZXJhdHVyZSUyMGNvbnZlcnRvfGVufDB8fHx8MTc1ODg5OTcyOHww&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "eMMZp5d0-zM"
+            },
         ]
     },
     {
@@ -149,11 +161,26 @@ const pythonModules: CourseModule[] = [
         title: 'Intermedio',
         order: 2,
         lessons: [
-            { id: 'py-i1', title: 'Frecuencia de Palabras', duration: '15 min', difficulty: 'Medio', content: '<h1>Frecuencia de Palabras</h1><p>Manipulación de texto y diccionarios. Desarrolla un programa que lea un archivo de texto, cuente la frecuencia de cada palabra (ignorando mayúsculas/minúsculas) y las muestre ordenadas.</p>', order: 1 },
-            { id: 'py-i2', title: 'Clase Libro', duration: '15 min', difficulty: 'Medio', content: '<h1>Clase Libro</h1><p>Programación Orientada a Objetos. Crea una clase para representar un objeto `Libro` con propiedades como `titulo`, `autor` y `año`. Incluye un método para mostrar la información del libro.</p>', order: 2 },
-            { id: 'py-i3', title: 'Conversión con List Comprehension', duration: '10 min', difficulty: 'Medio', content: '<h1>Conversión con List Comprehension</h1><p>Aprende una forma concisa de crear listas. Implementa un programa que convierta una lista de temperaturas de Celsius a Fahrenheit usando "list comprehensions".</p>', order: 3 },
-            { id: 'py-i4', title: 'Simulador de Cajero Automático', duration: '20 min', difficulty: 'Medio', content: '<h1>Simulador de Cajero Automático</h1><p>Construye una aplicación de consola más compleja. Desarrolla un programa para simular las operaciones básicas de un cajero automático (consultar saldo, depositar, retirar) usando un bucle y condicionales.</p>', order: 4 },
-            { id: 'py-i5', title: 'Herramienta CLI con Argparse', duration: '20 min', difficulty: 'Medio', content: '<h1>Herramienta CLI con Argparse</h1><p>Crea herramientas de línea de comandos profesionales. Utiliza el módulo `argparse` para construir una CLI que acepte argumentos, como un nombre y un número, y los imprima.</p>', order: 5 },
+            { id: 'py-i1', title: 'Frecuencia de Palabras', duration: '15 min', difficulty: 'Medio', content: '<h1>Frecuencia de Palabras</h1><p>Manipulación de texto y diccionarios. Desarrolla un programa que lea un archivo de texto, cuente la frecuencia de cada palabra (ignorando mayúsculas/minúsculas) y las muestre ordenadas.</p>', order: 1,
+              imageUrl: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxib29rJTIwdGV4dHxlbnwwfHx8fDE3NTg4OTk4MTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "bA2-za-c-9M"
+            },
+            { id: 'py-i2', title: 'Clase Libro', duration: '15 min', difficulty: 'Medio', content: '<h1>Clase Libro</h1><p>Programación Orientada a Objetos. Crea una clase para representar un objeto `Libro` con propiedades como `titulo`, `autor` y `año`. Incluye un método para mostrar la información del libro.</p>', order: 2,
+              imageUrl: "https://images.unsplash.com/photo-1532012197267-da84d127e765?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxib29rJTIwb2JqZWN0fGVufDB8fHx8MTc1ODg5OTg4Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "8O5p_2pcb2A"
+            },
+            { id: 'py-i3', title: 'Conversión con List Comprehension', duration: '10 min', difficulty: 'Medio', content: '<h1>Conversión con List Comprehension</h1><p>Aprende una forma concisa de crear listas. Implementa un programa que convierta una lista de temperaturas de Celsius a Fahrenheit usando "list comprehensions".</p>', order: 3,
+              imageUrl: "https://images.unsplash.com/photo-1605714330349-9c64213a04a3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxweXRob24lMjBsaXN0fGVufDB8fHx8MTc1ODg5OTk0Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "1-NYWk0n0yA"
+            },
+            { id: 'py-i4', title: 'Simulador de Cajero Automático', duration: '20 min', difficulty: 'Medio', content: '<h1>Simulador de Cajero Automático</h1><p>Construye una aplicación de consola más compleja. Desarrolla un programa para simular las operaciones básicas de un cajero automático (consultar saldo, depositar, retirar) usando un bucle y condicionales.</p>', order: 4,
+              imageUrl: "https://images.unsplash.com/photo-1583541999946-77861f5c3f9c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhdG0lMjBtYWNoaW5lfGVufDB8fHx8MTc1ODkwMDAyMnww&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "j-ND0aaN9T8"
+            },
+            { id: 'py-i5', title: 'Herramienta CLI con Argparse', duration: '20 min', difficulty: 'Medio', content: '<h1>Herramienta CLI con Argparse</h1><p>Crea herramientas de línea de comandos profesionales. Utiliza el módulo `argparse` para construir una CLI que acepte argumentos, como un nombre y un número, y los imprima.</p>', order: 5,
+              imageUrl: "https://images.unsplash.com/photo-1598228945628-3453303e92a4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb21tYW5kJTIwbGluZXxlbnwwfHx8fDE3NTg5MDAxMTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "rnbeS_H02jQ"
+            },
         ]
     },
     {
@@ -161,8 +188,14 @@ const pythonModules: CourseModule[] = [
         title: 'Experto',
         order: 3,
         lessons: [
-            { id: 'py-e1', title: 'Motor de Juego Básico con Pygame', duration: '60 min', difficulty: 'Difícil', content: '<h1>Motor de Juego Básico con Pygame</h1><p>Explora el desarrollo de juegos. Construye un motor de juego 2D muy básico utilizando Pygame que inicialice una ventana, maneje un bucle de juego principal y permita mover un objeto (un rectángulo) con las teclas de flecha.</p>', order: 1 },
-            { id: 'py-e2', title: 'API RESTful con Flask', duration: '50 min', difficulty: 'Difícil', content: '<h1>API RESTful con Flask</h1><p>Iníciate en el desarrollo backend. Crea una API RESTful utilizando Flask o FastAPI para gestionar una lista de usuarios en memoria. Implementa endpoints para obtener todos los usuarios (GET) y añadir un nuevo usuario (POST).</p>', order: 2 },
+            { id: 'py-e1', title: 'Motor de Juego Básico con Pygame', duration: '60 min', difficulty: 'Difícil', content: '<h1>Motor de Juego Básico con Pygame</h1><p>Explora el desarrollo de juegos. Construye un motor de juego 2D muy básico utilizando Pygame que inicialice una ventana, maneje un bucle de juego principal y permita mover un objeto (un rectángulo) con las teclas de flecha.</p>', order: 1,
+              imageUrl: "https://images.unsplash.com/photo-1593348128362-d0f68482c3c0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxweWdhbWV8ZW58MHx8fHwxNzU4OTAwMTc4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "jO6qQDNa2_g"
+            },
+            { id: 'py-e2', title: 'API RESTful con Flask', duration: '50 min', difficulty: 'Difícil', content: '<h1>API RESTful con Flask</h1><p>Iníciate en el desarrollo backend. Crea una API RESTful utilizando Flask o FastAPI para gestionar una lista de usuarios en memoria. Implementa endpoints para obtener todos los usuarios (GET) y añadir un nuevo usuario (POST).</p>', order: 2,
+              imageUrl: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmbGFzayUyMHB5dGhvbnxlbnwwfHx8fDE3NTg5MDAyNDV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "s_ht4AKnWZg"
+            },
         ]
     }
 ];
@@ -177,10 +210,22 @@ const javascriptModules: CourseModule[] = [
               imageUrl: "https://images.unsplash.com/photo-1509966756634-9c23dd6e6815?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyYW5kb20lMjBjb2xvcnN8ZW58MHx8fHwxNzU4NzYwNDIwfDA&ixlib=rb-4.1.0&q=80&w=1080",
               youtubeVideoId: "3x9AtR_bK-g",
             },
-            { id: 'js-b2', title: 'Validar Formulario Simple', duration: '5 min', difficulty: 'Fácil', content: '<h1>Validar Formulario Simple</h1><p>Eventos y validación. Crea un formulario HTML con un campo de email y un botón de envío. Usa JavaScript para interceptar el evento `submit` y mostrar una alerta si el campo de email está vacío, previniendo el envío del formulario.</p>', order: 2 },
-            { id: 'js-b3', title: 'El Mayor de Tres Números', duration: '5 min', difficulty: 'Fácil', content: '<h1>El Mayor de Tres Números</h1><p>Lógica y funciones. Crea una función de JavaScript que acepte tres números como parámetros y devuelva el mayor de ellos. Usa `Math.max()` o condicionales `if-else`.</p>', order: 3 },
-            { id: 'js-b4', title: 'Juego de Adivinanza de Números', duration: '10 min', difficulty: 'Fácil', content: '<h1>Juego de Adivinanza de Números</h1><p>Bucles y condicionales. Escribe un programa en la consola que genere un número aleatorio entre 1 y 10. Pide al usuario que adivine el número y dale pistas ("más alto", "más bajo") hasta que acierte.</p>', order: 4 },
-            { id: 'js-b5', title: 'Contador Regresivo', duration: '10 min', difficulty: 'Fácil', content: '<h1>Contador Regresivo</h1><p>Timers y manipulación del DOM. Crea un contador en una página web que comience en 10 y disminuya cada segundo. Cuando llegue a 0, muestra un mensaje. Usa `setInterval()` y actualiza el contenido de un elemento HTML.</p>', order: 5 },
+            { id: 'js-b2', title: 'Validar Formulario Simple', duration: '5 min', difficulty: 'Fácil', content: '<h1>Validar Formulario Simple</h1><p>Eventos y validación. Crea un formulario HTML con un campo de email y un botón de envío. Usa JavaScript para interceptar el evento `submit` y mostrar una alerta si el campo de email está vacío, previniendo el envío del formulario.</p>', order: 2,
+              imageUrl: "https://images.unsplash.com/photo-1563291074-2c841aa2dc52?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmb3JtJTIwdmFsaWRhdGlvbnxlbnwwfHx8fDE3NTg5MDAzNTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "SjH0F-2s36I"
+            },
+            { id: 'js-b3', title: 'El Mayor de Tres Números', duration: '5 min', difficulty: 'Fácil', content: '<h1>El Mayor de Tres Números</h1><p>Lógica y funciones. Crea una función de JavaScript que acepte tres números como parámetros y devuelva el mayor de ellos. Usa `Math.max()` o condicionales `if-else`.</p>', order: 3,
+              imageUrl: "https://images.unsplash.com/photo-1518676590629-3d9409584d95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxudW1iZXJzJTIwbG9naWN8ZW58MHx8fHwxNzU4OTAwNDEyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "QhGsoj5VZZ8"
+            },
+            { id: 'js-b4', title: 'Juego de Adivinanza de Números', duration: '10 min', difficulty: 'Fácil', content: '<h1>Juego de Adivinanza de Números</h1><p>Bucles y condicionales. Escribe un programa en la consola que genere un número aleatorio entre 1 y 10. Pide al usuario que adivine el número y dale pistas ("más alto", "más bajo") hasta que acierte.</p>', order: 4,
+              imageUrl: "https://images.unsplash.com/photo-1506992983354-94e09f6f6983?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxndWVzcyUyMGdhbWV8ZW58MHx8fHwxNzU4OTAwNDg5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "zL2Jp94I-48"
+            },
+            { id: 'js-b5', title: 'Contador Regresivo', duration: '10 min', difficulty: 'Fácil', content: '<h1>Contador Regresivo</h1><p>Timers y manipulación del DOM. Crea un contador en una página web que comience en 10 y disminuya cada segundo. Cuando llegue a 0, muestra un mensaje. Usa `setInterval()` y actualiza el contenido de un elemento HTML.</p>', order: 5,
+              imageUrl: "https://images.unsplash.com/photo-1508213629429-add2f87f272c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb3VudGRvd258ZW58MHx8fHwxNzU4OTAwNTUyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "x7WJ2e_w8d8"
+            },
         ]
     },
     {
@@ -188,11 +233,26 @@ const javascriptModules: CourseModule[] = [
         title: 'Intermedio',
         order: 2,
         lessons: [
-            { id: 'js-i1', title: 'Juego de Piedra, Papel o Tijera', duration: '20 min', difficulty: 'Medio', content: '<h1>Juego de Piedra, Papel o Tijera</h1><p>Lógica de juego. Desarrolla un juego simple de "Piedra, Papel o Tijera" contra la computadora. El usuario hace clic en un botón, la computadora elige al azar y se muestra el resultado en la página.</p>', order: 1 },
-            { id: 'js-i2', title: 'Consumir una API con Fetch', duration: '15 min', difficulty: 'Medio', content: '<h1>Consumir una API con Fetch</h1><p>Asincronía y APIs. Utiliza la API de `fetch` para obtener datos de una API pública (ej. JSONPlaceholder). Muestra una lista de títulos de "posts" en tu página web. Maneja el estado de carga y posibles errores.</p>', order: 2 },
-            { id: 'js-i3', title: 'Carrusel de Imágenes Básico', duration: '20 min', difficulty: 'Medio', content: '<h1>Carrusel de Imágenes Básico</h1><p>Manipulación avanzada del DOM. Crea un carrusel de imágenes con botones de "anterior" y "siguiente" para navegar entre un array de URLs de imágenes. Opcional: haz que se desplace automáticamente cada 3 segundos.</p>', order: 3 },
-            { id: 'js-i4', title: 'Filtro de Búsqueda Dinámico', duration: '15 min', difficulty: 'Medio', content: '<h1>Filtro de Búsqueda Dinámico</h1><p>Eventos y arrays. Para una lista de productos (un array de strings), crea un campo de texto donde, a medida que el usuario escribe, la lista de productos se filtra dinámicamente para mostrar solo los que coinciden.</p>', order: 4 },
-            { id: 'js-i5', title: 'Validador de Contraseñas', duration: '15 min', difficulty: 'Medio', content: '<h1>Validador de Contraseñas</h1><p>Expresiones regulares y UI. Crea un validador de contraseñas que verifique en tiempo real si la contraseña cumple con varias reglas (ej. longitud mínima, una mayúscula, un número) y muestra visualmente qué reglas se cumplen.</p>', order: 5 },
+            { id: 'js-i1', title: 'Juego de Piedra, Papel o Tijera', duration: '20 min', difficulty: 'Medio', content: '<h1>Juego de Piedra, Papel o Tijera</h1><p>Lógica de juego. Desarrolla un juego simple de "Piedra, Papel o Tijera" contra la computadora. El usuario hace clic en un botón, la computadora elige al azar y se muestra el resultado en la página.</p>', order: 1,
+              imageUrl: "https://images.unsplash.com/photo-1593348128362-d0f68482c3c0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyb2NrJTIwcGFwZXIlMjBzY2lzc29yc3xlbnwwfHx8fDE3NTg5MDA2MjJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "1-Gle3J43xU"
+            },
+            { id: 'js-i2', title: 'Consumir una API con Fetch', duration: '15 min', difficulty: 'Medio', content: '<h1>Consumir una API con Fetch</h1><p>Asincronía y APIs. Utiliza la API de `fetch` para obtener datos de una API pública (ej. JSONPlaceholder). Muestra una lista de títulos de "posts" en tu página web. Maneja el estado de carga y posibles errores.</p>', order: 2,
+              imageUrl: "https://images.unsplash.com/photo-1504242133235-d2bab161c616?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhcGklMjBmZXRjaHxlbnwwfHx8fDE3NTg5MDA2NzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "cuEtnrL9-H0"
+            },
+            { id: 'js-i3', title: 'Carrusel de Imágenes Básico', duration: '20 min', difficulty: 'Medio', content: '<h1>Carrusel de Imágenes Básico</h1><p>Manipulación avanzada del DOM. Crea un carrusel de imágenes con botones de "anterior" y "siguiente" para navegar entre un array de URLs de imágenes. Opcional: haz que se desplace automáticamente cada 3 segundos.</p>', order: 3,
+              imageUrl: "https://images.unsplash.com/photo-1611262588024-d12430b98920?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbWFnZSUyMGNhcm91c2VsfGVufDB8fHx8MTc1ODkwMDczMXww&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "Kts_NkttA9Y"
+            },
+            { id: 'js-i4', title: 'Filtro de Búsqueda Dinámico', duration: '15 min', difficulty: 'Medio', content: '<h1>Filtro de Búsqueda Dinámico</h1><p>Eventos y arrays. Para una lista de productos (un array de strings), crea un campo de texto donde, a medida que el usuario escribe, la lista de productos se filtra dinámicamente para mostrar solo los que coinciden.</p>', order: 4,
+              imageUrl: "https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzZWFyY2glMjBmaWx0ZXJ8ZW58MHx8fHwxNzU4OTAwNzk2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "V-mP1JCa3H8"
+            },
+            { id: 'js-i5', title: 'Validador de Contraseñas', duration: '15 min', difficulty: 'Medio', content: '<h1>Validador de Contraseñas</h1><p>Expresiones regulares y UI. Crea un validador de contraseñas que verifique en tiempo real si la contraseña cumple con varias reglas (ej. longitud mínima, una mayúscula, un número) y muestra visualmente qué reglas se cumplen.</p>', order: 5,
+              imageUrl: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwYXNzd29yZCUyMHZhbGlkYXRpb258ZW58MHx8fHwxNzU4OTAwODYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "Mn24i-y_p-Y"
+            },
         ]
     },
     {
@@ -200,8 +260,14 @@ const javascriptModules: CourseModule[] = [
         title: 'Experto',
         order: 3,
         lessons: [
-            { id: 'js-e1', title: 'Aplicación de Tareas (To-do list) con React', duration: '60 min', difficulty: 'Difícil', content: '<h1>Aplicación de Tareas con React</h1><p>Frameworks de Frontend. Crea una aplicación de una sola página (SPA) con React. Debe permitir añadir tareas a una lista, eliminarlas y marcarlas como completadas. Gestiona el estado del componente.</p>', order: 1 },
-            { id: 'js-e2', title: 'Animación de Partículas con Canvas', duration: '50 min', difficulty: 'Difícil', content: '<h1>Animación de Partículas con Canvas</h1><p>Gráficos y Animación. Implementa una animación simple utilizando la API de Canvas de HTML5. Crea un conjunto de partículas (círculos) que se mueven por la pantalla y rebotan en los bordes. Utiliza `requestAnimationFrame` para un rendimiento óptimo.</p>', order: 2 },
+            { id: 'js-e1', title: 'Aplicación de Tareas (To-do list) con React', duration: '60 min', difficulty: 'Difícil', content: '<h1>Aplicación de Tareas con React</h1><p>Frameworks de Frontend. Crea una aplicación de una sola página (SPA) con React. Debe permitir añadir tareas a una lista, eliminarlas y marcarlas como completadas. Gestiona el estado del componente.</p>', order: 1,
+              imageUrl: "https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0b2RvJTIwbGlzdCUyMGFwcHxlbnwwfHx8fDE3NTg5MDA5MjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "E1E08i2UJGI"
+            },
+            { id: 'js-e2', title: 'Animación de Partículas con Canvas', duration: '50 min', difficulty: 'Difícil', content: '<h1>Animación de Partículas con Canvas</h1><p>Gráficos y Animación. Implementa una animación simple utilizando la API de Canvas de HTML5. Crea un conjunto de partículas (círculos) que se mueven por la pantalla y rebotan en los bordes. Utiliza `requestAnimationFrame` para un rendimiento óptimo.</p>', order: 2,
+              imageUrl: "https://images.unsplash.com/photo-1534685785732-612651921318?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwYXJ0aWNsZSUyMGFuaW1hdGlvbnxlbnwwfHx8fDE3NTg5MDA5ODN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "Yvz_6i2p9Qs"
+            },
         ]
     }
 ];
@@ -232,6 +298,8 @@ const genericModules = (courseId: string, courseTitle: string): CourseModule[] =
                 difficulty: i < 3 ? 'Fácil' : i < 7 ? 'Medio' : 'Difícil',
                 content: lessonContent[i],
                 order: i + 1,
+                imageUrl: `https://picsum.photos/seed/${courseId.replace(/\W/g, '')}${i}/600/400`,
+                youtubeVideoId: 'dQw4w9WgXcQ' // Rick Astley as a placeholder :)
             })),
         },
     ];
@@ -254,7 +322,7 @@ export const courses: Course[] = courseData.map(course => {
                 order: 1,
                 lessons: [
                     pythonReactQuiz,
-                    { id: 'react-l2', title: 'Componentes y Props', duration: '15 min', difficulty: 'Fácil', content: '<h1>Componentes y Props</h1><p>Aprende a crear componentes reutilizables y a pasar datos entre ellos usando props.</p>', order: 2 },
+                    { id: 'react-l2', title: 'Componentes y Props', duration: '15 min', difficulty: 'Fácil', content: '<h1>Componentes y Props</h1><p>Aprende a crear componentes reutilizables y a pasar datos entre ellos usando props.</p>', order: 2, imageUrl: 'https://images.unsplash.com/photo-1569748130764-2fed59102442?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZWFjdCUyMGNvbXBvbmVudHN8ZW58MHx8fHwxNzU4NzYwMTEyfDA&ixlib=rb-4.1.0&q=80&w=1080', youtubeVideoId: '0u97-b2MrxU' },
                 ]
             }
         ]
@@ -271,5 +339,6 @@ export const courses: Course[] = courseData.map(course => {
     
 
     
+
 
 
