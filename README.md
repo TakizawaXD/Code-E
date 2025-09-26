@@ -1,6 +1,6 @@
 # Code-E: Plataforma de Aprendizaje en Línea
 
-Code-E es una plataforma web moderna para el aprendizaje en línea, diseñada para ofrecer a los usuarios una experiencia educativa interactiva y comunitaria. Construida con Next.js y Firebase, la aplicación permite a los usuarios explorar cursos, seguir rutas de aprendizaje, realizar cuestionarios y participar en foros de discusión.
+Code-E es una plataforma web moderna para el aprendizaje en línea, diseñada para ofrecer a los usuarios una experiencia educativa interactiva y comunitaria. Construida con Next.js para el frontend y un backend de Python (Flask), la aplicación permite a los usuarios explorar cursos, seguir rutas de aprendizaje y participar en foros de discusión.
 
 ## 🎯 Propósito, Audiencia y Visión
 
@@ -25,30 +25,28 @@ Code-E está dirigido a un público amplio y diverso, unido por el deseo de apre
 
 La visión a largo plazo para Code-E es convertirla en una plataforma de referencia en el aprendizaje tecnológico en español. Las expectativas de futuro incluyen:
 
--   **Integración de IA:** Incorporar herramientas de inteligencia artificial (con Genkit) para ofrecer tutorías personalizadas, corrección automática de código y recomendaciones de aprendizaje adaptativas.
--   **Gamificación Avanzada:** Desarrollar un sistema completo de puntos, insignias (badges) y tablas de clasificación para motivar a los estudiantes y recompensar su progreso.
--   **Bolsa de Trabajo y Perfiles Profesionales:** Crear un módulo donde las empresas puedan reclutar talento directamente desde la plataforma, basándose en los logros, certificados y portafolios de los estudiantes.
--   **Contenido Interactivo Avanzado:** Más allá de los videos y cuestionarios, se espera añadir "playgrounds" de código interactivos y la posibilidad de que los usuarios suban y compartan sus propios proyectos.
+-   **Integración de IA:** Incorporar herramientas de inteligencia artificial para ofrecer tutorías personalizadas y recomendaciones de aprendizaje.
+-   **Gamificación Avanzada:** Desarrollar un sistema completo de puntos, insignias y tablas de clasificación para motivar a los estudiantes.
+-   **Bolsa de Trabajo:** Crear un módulo donde las empresas puedan reclutar talento directamente desde la plataforma.
 
 ## ✨ Características Principales
 
--   **Autenticación de Usuarios:** Sistema completo de registro e inicio de sesión con correo y contraseña.
+-   **Autenticación de Usuarios:** Sistema de registro e inicio de sesión.
 -   **Catálogo de Cursos:** Explora cursos organizados por categorías y rutas de aprendizaje.
--   **Progreso del Curso:** Sigue tu avance en cada curso, marca lecciones como completadas y realiza cuestionarios.
--   **Panel de Usuario:** Un dashboard personal donde puedes ver tus cursos en progreso y los certificados obtenidos.
--   **Comunidad y Foros:** Un espacio para que los usuarios inicien discusiones, hagan preguntas y colaboren entre sí.
--   **Diseño Responsivo:** Interfaz de usuario optimizada para una experiencia fluida en computadoras de escritorio y dispositivos móviles.
--   **Tema Oscuro y Claro:** Personaliza la apariencia de la plataforma según tus preferencias.
+-   **Progreso del Curso:** Sigue tu avance en cada curso y marca lecciones como completadas.
+-   **Panel de Usuario:** Un dashboard personal para ver tus cursos y progreso.
+-   **Comunidad y Foros:** Un espacio para que los usuarios inicien discusiones y colaboren.
+-   **Diseño Responsivo:** Interfaz de usuario optimizada para escritorio y móviles.
 
 ---
 
 ## 🚀 Stack Tecnológico
 
 -   **Framework Frontend:** [Next.js](https://nextjs.org/) (con App Router)
--   **Lenguaje:** [TypeScript](https://www.typescriptlang.org/)
+-   **Backend:** [Python](https://www.python.org/) con [Flask](https://flask.palletsprojects.com/)
+-   **Base de Datos:** [MySQL](https://www.mysql.com/) (local)
+-   **Lenguaje (Frontend):** [TypeScript](https://www.typescriptlang.org/)
 -   **UI y Estilos:** [React](https://reactjs.org/), [Tailwind CSS](https://tailwindcss.com/), [ShadCN UI](https://ui.shadcn.com/)
--   **Backend y Base de Datos:** [Firebase](https://firebase.google.com/) (Authentication, Firestore)
--   **Gestión de Formularios:** [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/)
 -   **Iconos:** [Lucide React](https://lucide.dev/)
 
 ---
@@ -59,105 +57,62 @@ He aquí un diagrama de alto nivel que ilustra la arquitectura de Code-E:
 
 ```
 +---------------------------+      +---------------------------+      +---------------------------+
-|      Cliente (Navegador)  |      |      Servidor (Next.js)   |      |    Servicios de Backend   |
+|      Cliente (Navegador)  |      |      Servidor (Next.js)   |      |      Servidor (Flask)     |
 |---------------------------|      |---------------------------|      |---------------------------|
 |                           |      |                           |      |                           |
-|   React (ShadCN UI)       | <--> |   Routing (App Router)    |      |                           |
-|   - Componentes           |      |   - Páginas (Server/Client) |      |   Firebase Authentication |
-|   - Vistas (Cursos, Dash) |      |   - API Routes / Actions    | <--> |   - Gestión de Usuarios   |
-|   - Hooks (useUser, etc.) |      |                           |      |                           |
+|   React (ShadCN UI)       | <--> |   Routing (App Router)    |      |    API Endpoints (REST)   |
+|   - Componentes           |      |   - Páginas (Server/Client) | <--> |   - /api/courses          |
+|   - Vistas (Cursos, Dash) |      |   - Server Actions        |      |   - /api/users            |
+|                           |      |                           |      |   - Lógica de negocio     |
 |                           |      |                           |      |                           |
-|   Tailwind CSS            |      |   Lógica de Negocio       |      |   Firestore (Base de Datos) |
-|   - Estilos y Tema        |      |   - src/lib/data.ts       |      |   - Cursos, Progreso, etc.  |
-|                           |      |                           |      |                           |
+|   Tailwind CSS            |      |   Lógica de Presentación  |      |                           |
+|   - Estilos y Tema        |      |                           |      |                           |
 +---------------------------+      +---------------------------+      +---------------------------+
-       |                                      ^
-       | (Peticiones HTTPS)                   | (SDK de Firebase)
-       |                                      |
-       +--------------------------------------+
-
+                                                                             |
+       (Peticiones HTTP/API)                                                 | (Conector MySQL)
+                                                                             |
+                                                                    +--------------------+
+                                                                    |   Base de Datos    |
+                                                                    |      (MySQL)       |
+                                                                    +--------------------+
 ```
 
--   **Cliente (Navegador):** Es la interfaz de usuario con la que interactúan los usuarios. Construida con React y componentes de ShadCN UI, se encarga de presentar la información y capturar las interacciones.
--   **Servidor (Next.js):** Gestiona el enrutamiento, el renderizado de páginas (tanto en el servidor como en el cliente) y la lógica de negocio. Se comunica con Firebase a través del SDK para obtener y escribir datos.
--   **Servicios de Backend (Firebase):** Proporciona los servicios de autenticación y la base de datos NoSQL (Firestore) para almacenar toda la información dinámica de la aplicación, como perfiles de usuario, progreso de cursos y discusiones del foro.
+-   **Cliente (Navegador):** La interfaz de usuario construida con React, Next.js y ShadCN UI.
+-   **Servidor (Next.js):** Gestiona el renderizado de páginas y se comunica con el backend de Flask a través de llamadas a su API REST.
+-   **Servidor (Flask):** Provee una API REST que maneja toda la lógica de negocio, incluyendo la autenticación de usuarios y la interacción con la base de datos MySQL.
+-   **Base de Datos (MySQL):** Almacena toda la información de la aplicación, como usuarios, cursos, progreso, etc.
 
 ---
 
-## 🗃️ Estructura de la Base de Datos (Firestore)
+## 🗃️ Esquema de la Base de Datos (MySQL)
 
-A continuación se detalla la estructura de colecciones y los esquemas de datos utilizados en la base de datos de Firestore.
+A continuación se detalla la estructura de tablas y relaciones para la base de datos MySQL.
 
-### Entidades Principales
-
--   **User:** Almacena la información del perfil público de cada usuario.
--   **Course:** Contiene los detalles de cada curso, como título, descripción e instructor.
--   **LearningPath:** Agrupa los cursos en rutas de aprendizaje temáticas.
--   **CourseModule:** Representa un módulo o sección dentro de un curso.
--   **Lesson:** Contiene el material de una lección individual, incluyendo contenido, videos y cuestionarios.
--   **Progress:** Rastrea el progreso de un usuario en un curso específico, incluyendo las lecciones completadas.
--   **ForumThread:** Modela una discusión principal dentro del foro de la comunidad.
--   **ForumPost:** Representa una respuesta o un mensaje individual dentro de una discusión.
--   **Notification, Badge, GamificationStats:** Entidades para futuras funcionalidades de gamificación y notificaciones.
-
-### Rutas de las Colecciones
-
-```json
-{
-  "/learningPaths/{learningPathId}": { "schema": "LearningPath" },
-  "/courses/{courseId}": {
-    "schema": "Course",
-    "subcollections": {
-      "/modules/{moduleId}": {
-        "schema": "CourseModule",
-        "subcollections": {
-          "/lessons/{lessonId}": {
-            "schema": "Lesson",
-            "subcollections": {
-              "/comments/{commentId}": { "schema": "Comment" }
-            }
-          }
-        }
-      }
-    }
-  },
-  "/users/{userId}": {
-    "schema": "User",
-    "subcollections": {
-      "/progress/{progressId}": { "schema": "Progress" },
-      "/notifications/{notificationId}": { "schema": "Notification" },
-      "/gamification/{statsId}": { "schema": "GamificationStats" },
-      "/badges/{userBadgeId}": { "schema": "UserBadge" }
-    }
-  },
-  "/badges/{badgeId}": { "schema": "Badge" },
-  "/forumThreads/{threadId}": {
-    "schema": "ForumThread",
-    "subcollections": {
-      "/posts/{postId}": { "schema": "ForumPost" }
-    }
-  }
-}
-```
+-   **`users`**: Almacena la información de los usuarios.
+    -   `id` (PK), `name`, `username`, `email`, `password_hash`, `created_at`
+-   **`learning_paths`**: Agrupa los cursos en rutas de aprendizaje.
+    -   `id` (PK), `title`, `description`
+-   **`courses`**: Contiene los detalles de cada curso.
+    -   `id` (PK), `title`, `description`, `instructor_name`, `path_id` (FK a `learning_paths`)
+-   **`modules`**: Representa un módulo o sección dentro de un curso.
+    -   `id` (PK), `title`, `course_id` (FK a `courses`), `order`
+-   **`lessons`**: Contiene el material de una lección individual.
+    -   `id` (PK), `title`, `content` (TEXT), `video_url`, `module_id` (FK a `modules`), `order`
+-   **`progress`**: Rastrea el progreso de un usuario en un curso.
+    -   `id` (PK), `user_id` (FK a `users`), `course_id` (FK a `courses`), `completed_lessons` (JSON o tabla pivote), `status` ('in_progress', 'completed')
+-   **`forum_threads`**: Modela una discusión en el foro.
+    -   `id` (PK), `title`, `content` (TEXT), `user_id` (FK a `users`), `created_at`
+-   **`forum_posts`**: Representa una respuesta dentro de una discusión.
+    -   `id` (PK), `content` (TEXT), `thread_id` (FK a `forum_threads`), `user_id` (FK a `users`), `created_at`
 
 ---
 
 ## 📁 Estructura de Carpetas
 
--   **`/src/app`**: Contiene las rutas principales de la aplicación siguiendo la convención del App Router de Next.js.
-    -   **`/(main)`**: Layout principal para las páginas autenticadas y públicas (header, footer).
-    -   **`/auth`**: Layout y páginas para el flujo de autenticación (login, signup).
--   **`/src/components`**: Componentes de React reutilizables.
-    -   **`/ui`**: Componentes base de ShadCN UI.
-    -   **`/layout`**: Componentes estructurales como el Header y la Navegación.
--   **`/src/lib`**: Contiene la lógica y los datos centrales de la aplicación.
-    -   **`data.ts`**: Simula una base de datos con datos estáticos para cursos y lecciones.
-    -   **`types.ts`**: Definiciones de tipos de TypeScript para todo el proyecto.
-    -   **`seed.ts`**: Script para poblar la base de datos de Firestore.
--   **`/src/firebase`**: Configuración y hooks personalizados para interactuar con Firebase.
-    -   **`provider.tsx`**: Proveedor de contexto para los servicios de Firebase.
-    -   **`use-collection.tsx` / `use-doc.tsx`**: Hooks para suscripciones en tiempo real a Firestore.
--   **`/src/ai`**: Reservado para futuras integraciones de IA con Genkit.
+-   **`/src/app`**: Rutas principales de la aplicación (App Router de Next.js).
+-   **`/src/components`**: Componentes de React reutilizables (UI, layout, etc.).
+-   **`/src/lib`**: Lógica de cliente, tipos de TypeScript y datos estáticos.
+-   **`/backend`**: (Directorio sugerido) Contendría la aplicación Flask, modelos de datos y lógica de la API.
 
 ---
 
@@ -166,49 +121,42 @@ A continuación se detalla la estructura de colecciones y los esquemas de datos 
 ### 1. Requisitos Previos
 
 -   Node.js (versión 18 o superior)
--   `pnpm` o `npm` como gestor de paquetes
+-   `npm` o `pnpm`
+-   Python (versión 3.8 o superior) y `pip`
+-   Un servidor de MySQL local instalado y en ejecución
 
-### 2. Configuración del Proyecto
+### 2. Configuración del Frontend
 
-1.  **Clona el repositorio:**
+1.  **Clona el repositorio e instala dependencias:**
     ```bash
     git clone <URL_DEL_REPOSITORIO>
     cd <NOMBRE_DEL_PROYECTO>
-    ```
-
-2.  **Instala las dependencias:**
-    ```bash
     npm install
     ```
-
-### 3. Seeding de la Base de Datos
-
-Para poblar tu base de datos de Firestore con el conjunto inicial de cursos, rutas de aprendizaje y lecciones, ejecuta el siguiente comando desde tu terminal:
-
-```bash
-npx tsx src/lib/seed.ts
-```
-
-Este comando ejecuta el script de *seeding* que escribirá los datos necesarios en tu instancia de Firestore. Solo necesitas ejecutarlo una vez para configurar el proyecto.
-
-### 4. Ejecutar el Servidor de Desarrollo
-
-Una vez que la base de datos esté poblada, puedes iniciar el servidor de desarrollo:
-
-```bash
-npm run dev
-```
-
-Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver la aplicación en funcionamiento.
-
-### 5. Añadir o Modificar Cursos
-
-Todo el contenido de los cursos se gestiona dentro del archivo `src/lib/seed.ts`. Para añadir, editar o eliminar un curso, sigue estos pasos:
-
-1.  **Abre `src/lib/seed.ts`**: Dentro de este archivo, encontrarás arrays de datos para `learningPaths`, `courses`, y `modulesAndLessons`.
-2.  **Modifica los datos**: Añade o edita los objetos en estos arrays para reflejar el contenido que deseas.
-3.  **Vuelve a ejecutar el script de seeding**:
+2.  **Inicia el servidor de desarrollo de Next.js:**
     ```bash
-    npx tsx src/lib/seed.ts
+    npm run dev
     ```
-    Esto sobrescribirá los datos de la base de datos con los cambios que has realizado en el archivo.
+
+### 3. Configuración del Backend
+
+1.  **Navega a la carpeta del backend y crea un entorno virtual:**
+    ```bash
+    cd backend
+    python -m venv venv
+    source venv/bin/activate  # En Windows: venv\Scripts\activate
+    ```
+2.  **Instala las dependencias de Python:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+3.  **Configura la base de datos:**
+    -   Crea una base de datos en tu servidor MySQL.
+    -   Configura la cadena de conexión en un archivo `.env` dentro de la carpeta `backend`.
+    -   Ejecuta las migraciones para crear las tablas: `flask db upgrade`
+4.  **Inicia el servidor de Flask:**
+    ```bash
+    flask run
+    ```
+
+Ahora, la aplicación Next.js debería poder comunicarse con tu API de Flask local.
