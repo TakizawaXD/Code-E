@@ -90,7 +90,7 @@ const courseData: Omit<Course, 'modules'>[] = [
     order: 1,
     content: '<h1>Introducción a React</h1><p>React es una librería de JavaScript para construir interfaces de usuario. En esta lección, aprenderás los conceptos fundamentales de React, incluyendo componentes, JSX y el DOM virtual. Prepárate para el cuestionario al final.</p>',
     imageUrl: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZWFjdCUyMGphdmFzY3JpcHR8ZW58MHx8fHwxNzU4NzU5ODgxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-    youtubeVideoId: "6I3W1v2v6wY",
+    youtubeVideoId: "nAe_a1mdNDY",
     quiz: {
       id: 'react-quiz-1',
       title: 'Cuestionario de React Básico',
@@ -271,3 +271,4 @@ export const courses: Course[] = courseData.map(course => {
     
 
     
+
