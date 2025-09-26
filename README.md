@@ -84,6 +84,64 @@ He aquí un diagrama de alto nivel que ilustra la arquitectura de Code-E:
 
 ---
 
+## 🗃️ Estructura de la Base de Datos (Firestore)
+
+A continuación se detalla la estructura de colecciones y los esquemas de datos utilizados en la base de datos de Firestore.
+
+### Entidades Principales
+
+-   **User:** Almacena la información del perfil público de cada usuario.
+-   **Course:** Contiene los detalles de cada curso, como título, descripción e instructor.
+-   **LearningPath:** Agrupa los cursos en rutas de aprendizaje temáticas.
+-   **CourseModule:** Representa un módulo o sección dentro de un curso.
+-   **Lesson:** Contiene el material de una lección individual, incluyendo contenido, videos y cuestionarios.
+-   **Progress:** Rastrea el progreso de un usuario en un curso específico, incluyendo las lecciones completadas.
+-   **ForumThread:** Modela una discusión principal dentro del foro de la comunidad.
+-   **ForumPost:** Representa una respuesta o un mensaje individual dentro de una discusión.
+-   **Notification, Badge, GamificationStats:** Entidades para futuras funcionalidades de gamificación y notificaciones.
+
+### Rutas de las Colecciones
+
+```json
+{
+  "/learningPaths/{learningPathId}": { "schema": "LearningPath" },
+  "/courses/{courseId}": {
+    "schema": "Course",
+    "subcollections": {
+      "/modules/{moduleId}": {
+        "schema": "CourseModule",
+        "subcollections": {
+          "/lessons/{lessonId}": {
+            "schema": "Lesson",
+            "subcollections": {
+              "/comments/{commentId}": { "schema": "Comment" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/users/{userId}": {
+    "schema": "User",
+    "subcollections": {
+      "/progress/{progressId}": { "schema": "Progress" },
+      "/notifications/{notificationId}": { "schema": "Notification" },
+      "/gamification/{statsId}": { "schema": "GamificationStats" },
+      "/badges/{userBadgeId}": { "schema": "UserBadge" }
+    }
+  },
+  "/badges/{badgeId}": { "schema": "Badge" },
+  "/forumThreads/{threadId}": {
+    "schema": "ForumThread",
+    "subcollections": {
+      "/posts/{postId}": { "schema": "ForumPost" }
+    }
+  }
+}
+```
+
+---
+
 ## 📁 Estructura de Carpetas
 
 -   **`/src/app`**: Contiene las rutas principales de la aplicación siguiendo la convención del App Router de Next.js.
