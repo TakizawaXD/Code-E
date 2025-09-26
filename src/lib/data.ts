@@ -173,7 +173,7 @@ const javascriptModules: CourseModule[] = [
         title: 'Principiante',
         order: 1,
         lessons: [
-            { id: 'js-b1', title: 'Cambiar Color de Fondo', duration: '5 min', difficulty: 'Fácil', content: '<h1>Cambiar Color de Fondo</h1><p>Manipulación del DOM. Escribe una función en un archivo .js que, al ser llamada por el `onclick` de un botón en tu HTML, cambie el color de fondo (`backgroundColor`) del `<body>` de la página a un color aleatorio.</p>', order: 1,
+            { id: 'js-b1', title: 'Cambiar Color de Fondo', duration: '5 min', difficulty: 'Fácil', content: '<h1>Cambiar Color de Fondo</h1><p>Manipulación del DOM. Escribe una función en un archivo .js que, al ser llamada por el `onclick` de un botón en tu HTML, cambie el color de fondo (`backgroundColor`) del `<body>` de la página a un color aleatorio.</p>', order: 1, 
               imageUrl: "https://images.unsplash.com/photo-1509966756634-9c23dd6e6815?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyYW5kb20lMjBjb2xvcnN8ZW58MHx8fHwxNzU4NzYwNDIwfDA&ixlib=rb-4.1.0&q=80&w=1080",
               youtubeVideoId: "3x9AtR_bK-g",
             },
@@ -265,8 +265,6 @@ export const courses: Course[] = courseData.map(course => {
   }
   return { ...course, modules };
 });
-
-    
 
     
 

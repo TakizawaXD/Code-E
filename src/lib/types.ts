@@ -26,7 +26,7 @@ export type Lesson = {
   id: string;
   title: string;
   duration: string;
-  content: string; // Changed from optional to required
+  content: string; 
   difficulty: 'Fácil' | 'Medio' | 'Difícil';
   quiz?: Quiz;
   order: number;
