@@ -65,10 +65,17 @@ export default function CourseDetailPage({
   const { user } = useUser();
   const firestore = useFirestore();
 
-  const course = useMemo(() => allCourses.find(c => c.id === id), [id]);
+  const [isLoadingCourse, setIsLoadingCourse] = useState(true);
+
+  const course = useMemo(() => {
+    if (!id) return null;
+    const foundCourse = allCourses.find(c => c.id === id);
+    if(foundCourse) setIsLoadingCourse(false);
+    return foundCourse;
+  }, [id]);
 
   const progressQuery = useMemoFirebase(() => {
-    if (!user || !firestore) return null;
+    if (!user || !firestore || !id) return null;
     return query(collection(firestore, `users/${user.uid}/progress`), where("courseId", "==", id));
   }, [firestore, user, id]);
 
@@ -98,12 +105,14 @@ export default function CourseDetailPage({
 
 
   useEffect(() => {
+    if (!course) return; // Don't run effect until course is loaded
+    
     const moduleId = searchParams.get("module");
     const lessonId = searchParams.get("lesson");
 
     if (moduleId && lessonId) {
       setCurrentLesson({ moduleId, lessonId });
-    } else if (course && course.modules.length > 0 && course.modules[0].lessons.length > 0) {
+    } else if (course.modules.length > 0 && course.modules[0].lessons.length > 0) {
       const firstModule = course.modules[0];
       const firstLesson = firstModule.lessons[0];
       handleSetLesson(firstModule.id, firstLesson.id);
@@ -132,6 +141,7 @@ export default function CourseDetailPage({
   }, [course, progress, completedLessons]);
 
   const handleSetLesson = (moduleId: string, lessonId: string) => {
+    if (!id) return;
     setCurrentLesson({ moduleId, lessonId });
     const newUrl = `/courses/${id}?module=${moduleId}&lesson=${lessonId}`;
     router.push(newUrl, { scroll: false });
@@ -202,7 +212,7 @@ export default function CourseDetailPage({
     }
   };
 
-  if (!course) {
+  if (isLoadingCourse || !course || !currentLesson) {
     // Show a loading state or a not found message
     return <div className="container flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin" /></div>;
   }
