@@ -1,4 +1,5 @@
 
+
 import type { Notification, LearningPath, Course, CourseModule, Lesson } from "@/lib/types";
 
 // This file now only contains types and potentially non-user-specific, non-db data.
@@ -57,29 +58,29 @@ const courseData: Omit<Course, 'modules'>[] = [
     // IA y Data Science
     { id: 'ia-datascience-python', pathId: 'ia-datascience', title: 'Python para Data Science', description: 'Fácil: Utiliza NumPy para crear un array 3x3 de ceros y otro con valores aleatorios. Fácil: Usa Pandas para cargar un archivo CSV y mostrar las primeras 5 filas y un resumen estadístico de los datos. Intermedio: Realiza una limpieza de datos en un DataFrame de Pandas, manejando valores nulos, eliminando duplicados y cambiando tipos de datos. Intermedio: Crea un gráfico de dispersión (scatter plot) con Matplotlib para visualizar la relación entre dos columnas de un DataFrame. Avanzado: Carga dos DataFrames y realiza una operación de merge o join basándose en una columna en común. Avanzado: Implementa un análisis exploratorio de datos (EDA) completo en un Jupyter Notebook, utilizando visualizaciones múltiples y estadísticas descriptivas para entender un conjunto de datos.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=carlossanchez', imageUrl: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
     { id: 'ia-ml', pathId: 'ia-datascience', title: 'Fundamentos de Machine Learning', description: 'Fácil: Carga un conjunto de datos de la librería Scikit-learn (por ejemplo, iris) y divídelo en conjuntos de entrenamiento y prueba. Fácil: Implementa un modelo de regresión lineal simple para predecir un valor continuo a partir de una variable. Intermedio: Entrena un modelo de clasificación (DecisionTreeClassifier o SVC) en un conjunto de datos y evalúa su precisión utilizando una matriz de confusión. Intermedio: Realiza un preprocesamiento de datos básico, incluyendo escalado de características y codificación de variables categóricas. Avanzado: Implementa un modelo de agrupamiento (K-Means) y visualiza los resultados para entender los clústeres. Avanzado: Desarrolla un pipeline de Machine Learning que incluya la carga de datos, preprocesamiento, entrenamiento del modelo, optimización de hiperparámetros con búsqueda en cuadrícula (grid search) y evaluación final.', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=lauramartinez', imageUrl: 'https://images.unsplash.com/photo-1620712943543-95f135346a50?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
-    { id: 'ia-r', pathId: 'ia-datascience', title: 'Análisis de Datos con R', description: 'Fácil: Carga un data.frame desde un archivo CSV y calcula la media, mediana y desviación estándar de una columna. Fácil: Utiliza el paquete dplyr para filtrar filas de un data.frame que cumplan una condición específica. Intermedio: Crea un histograma de una variable numérica y un gráfico de barras para una variable categórica usando ggplot2. Intermedio: Realiza un análisis de correlación entre dos variables y visualiza el resultado con un gráfico de dispersión y una línea de tendencia. Avanzado: Implementa un modelo de regresión lineal múltiple para predecir una variable dependiente a partir de múltiples variables independientes. Avanzado: Realiza un análisis de supervivencia o un modelo de series temporales simple sobre un conjunto de datos apropiado.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=dianafranco', imageUrl: 'https://images.unsplash.com/photo-1543286386-2e6593068625?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%D%3D&auto=format&fit=crop&w=1170&q=80'},
-    { id: 'ia-sql', pathId: 'ia-datascience', title: 'SQL para Data Science', description: 'Fácil: Escribe una consulta que seleccione todas las columnas de una tabla llamada clientes. Fácil: Realiza una consulta para contar el número total de clientes en una tabla. Intermedio: Escribe una consulta para obtener los 10 productos más vendidos, uniendo las tablas ventas y productos. Intermedio: Utiliza GROUP BY y HAVING para encontrar los clientes que han gastado más de $1000. Avanzado: Crea una subconsulta para encontrar los productos que no se han vendido en los últimos 6 meses. Avanzado: Utiliza una Common Table Expression (CTE) para calcular la venta total por mes y comparar las ventas de un mes con el promedio del año.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=albertonunez', imageUrl: 'https://images.unsplash.com/photo-1529078155227-5425278b67f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%D%3D&auto=format&fit=crop&w=1170&q=80'},
+    { id: 'ia-r', pathId: 'ia-datascience', title: 'Análisis de Datos con R', description: 'Fácil: Carga un data.frame desde un archivo CSV y calcula la media, mediana y desviación estándar de una columna. Fácil: Utiliza el paquete dplyr para filtrar filas de un data.frame que cumplan una condición específica. Intermedio: Crea un histograma de una variable numérica y un gráfico de barras para una variable categórica usando ggplot2. Intermedio: Realiza un análisis de correlación entre dos variables y visualiza el resultado con un gráfico de dispersión y una línea de tendencia. Avanzado: Implementa un modelo de regresión lineal múltiple para predecir una variable dependiente a partir de múltiples variables independientes. Avanzado: Realiza un análisis de supervivencia o un modelo de series temporales simple sobre un conjunto de datos apropiado.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=dianafranco', imageUrl: 'https://images.unsplash.com/photo-1543286386-2e6593068625?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
+    { id: 'ia-sql', pathId: 'ia-datascience', title: 'SQL para Data Science', description: 'Fácil: Escribe una consulta que seleccione todas las columnas de una tabla llamada clientes. Fácil: Realiza una consulta para contar el número total de clientes en una tabla. Intermedio: Escribe una consulta para obtener los 10 productos más vendidos, uniendo las tablas ventas y productos. Intermedio: Utiliza GROUP BY y HAVING para encontrar los clientes que han gastado más de $1000. Avanzado: Crea una subconsulta para encontrar los productos que no se han vendido en los últimos 6 meses. Avanzado: Utiliza una Common Table Expression (CTE) para calcular la venta total por mes y comparar las ventas de un mes con el promedio del año.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=albertonunez', imageUrl: 'https://images.unsplash.com/photo-1529078155227-5425278b67f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
     
     // Diseño de Producto y UX
     { id: 'ux-investigacion', pathId: 'diseno-ux', title: 'Investigación de Usuarios', description: 'Fácil: Desarrolla 3 preguntas abiertas para una entrevista de usuario sobre una aplicación móvil de fitness. Fácil: Define las 5 principales hipótesis sobre los problemas que un grupo de usuarios podría tener con un sitio de comercio electrónico. Intermedio: Crea un user persona detallado para una aplicación de gestión de proyectos, incluyendo sus metas, frustraciones y comportamiento. Intermedio: Diseña un guion para una prueba de usabilidad de 15 minutos para una nueva función de un software, con 3 tareas específicas para el usuario. Avanzado: Mapea el User Journey completo desde que un usuario descubre un producto hasta que lo usa regularmente, identificando puntos de dolor y oportunidades.', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=davidgomez', imageUrl: 'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80' },
     { id: 'ux-figma', pathId: 'diseno-ux', title: 'Diseño de Interfaces con Figma', description: 'Fácil: Crea un prototipo de una aplicación de calculadora simple, con botones y un display, y enlaza los clics a la funcionalidad de prototipado. Fácil: Diseña una pantalla de Login y Registro para una aplicación móvil, aplicando una paleta de colores coherente y tipografía legible. Intermedio: Utiliza Auto Layout para diseñar un menú de navegación responsivo que se adapte automáticamente al tamaño de la pantalla. Intermedio: Crea un componente de botón interactivo con variantes para sus estados (predeterminado, hover, disabled). Avanzado: Diseña un sistema de diseño (Design System) básico con una biblioteca de componentes, estilos de color y tipografía, y úsalo para crear la pantalla de un Dashboard de análisis.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=beatrizrico', imageUrl: 'https://images.unsplash.com/photo-1611262588024-d12430b98920?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80' },
   
     // Cloud y DevOps
-    { id: 'cloud-aws', pathId: 'cloud-devops', title: 'Introducción a AWS', description: 'Fácil: Configura un bucket de S3 y sube un archivo HTML estático. Fácil: Crea una instancia de EC2 y conéctate a ella vía SSH. Intermedio: Utiliza IAM para crear un usuario con permisos limitados a un bucket de S3 específico. Intermedio: Implementa una función AWS Lambda simple que reciba un nombre y devuelva un saludo, y configura un API Gateway para invocarla a través de una URL. Avanzado: Desarrolla un pipeline de CI/CD para una aplicación web estática, utilizando servicios como CodeCommit, CodeBuild y S3.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=elenafernandez', imageUrl: 'https://images.unsplash.com/photo-1582102759419-7b97c88d0a84?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%D%3D&auto=format&fit=crop&w=1170&q=80' },
+    { id: 'cloud-aws', pathId: 'cloud-devops', title: 'Introducción a AWS', description: 'Fácil: Configura un bucket de S3 y sube un archivo HTML estático. Fácil: Crea una instancia de EC2 y conéctate a ella vía SSH. Intermedio: Utiliza IAM para crear un usuario con permisos limitados a un bucket de S3 específico. Intermedio: Implementa una función AWS Lambda simple que reciba un nombre y devuelva un saludo, y configura un API Gateway para invocarla a través de una URL. Avanzado: Desarrolla un pipeline de CI/CD para una aplicación web estática, utilizando servicios como CodeCommit, CodeBuild y S3.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=elenafernandez', imageUrl: 'https://images.unsplash.com/photo-1582102759419-7b97c88d0a84?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
     { id: 'cloud-docker', pathId: 'cloud-devops', title: 'Docker para Desarrolladores', description: 'Fácil: Escribe un Dockerfile para una aplicación Node.js simple y construye la imagen. Fácil: Crea un contenedor a partir de una imagen de Nginx y accede a la página web en tu navegador. Intermedio: Utiliza docker-compose para orquestar una aplicación de dos servicios: un servidor Node.js y una base de datos PostgreSQL. Intermedio: Implementa un Docker volumen para persistir los datos de la base de datos de un contenedor. Avanzado: Conteneriza una aplicación React con un Dockerfile multi-etapa para optimizar el tamaño de la imagen final.', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=marcosluna', imageUrl: 'https://images.unsplash.com/photo-1622359990261-3f48a74d7543?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
     
     // Desarrollo Móvil
     { id: 'movil-swift', pathId: 'desarrollo-movil', title: 'Swift y SwiftUI: De Cero a App Store', description: 'Fácil: Crea una interfaz de usuario con SwiftUI que muestre un texto y un botón que cambie el texto al ser presionado. Fácil: Diseña una lista de elementos (por ejemplo, nombres) y hazla navegable para mostrar una pantalla de detalles para cada elemento. Intermedio: Implementa la gestión del estado para una aplicación simple de contador de pasos, utilizando @State y @Binding. Intermedio: Realiza una llamada a una API REST para obtener datos y mostrarlos en una lista en tu interfaz de usuario. Avanzado: Crea un sistema de navegación completo con pestañas (TabView) y vistas de detalle, y maneja el estado de la aplicación entre pantallas.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=luciajimenez', imageUrl: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80'},
     { id: 'movil-kotlin', pathId: 'desarrollo-movil', title: 'Android con Kotlin: Curso Completo', description: 'Fácil: Crea una aplicación con un único Activity que contenga un botón y un TextView. Fácil: Utiliza ConstraintLayout para diseñar una pantalla de login básica. Intermedio: Implementa una RecyclerView para mostrar una lista de datos que se obtienen de una clase de modelo. Intermedio: Realiza una llamada a una API web utilizando librerías como Retrofit y Gson para obtener datos y mostrarlos en la interfaz. Avanzado: Construye una aplicación con múltiples Activities y maneja la navegación entre ellas usando Intents.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=mateorojas', imageUrl: 'https://images.unsplash.com/photo-1614332287897-c283fa3c8c4c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
     { id: 'movil-flutter', pathId: 'desarrollo-movil', title: 'Flutter: Apps para iOS y Android', description: 'Fácil: Crea una aplicación simple con un widget Scaffold, una AppBar y un Center con texto. Fácil: Implementa un widget ListView que muestre una lista de elementos generada dinámicamente. Intermedio: Desarrolla un formulario con múltiples campos de entrada de texto y valida los datos antes de mostrarlos en otra pantalla. Intermedio: Usa un widget FutureBuilder para realizar una llamada a una API REST y mostrar el resultado en la interfaz. Avanzado: Implementa un sistema de gestión del estado con Provider o BLoC para una aplicación de contador que tenga múltiples pantallas.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=luciajimenez', imageUrl: 'https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-    { id: 'movil-dart', pathId: 'desarrollo-movil', title: 'Fundamentos de Dart para Flutter', description: 'Fácil: Declara variables, usa operadores básicos y define una función simple que no retorne un valor. Fácil: Escribe una función que tome una lista de números y devuelva una nueva lista con los números pares. Intermedio: Crea una clase Persona con un constructor, y métodos getter y setter para sus propiedades. Intermedio: Implementa una clase abstracta Animal con un método abstracto y una clase Perro que herede de ella. Avanzado: Trabaja con Futures y async/await para simular una operación asíncrona, como una llamada a una API, y maneja los errores.', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=andrealezama', imageUrl: 'https://images.unsplash.com/photo-1617042375876-a13e36732a04?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%D%3D&auto=format&fit=crop&w=1170&q=80'},
+    { id: 'movil-dart', pathId: 'desarrollo-movil', title: 'Fundamentos de Dart para Flutter', description: 'Fácil: Declara variables, usa operadores básicos y define una función simple que no retorne un valor. Fácil: Escribe una función que tome una lista de números y devuelva una nueva lista con los números pares. Intermedio: Crea una clase Persona con un constructor, y métodos getter y setter para sus propiedades. Intermedio: Implementa una clase abstracta Animal con un método abstracto y una clase Perro que herede de ella. Avanzado: Trabaja con Futures y async/await para simular una operación asíncrona, como una llamada a una API, y maneja los errores.', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=andrealezama', imageUrl: 'https://images.unsplash.com/photo-1617042375876-a13e36732a04?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
   
     // Blockchain y Web3
-    { id: 'web3-solidity', pathId: 'blockchain-web3', title: 'Smart Contracts con Solidity', description: 'Fácil: Escribe un contrato inteligente simple que almacene un número y tenga funciones para leer y actualizar ese número. Fácil: Crea un contrato de votación que permita a los usuarios votar una sola vez y muestre el conteo de votos. Intermedio: Desarrolla un contrato ERC-20 (Token estándar) básico que permita a los usuarios acuñar (mint) y transferir tokens. Intermedio: Implementa un modificador (modifier) para restringir el acceso a una función solo al propietario del contrato. Avanzado: Crea un contrato de subasta que use require para validar que las pujas sean mayores que la anterior y maneje el reembolso de los fondos.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=adriannavarro', imageUrl: 'https://images.unsplash.com/photo-1640118591547-906514188b6f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%D%3D&auto=format&fit=crop&w=1167&q=80' },
-    { id: 'web3-rust', pathId: 'blockchain-web3', title: 'Desarrollo en Solana con Rust', description: 'Fácil: Escribe un programa simple en Rust que imprima "Hola, Solana!". Fácil: Define una struct en Rust para representar una cuenta de programa en Solana, con un campo para un contador. Intermedio: Implementa una función que inicialice la cuenta de un programa con un valor inicial. Intermedio: Crea una instrucción para un programa de Solana que incremente el contador en una cuenta de programa específica. Avanzado: Desarrolla un programa más complejo que maneje múltiples cuentas y transacciones, utilizando cross-program invocations (invocaciones entre programas).', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=danielsolis', imageUrl: 'https://images.unsplash.com/photo-1642159829394-11648e285094?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%D%3D&auto=format&fit=crop&w=1170&q=80'},
+    { id: 'web3-solidity', pathId: 'blockchain-web3', title: 'Smart Contracts con Solidity', description: 'Fácil: Escribe un contrato inteligente simple que almacene un número y tenga funciones para leer y actualizar ese número. Fácil: Crea un contrato de votación que permita a los usuarios votar una sola vez y muestre el conteo de votos. Intermedio: Desarrolla un contrato ERC-20 (Token estándar) básico que permita a los usuarios acuñar (mint) y transferir tokens. Intermedio: Implementa un modificador (modifier) para restringir el acceso a una función solo al propietario del contrato. Avanzado: Crea un contrato de subasta que use require para validar que las pujas sean mayores que la anterior y maneje el reembolso de los fondos.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=adriannavarro', imageUrl: 'https://images.unsplash.com/photo-1640118591547-906514188b6f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1167&q=80' },
+    { id: 'web3-rust', pathId: 'blockchain-web3', title: 'Desarrollo en Solana con Rust', description: 'Fácil: Escribe un programa simple en Rust que imprima "Hola, Solana!". Fácil: Define una struct en Rust para representar una cuenta de programa en Solana, con un campo para un contador. Intermedio: Implementa una función que inicialice la cuenta de un programa con un valor inicial. Intermedio: Crea una instrucción para un programa de Solana que incremente el contador en una cuenta de programa específica. Avanzado: Desarrolla un programa más complejo que maneje múltiples cuentas y transacciones, utilizando cross-program invocations (invocaciones entre programas).', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=danielsolis', imageUrl: 'https://images.unsplash.com/photo-1642159829394-11648e285094?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'},
   
     // Ciberseguridad
-    { id: 'cyber-intro', pathId: 'ciberseguridad', title: 'Fundamentos de Ciberseguridad', description: 'Fácil: Investiga y explica la diferencia entre HTTP y HTTPS y por qué es importante para la seguridad web. Fácil: Identifica los 5 principales errores de configuración de seguridad en una red Wi-Fi doméstica. Intermedio: Describe y crea un ejemplo de cómo funciona un ataque de SQL Injection en una aplicación web. Intermedio: Investiga y explica los pasos de una cadena de ataque (kill chain) para una intrusión en una red corporativa. Avanzado: Diseña una estrategia de defensa a profundidad para una aplicación web, incluyendo capas como WAF, IDS/IPS, control de acceso y monitoreo.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=miguelromero', imageUrl: 'https://images.unsplash.com/photo-1544890225-2f3faec4cd60?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%D%3D&auto=format&fit=crop&w=1025&q=80' },
+    { id: 'cyber-intro', pathId: 'ciberseguridad', title: 'Fundamentos de Ciberseguridad', description: 'Fácil: Investiga y explica la diferencia entre HTTP y HTTPS y por qué es importante para la seguridad web. Fácil: Identifica los 5 principales errores de configuración de seguridad en una red Wi-Fi doméstica. Intermedio: Describe y crea un ejemplo de cómo funciona un ataque de SQL Injection en una aplicación web. Intermedio: Investiga y explica los pasos de una cadena de ataque (kill chain) para una intrusión en una red corporativa. Avanzado: Diseña una estrategia de defensa a profundidad para una aplicación web, incluyendo capas como WAF, IDS/IPS, control de acceso y monitoreo.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=miguelromero', imageUrl: 'https://images.unsplash.com/photo-1544890225-2f3faec4cd60?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1025&q=80' },
   ];
 
   const pythonReactQuiz: Lesson = {
@@ -247,11 +248,11 @@ const javascriptModules: CourseModule[] = [
             },
             { id: 'js-i4', title: 'Filtro de Búsqueda Dinámico', duration: '15 min', difficulty: 'Medio', content: '<h1>Filtro de Búsqueda Dinámico</h1><p>Eventos y arrays. Para una lista de productos (un array de strings), crea un campo de texto donde, a medida que el usuario escribe, la lista de productos se filtra dinámicamente para mostrar solo los que coinciden.</p>', order: 4,
               imageUrl: "https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzZWFyY2glMjBmaWx0ZXJ8ZW58MHx8fHwxNzU4OTAwNzk2fDA&ixlib=rb-4.1.0&q=80&w=1080",
-              youtubeVideoId: "V-mP1JCa3H8"
+              youtubeVideoId: "V-sEwsca1ZA"
             },
-            { id: 'js-i5', title: 'Validador de Contraseñas', duration: '15 min', difficulty: 'Medio', content: '<h1>Validador de Contraseñas</h1><p>Expresiones regulares y UI. Crea un validador de contraseñas que verifique en tiempo real si la contraseña cumple con varias reglas (ej. longitud mínima, una mayúscula, un número) y muestra visualmente qué reglas se cumplen.</p>', order: 5,
-              imageUrl: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwYXNzd29yZCUyMHZhbGlkYXRpb258ZW58MHx8fHwxNzU4OTAwODYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
-              youtubeVideoId: "Mn24i-y_p-Y"
+            { id: 'js-i5', title: 'Aplicación del Clima', duration: '25 min', difficulty: 'Medio', content: '<h1>Aplicación del Clima</h1><p>API y DOM. Desarrolla una aplicación web que permita a los usuarios buscar una ciudad y muestre la temperatura y el pronóstico actual. Utiliza una API del clima gratuita como OpenWeatherMap.</p>', order: 5,
+              imageUrl: "https://images.unsplash.com/photo-1592210454359-9043f067919b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3ZWF0aGVyJTIwYXBwfGVufDB8fHx8MTc1ODkwMDg4Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "gu2K2k3jC3k"
             },
         ]
     },
@@ -260,13 +261,13 @@ const javascriptModules: CourseModule[] = [
         title: 'Experto',
         order: 3,
         lessons: [
-            { id: 'js-e1', title: 'Aplicación de Tareas (To-do list) con React', duration: '60 min', difficulty: 'Difícil', content: '<h1>Aplicación de Tareas con React</h1><p>Frameworks de Frontend. Crea una aplicación de una sola página (SPA) con React. Debe permitir añadir tareas a una lista, eliminarlas y marcarlas como completadas. Gestiona el estado del componente.</p>', order: 1,
-              imageUrl: "https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0b2RvJTIwbGlzdCUyMGFwcHxlbnwwfHx8fDE3NTg5MDA5MjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
-              youtubeVideoId: "E1E08i2UJGI"
+            { id: 'js-e1', title: 'Chat en Tiempo Real con WebSockets', duration: '60 min', difficulty: 'Difícil', content: '<h1>Chat en Tiempo Real con WebSockets</h1><p>Comunicación bidireccional. Crea un servidor de Node.js con `ws` y una página HTML simple. Implementa una aplicación de chat donde los mensajes enviados por un cliente se transmitan a todos los demás clientes conectados en tiempo real.</p>', order: 1,
+              imageUrl: "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3ZWJzb2NrZXR8ZW58MHx8fHwxNzU4OTAwOTkxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "2Nt0dGq3S7o"
             },
-            { id: 'js-e2', title: 'Animación de Partículas con Canvas', duration: '50 min', difficulty: 'Difícil', content: '<h1>Animación de Partículas con Canvas</h1><p>Gráficos y Animación. Implementa una animación simple utilizando la API de Canvas de HTML5. Crea un conjunto de partículas (círculos) que se mueven por la pantalla y rebotan en los bordes. Utiliza `requestAnimationFrame` para un rendimiento óptimo.</p>', order: 2,
-              imageUrl: "https://images.unsplash.com/photo-1534685785732-612651921318?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwYXJ0aWNsZSUyMGFuaW1hdGlvbnxlbnwwfHx8fDE3NTg5MDA5ODN8MA&ixlib=rb-4.1.0&q=80&w=1080",
-              youtubeVideoId: "Yvz_6i2p9Qs"
+            { id: 'js-e2', title: 'Módulo de Componentes Web Reutilizables', duration: '50 min', difficulty: 'Difícil', content: '<h1>Módulo de Componentes Web Reutilizables</h1><p>Estándares web modernos. Usando JavaScript puro y la API de Custom Elements, crea un componente reutilizable (ej. un `<custom-tooltip>`) que pueda ser usado en cualquier página HTML con su propio comportamiento y estilo encapsulado.</p>', order: 2,
+              imageUrl: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3ZWIlMjBjb21wb25lbnRzfGVufDB8fHx8MTc1ODkwMTA1M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+              youtubeVideoId: "Rpl22B4r3E8"
             },
         ]
     }
@@ -279,100 +280,387 @@ const javaModules: CourseModule[] = [
         order: 1,
         lessons: [
             {
-                id: 'java-b1', title: '¡Hola, mundo!', duration: '5 min', difficulty: 'Fácil', order: 1,
-                content: '<h1>¡Hola, mundo! en Java</h1><p>Tu primer programa en Java. Escribe una clase principal que imprima el texto "¡Hola, mundo!" en la consola. Te familiarizarás con la estructura de una clase, el método `main` y `System.out.println()`.</p>',
-                imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxqYXZhJTIwY29kZXxlbnwwfHx8fDE3NTg5MDExNDZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-                youtubeVideoId: "mG4_v2cQfe0",
+                id: 'java-b1',
+                title: '¡Hola, mundo!',
+                duration: '5 min',
+                difficulty: 'Fácil',
+                content: '<h1>¡Hola, mundo! en Java</h1><p>Tu primer paso en Java. Aprenderás sobre la estructura básica de una clase de Java, el método `main`, y cómo usar `System.out.println()` para mostrar texto en la consola.</p>',
+                order: 1,
+                imageUrl: 'https://images.unsplash.com/photo-1592609931095-54a2168ae893?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxqYXZhJTIwY29kZXxlbnwwfHx8fDE3NTg5MDEzNTF8MA&ixlib=rb-4.1.0&q=80&w=1080',
+                youtubeVideoId: 'r3GGV2TG_vw',
                 quiz: {
                     id: 'java-quiz-1',
-                    title: 'Cuestionario de "Hola, Mundo" en Java',
+                    title: 'Cuestionario Básico de Java',
                     questions: [
-                        { id: 'q1', question: '¿Cuál es el punto de entrada de un programa en Java?', options: ['start()', 'main()', 'run()', 'begin()'], correctAnswer: 1 },
-                        { id: 'q2', question: '¿Qué instrucción se usa para imprimir en la consola?', options: ['Console.Write()', 'print()', 'System.out.println()', 'log()'], correctAnswer: 2 }
+                        {
+                            id: 'q1',
+                            question: '¿Cuál es el punto de entrada de un programa en Java?',
+                            options: ['start()', 'main()', 'run()', 'execute()'],
+                            correctAnswer: 1
+                        }
                     ]
                 }
             },
-            {
-                id: 'java-b2', title: 'Clase Coche', duration: '10 min', difficulty: 'Fácil', order: 2,
-                content: '<h1>Clase Coche</h1><p>Aprende los conceptos básicos de la Programación Orientada a Objetos. Escribe una clase `Coche` con atributos de `marca`, `modelo` y `año`, y un método para imprimir sus detalles.</p>',
-                imageUrl: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjYXJ8ZW58MHx8fHwxNzU4OTAxMjYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
-                youtubeVideoId: "KyJ8qf9_gaw"
+            { id: 'java-b2', title: 'Calculadora Simple', duration: '10 min', difficulty: 'Fácil', content: '<h1>Calculadora Simple</h1><p>Practica con variables y operadores. Crea un programa que declare dos variables numéricas y muestre el resultado de su suma, resta, multiplicación y división.</p>', order: 2,
+              imageUrl: 'https://images.unsplash.com/photo-1591799264318-7e6e74e3dce4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjYWxjdWxhdG9yJTIwaWNvbnxlbnwwfHx8fDE3NTg5MDE0NTB8MA&ixlib=rb-4.1.0&q=80&w=1080',
+              youtubeVideoId: 'K-qB4mY-XlA'
             },
         ]
     }
 ];
 
-const genericModules = (courseId: string, courseTitle: string): CourseModule[] => {
-    const lessonContent = [
-        `<h1>Ejercicio 1: Configuración del Entorno</h1><p>Instala las herramientas necesarias para el curso "${courseTitle}" y crea tu primer proyecto "Hola Mundo".</p>`,
-        `<h1>Ejercicio 2: Variables y Tipos de Datos</h1><p>Aprende a declarar variables y a utilizar los tipos de datos fundamentales en el contexto de "${courseTitle}".</p>`,
-        `<h1>Ejercicio 3: Operadores Básicos</h1><p>Realiza operaciones aritméticas y lógicas para resolver un problema simple relacionado con "${courseTitle}".</p>`,
-        `<h1>Ejercicio 4: Estructuras de Control</h1><p>Usa condicionales (if/else) para crear un programa que tome decisiones basadas en una entrada, aplicado a un caso de uso de "${courseTitle}".</p>`,
-        `<h1>Ejercicio 5: Bucles y Repeticiones</h1><p>Utiliza bucles (for/while) para procesar una colección de datos e imprimir los resultados. Este es un pilar en "${courseTitle}".</p>`,
-        `<h1>Ejercicio 6: Funciones y Modularización</h1><p>Crea tu primera función reutilizable que encapsule una lógica específica del dominio de "${courseTitle}".</p>`,
-        `<h1>Ejercicio 7: Manejo de Arrays/Listas</h1><p>Aprende a almacenar y manipular colecciones de datos, un requisito indispensable para cualquier proyecto de "${courseTitle}".</p>`,
-        `<h1>Ejercicio 8: Programación Orientada a Objetos (Básico)</h1><p>Define una clase simple que modele un concepto del mundo real relevante para "${courseTitle}".</p>`,
-        `<h1>Ejercicio 9: Manipulación de Strings</h1><p>Trabaja con texto para extraer información, formatearla o validarla, una tarea común en "${courseTitle}".</p>`,
-        `<h1>Ejercicio 10: Proyecto Final Pequeño</h1><p>Integra todos los conceptos aprendidos para construir una pequeña aplicación o script que resuelva un problema práctico de "${courseTitle}".</p>`
-    ];
-
-    return [
-        {
-            id: `${courseId}-m1`,
-            title: 'Módulo de Introducción Práctica',
-            order: 1,
-            lessons: Array.from({ length: 10 }, (_, i) => ({
-                id: `${courseId}-l${i + 1}`,
-                title: `Ejercicio Práctico ${i + 1}`,
-                duration: `${Math.floor(Math.random() * 15) + 5} min`,
-                difficulty: i < 3 ? 'Fácil' : i < 7 ? 'Medio' : 'Difícil',
-                content: lessonContent[i],
-                order: i + 1,
-                imageUrl: `https://picsum.photos/seed/${courseId.replace(/\W/g, '')}${i}/600/400`,
-                youtubeVideoId: 'dQw4w9WgXcQ' // Rick Astley as a placeholder :)
-            })),
-        },
-    ];
-};
-
-export const courses: Course[] = courseData.map(course => {
-  let modules: CourseModule[] = [];
-  switch (course.id) {
-    case 'prog-python':
-      modules = pythonModules;
-      break;
-    case 'prog-javascript':
-      modules = javascriptModules;
-      break;
-    case 'prog-java':
-      modules = javaModules;
-      break;
-    case 'web-react':
-        modules = [
+const cppModules: CourseModule[] = [
+    {
+        id: 'cpp-m1',
+        title: 'Principiante',
+        order: 1,
+        lessons: [
             {
-                id: 'react-m1',
-                title: 'Fundamentos de React',
+                id: 'cpp-b1',
+                title: '¡Hola, mundo!',
+                duration: '5 min',
+                difficulty: 'Fácil',
+                content: '<h1>¡Hola, mundo! en C++</h1><p>El primer paso en C++. Aprenderás a usar la librería `iostream` y el objeto `std::cout` para imprimir texto en la consola, y entenderás la estructura básica de un programa en C++.</p>',
                 order: 1,
-                lessons: [
-                    pythonReactQuiz,
-                    { id: 'react-l2', title: 'Componentes y Props', duration: '15 min', difficulty: 'Fácil', content: '<h1>Componentes y Props</h1><p>Aprende a crear componentes reutilizables y a pasar datos entre ellos usando props.</p>', order: 2, imageUrl: 'https://images.unsplash.com/photo-1569748130764-2fed59102442?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZWFjdCUyMGNvbXBvbmVudHN8ZW58MHx8fHwxNzU4NzYwMTEyfDA&ixlib=rb-4.1.0&q=80&w=1080', youtubeVideoId: '0u97-b2MrxU' },
-                ]
+                imageUrl: 'https://images.unsplash.com/photo-1598662768283-35a1a47b1c47?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
+                youtubeVideoId: 'vLnPwxZdW4Y',
+                quiz: {
+                    id: 'cpp-quiz-1',
+                    title: 'Cuestionario Básico de C++',
+                    questions: [
+                        {
+                            id: 'q1',
+                            question: '¿Qué librería se necesita para imprimir en la consola en C++?',
+                            options: ['stdio', 'console', 'iostream', 'string'],
+                            correctAnswer: 2
+                        }
+                    ]
+                }
             }
         ]
-        break;
-    default:
-      modules = genericModules(course.id, course.title);
-      break;
-  }
-  return { ...course, modules };
-});
+    }
+];
 
-    
+const typescriptModules: CourseModule[] = [
+    {
+        id: 'ts-m1',
+        title: 'Principiante',
+        order: 1,
+        lessons: [
+            {
+                id: 'ts-b1',
+                title: 'Introducción a Tipos',
+                duration: '10 min',
+                difficulty: 'Fácil',
+                content: '<h1>Introducción a Tipos en TypeScript</h1><p>Aprende a usar tipos básicos como `string`, `number` y `boolean` para hacer tu código JavaScript más seguro. Tiparás variables y funciones simples.</p>',
+                order: 1,
+                imageUrl: 'https://images.unsplash.com/photo-1618335436825-d4f08964391a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
+                youtubeVideoId: 'S5w-k_Q3x6g',
+                quiz: {
+                    id: 'ts-quiz-1',
+                    title: 'Cuestionario de Tipos en TypeScript',
+                    questions: [
+                        {
+                            id: 'q1',
+                            question: '¿Cuál es la sintaxis para declarar una variable de tipo número en TypeScript?',
+                            options: ['var age: number = 30;', 'number age = 30;', 'let age = number(30);', 'let age: number = 30;'],
+                            correctAnswer: 3
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+];
 
-    
+const phpModules: CourseModule[] = [
+    {
+        id: 'php-m1',
+        title: 'Principiante',
+        order: 1,
+        lessons: [
+            {
+                id: 'php-b1',
+                title: '¡Hola, mundo!',
+                duration: '5 min',
+                difficulty: 'Fácil',
+                content: '<h1>¡Hola, mundo! en PHP</h1><p>Tu primer script en PHP. Aprenderás a usar la etiqueta `<?php` y la instrucción `echo` para mostrar texto en una página web generada por el servidor.</p>',
+                order: 1,
+                imageUrl: 'https://images.unsplash.com/photo-1599507593499-a3f7d7d97667?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1073&q=80',
+                youtubeVideoId: 'BUCiSSy2U-M',
+                quiz: {
+                    id: 'php-quiz-1',
+                    title: 'Cuestionario Básico de PHP',
+                    questions: [
+                        {
+                            id: 'q1',
+                            question: '¿Qué instrucción se usa para imprimir texto en PHP?',
+                            options: ['print', 'console.log', 'display', 'echo'],
+                            correctAnswer: 3
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+];
 
-    
+const rModules: CourseModule[] = [
+    {
+        id: 'r-m1',
+        title: 'Principiante',
+        order: 1,
+        lessons: [
+            {
+                id: 'r-b1',
+                title: 'Introducción a R y RStudio',
+                duration: '10 min',
+                difficulty: 'Fácil',
+                content: '<h1>Introducción a R y RStudio</h1><p>Aprende qué es R y cómo usar RStudio. Crearás tus primeras variables y realizarás operaciones matemáticas básicas en la consola.</p>',
+                order: 1,
+                imageUrl: 'https://images.unsplash.com/photo-1543286386-2e6593068625?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
+                youtubeVideoId: '704_GjBj-bA',
+                quiz: {
+                    id: 'r-quiz-1',
+                    title: 'Cuestionario Básico de R',
+                    questions: [
+                        {
+                            id: 'q1',
+                            question: '¿Qué operador se usa comúnmente para la asignación de variables en R?',
+                            options: ['=', '<-', ':=', '->'],
+                            correctAnswer: 1
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+];
 
+const sqlModules: CourseModule[] = [
+    {
+        id: 'sql-m1',
+        title: 'Principiante',
+        order: 1,
+        lessons: [
+            {
+                id: 'sql-b1',
+                title: 'La Sentencia SELECT',
+                duration: '10 min',
+                difficulty: 'Fácil',
+                content: '<h1>La Sentencia SELECT en SQL</h1><p>La base de todas las consultas. Aprenderás a usar `SELECT` para recuperar columnas específicas de una tabla y `SELECT *` para obtener todas las columnas.</p>',
+                order: 1,
+                imageUrl: 'https://images.unsplash.com/photo-1529078155227-5425278b67f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
+                youtubeVideoId: 'c2Z64y2y2aY',
+                quiz: {
+                    id: 'sql-quiz-1',
+                    title: 'Cuestionario de SELECT',
+                    questions: [
+                        {
+                            id: 'q1',
+                            question: '¿Qué comando usarías para seleccionar todas las columnas de una tabla llamada "clientes"?',
+                            options: ['GET * FROM clientes;', 'SELECT all FROM clientes;', 'SELECT * FROM clientes;', 'FETCH * FROM clientes;'],
+                            correctAnswer: 2
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+];
 
+const swiftModules: CourseModule[] = [
+    {
+        id: 'swift-m1',
+        title: 'Principiante',
+        order: 1,
+        lessons: [
+            {
+                id: 'swift-b1',
+                title: 'Introducción a Swift',
+                duration: '10 min',
+                difficulty: 'Fácil',
+                content: '<h1>Introducción a Swift</h1><p>Tu primer contacto con el lenguaje de Apple. Aprenderás a declarar variables con `let` y `var`, y a imprimir en la consola con la función `print()`.</p>',
+                order: 1,
+                imageUrl: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80',
+                youtubeVideoId: 'UroPdj45n-A',
+                quiz: {
+                    id: 'swift-quiz-1',
+                    title: 'Cuestionario Básico de Swift',
+                    questions: [
+                        {
+                            id: 'q1',
+                            question: 'En Swift, ¿qué palabra clave se utiliza para declarar una constante?',
+                            options: ['var', 'const', 'let', 'static'],
+                            correctAnswer: 2
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+];
 
+const kotlinModules: CourseModule[] = [
+    {
+        id: 'kotlin-m1',
+        title: 'Principiante',
+        order: 1,
+        lessons: [
+            {
+                id: 'kotlin-b1',
+                title: 'Introducción a Kotlin',
+                duration: '10 min',
+                difficulty: 'Fácil',
+                content: '<h1>Introducción a Kotlin</h1><p>El lenguaje moderno para Android. Aprenderás la estructura básica de una función `main` y cómo imprimir en consola con `println()`.</p>',
+                order: 1,
+                imageUrl: 'https://images.unsplash.com/photo-1614332287897-c283fa3c8c4c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
+                youtubeVideoId: 'sBwGLF-2fkA',
+                quiz: {
+                    id: 'kotlin-quiz-1',
+                    title: 'Cuestionario Básico de Kotlin',
+                    questions: [
+                        {
+                            id: 'q1',
+                            question: '¿Qué palabra clave se usa para declarar una variable de solo lectura en Kotlin?',
+                            options: ['var', 'let', 'const', 'val'],
+                            correctAnswer: 3
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+];
 
+const dartModules: CourseModule[] = [
+    {
+        id: 'dart-m1',
+        title: 'Principiante',
+        order: 1,
+        lessons: [
+            {
+                id: 'dart-b1',
+                title: 'Introducción a Dart',
+                duration: '10 min',
+                difficulty: 'Fácil',
+                content: '<h1>Introducción a Dart</h1><p>El lenguaje detrás de Flutter. Aprenderás a escribir una función `main`, declarar variables y usar `print()` para la salida en consola.</p>',
+                order: 1,
+                imageUrl: 'https://images.unsplash.com/photo-1617042375876-a13e36732a04?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
+                youtubeVideoId: '5KlnlCq2M5Q',
+                quiz: {
+                    id: 'dart-quiz-1',
+                    title: 'Cuestionario Básico de Dart',
+                    questions: [
+                        {
+                            id: 'q1',
+                            question: '¿Cuál es el punto de entrada de una aplicación en Dart?',
+                            options: ['start()', 'main()', 'run()', 'entry()'],
+                            correctAnswer: 1
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+];
+
+const solidityModules: CourseModule[] = [
+    {
+        id: 'solidity-m1',
+        title: 'Principiante',
+        order: 1,
+        lessons: [
+            {
+                id: 'solidity-b1',
+                title: 'Estructura de un Smart Contract',
+                duration: '10 min',
+                difficulty: 'Fácil',
+                content: '<h1>Estructura de un Smart Contract</h1><p>Aprende la estructura básica de un contrato inteligente en Solidity, incluyendo la versión del compilador, la palabra clave `contract` y las variables de estado.</p>',
+                order: 1,
+                imageUrl: 'https://images.unsplash.com/photo-1640118591547-906514188b6f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1167&q=80',
+                youtubeVideoId: 'd_i-gQ9fA_o',
+                quiz: {
+                    id: 'solidity-quiz-1',
+                    title: 'Cuestionario de Smart Contracts',
+                    questions: [
+                        {
+                            id: 'q1',
+                            question: '¿Cómo se define la versión del compilador de Solidity en un contrato?',
+                            options: ['version solidity ^0.8.0;', 'compiler 0.8.0;', 'pragma solidity ^0.8.0;', 'solidity version ^0.8.0;'],
+                            correctAnswer: 2
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+];
+
+const rustModules: CourseModule[] = [
+    {
+        id: 'rust-m1',
+        title: 'Principiante',
+        order: 1,
+        lessons: [
+            {
+                id: 'rust-b1',
+                title: '¡Hola, mundo!',
+                duration: '5 min',
+                difficulty: 'Fácil',
+                content: '<h1>¡Hola, mundo! en Rust</h1><p>Tu primer programa en Rust. Aprenderás sobre la función `main` y la macro `println!` para imprimir texto en la consola de forma segura y eficiente.</p>',
+                order: 1,
+                imageUrl: 'https://images.unsplash.com/photo-1642159829394-11648e285094?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
+                youtubeVideoId: 'zF34dRivLOw',
+                quiz: {
+                    id: 'rust-quiz-1',
+                    title: 'Cuestionario Básico de Rust',
+                    questions: [
+                        {
+                            id: 'q1',
+                            question: '¿Qué macro se utiliza para imprimir una línea de texto en Rust?',
+                            options: ['print!()', 'echo!()', 'println!()', 'log!()'],
+                            correctAnswer: 2
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+];
+
+// Combine all modules
+const allModules: Record<string, CourseModule[]> = {
+    'prog-python': pythonModules,
+    'prog-javascript': javascriptModules,
+    'prog-java': javaModules,
+    'prog-cpp': cppModules,
+    'web-react': [{ id: 'react-m1', title: 'Fundamentos de React', order: 1, lessons: [pythonReactQuiz] }],
+    'web-typescript': typescriptModules,
+    'web-php': phpModules,
+    'ia-r': rModules,
+    'ia-sql': sqlModules,
+    'movil-swift': swiftModules,
+    'movil-kotlin': kotlinModules,
+    'movil-dart': dartModules,
+    'web3-solidity': solidityModules,
+    'web3-rust': rustModules,
+    // Add other courses here and map them to their modules
+};
+
+export const courses: Course[] = courseData.map(course => ({
+    ...course,
+    modules: allModules[course.id] || [{
+        id: `${course.id}-m1`,
+        title: 'Contenido del Curso',
+        order: 1,
+        lessons: [{
+            id: `${course.id}-l1`,
+            title: 'Lección Próximamente',
+            duration: 'N/A',
+            difficulty: 'Fácil',
+            content: '<p>El contenido detallado para este curso estará disponible muy pronto. ¡Gracias por tu paciencia!</p>',
+            order: 1
+        }]
+    }]
+}));
