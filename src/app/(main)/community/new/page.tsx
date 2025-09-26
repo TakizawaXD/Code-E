@@ -66,7 +66,7 @@ export default function NewThreadPage() {
         description: "Tu nuevo tema ha sido publicado en el foro.",
       });
 
-      router.push(`/community/thread/${docRef.id}`);
+      router.push(`/community/threads/${docRef.id}`);
 
     } catch (error: any) {
       toast({

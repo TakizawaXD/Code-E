@@ -62,7 +62,7 @@ function ForumList() {
 
                             </Avatar>
                             <div>
-                                <Link href={`/community/thread/${thread.id}`}>
+                                <Link href={`/community/threads/${thread.id}`}>
                                     <h3 className="font-semibold text-lg hover:underline">{thread.title}</h3>
                                 </Link>
                                 <p className="text-sm text-muted-foreground">
@@ -201,7 +201,7 @@ export default function CommunityPage() {
             </header>
 
             <Tabs defaultValue="forums" className="w-full">
-                <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+                <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
                     <TabsTrigger value="forums"><MessageSquare className="mr-2"/>Foros de Discusión</TabsTrigger>
                     <TabsTrigger value="channels"><Users className="mr-2"/>Canales de Chat</TabsTrigger>
                     <TabsTrigger value="leaderboard"><Trophy className="mr-2"/>Clasificación</TabsTrigger>

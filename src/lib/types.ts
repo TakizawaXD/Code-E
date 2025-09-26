@@ -60,6 +60,7 @@ export type LearningPath = {
 
 export type UserProfile = {
   name: string;
+  username: string;
   email: string;
   createdAt: FieldValue;
   points?: number;

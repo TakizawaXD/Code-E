@@ -34,8 +34,13 @@ import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres." }),
+  username: z.string().min(3, { message: "El nombre de usuario debe tener al menos 3 caracteres." }).regex(/^[a-z0-9_.]+$/, { message: "Solo letras minúsculas, números, puntos y guiones bajos."}),
   email: z.string().email({ message: "Por favor, introduce un correo electrónico válido." }),
   password: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres." }),
+  confirmPassword: z.string()
+}).refine(data => data.password === data.confirmPassword, {
+    message: "Las contraseñas no coinciden.",
+    path: ["confirmPassword"],
 });
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -76,8 +81,10 @@ export default function SignupPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       fullName: "",
+      username: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
@@ -91,7 +98,7 @@ export default function SignupPage() {
       const user = userCredential.user;
 
       // Update Firebase Auth profile
-      await updateProfile(user, { displayName: values.fullName });
+      await updateProfile(user, { displayName: values.username });
 
       // Send verification email
       await sendEmailVerification(user);
@@ -99,8 +106,10 @@ export default function SignupPage() {
       // Create user profile in Firestore
       setDocumentNonBlocking(doc(firestore, "users", user.uid), {
         name: values.fullName,
+        username: values.username,
         email: values.email,
         createdAt: serverTimestamp(),
+        points: 0,
       }, {});
 
       toast({
@@ -151,7 +160,20 @@ export default function SignupPage() {
                 <FormItem>
                   <FormLabel>Nombre Completo</FormLabel>
                   <FormControl>
-                    <Input placeholder="Tu Nombre" {...field} />
+                    <Input placeholder="Tu Nombre Completo" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nombre de Usuario</FormLabel>
+                  <FormControl>
+                    <Input placeholder="tusuario" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -177,13 +199,28 @@ export default function SignupPage() {
                 <FormItem>
                   <FormLabel>Contraseña</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input type="password" placeholder="••••••••" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full mt-2">Crear Cuenta</Button>
+             <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirmar Contraseña</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="••••••••" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full mt-2" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? "Creando cuenta..." : "Crear Cuenta"}
+              </Button>
           </form>
         </Form>
       </CardContent>
