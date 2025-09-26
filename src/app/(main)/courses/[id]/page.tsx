@@ -24,6 +24,7 @@ import {
   MessageSquare,
   BarChart3,
   Youtube,
+  Loader2,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { QuizComponent } from "@/components/quiz";
@@ -58,7 +59,7 @@ export default function CourseDetailPage({
 }: {
   params: { id: string };
 }) {
-  const { id } = params;
+  const id = params.id;
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useUser();
@@ -188,12 +189,6 @@ export default function CourseDetailPage({
     }
   };
 
-  if (!course) {
-    notFound();
-  }
-
-  const instructorAvatar = { imageUrl: course?.instructorAvatarUrl, name: course?.instructor };
-
   const getDifficultyBadge = (difficulty: 'Fácil' | 'Medio' | 'Difícil' | undefined) => {
     switch (difficulty) {
         case 'Fácil':
@@ -206,6 +201,13 @@ export default function CourseDetailPage({
             return null;
     }
   };
+
+  if (!course) {
+    // Show a loading state or a not found message
+    return <div className="container flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin" /></div>;
+  }
+
+  const instructorAvatar = { imageUrl: course.instructorAvatarUrl, name: course.instructor };
 
   return (
     <div className="container mx-auto py-8">
