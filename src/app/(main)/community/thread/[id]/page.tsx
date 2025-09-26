@@ -17,7 +17,7 @@ import { ArrowLeft, Loader2, Send } from "lucide-react";
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
-export default function ThreadPage({ params: { id } }: { params: { id: string } }) {
+export default function ThreadPage({ params }: { params: { id: string } }) {
     const { user } = useUser();
     const firestore = useFirestore();
     const router = useRouter();
@@ -26,8 +26,8 @@ export default function ThreadPage({ params: { id } }: { params: { id: string } 
 
     const threadRef = useMemoFirebase(() => {
         if (!firestore) return null;
-        return doc(firestore, "forumThreads", id);
-    }, [firestore, id]);
+        return doc(firestore, "forumThreads", params.id);
+    }, [firestore, params.id]);
     
     const { data: thread, isLoading: isThreadLoading } = useDoc<ForumThread>(threadRef);
 
@@ -87,7 +87,7 @@ export default function ThreadPage({ params: { id } }: { params: { id: string } 
                 <Button variant="ghost" asChild>
                     <Link href="/community">
                         <ArrowLeft className="mr-2"/>
-                        Volver a la comunidad
+                        Volver a los foros
                     </Link>
                 </Button>
             </div>
@@ -155,4 +155,3 @@ export default function ThreadPage({ params: { id } }: { params: { id: string } 
         </div>
     );
 }
-
