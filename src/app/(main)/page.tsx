@@ -193,7 +193,7 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="mx-auto grid grid-cols-1 gap-6 py-12 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mx-auto grid grid-cols-1 gap-6 py-12 sm:grid-cols-2 lg:grid-cols-1">
               {!learningPaths && <p>Cargando...</p>}
               {learningPaths?.map((path) => (
                 <Link key={path.id} href={`/paths#${path.id}`}>

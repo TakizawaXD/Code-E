@@ -300,7 +300,7 @@ export default function CourseDetailPage({
           </div>
         </div>
 
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 lg:order-first">
           <div className="sticky top-24">
             <h2 className="text-xl font-bold mb-4">{course.title}</h2>
              <div className="flex items-center gap-4 mb-4">

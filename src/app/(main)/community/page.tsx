@@ -201,7 +201,7 @@ export default function CommunityPage() {
             </header>
 
             <Tabs defaultValue="forums" className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
+                <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
                     <TabsTrigger value="forums"><MessageSquare className="mr-2"/>Foros de Discusión</TabsTrigger>
                     <TabsTrigger value="channels"><Users className="mr-2"/>Canales de Chat</TabsTrigger>
                     <TabsTrigger value="leaderboard"><Trophy className="mr-2"/>Clasificación</TabsTrigger>
