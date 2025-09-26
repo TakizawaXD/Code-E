@@ -86,7 +86,9 @@ He aquí un diagrama de alto nivel que ilustra la arquitectura de Code-E:
 
 ## 🗃️ Esquema de la Base de Datos (MySQL)
 
-A continuación se detalla la estructura de tablas y relaciones para la base de datos MySQL.
+A continuación se detalla la estructura de tablas y relaciones para la base de datos MySQL. Para ver el script SQL completo para la creación de estas tablas, consulta el archivo `docs/schema.sql`.
+
+![Diagrama de la Base de Datos](https://github.com/TakizawaXD/Code-E/blob/main/img/diagram-export-26-9-2025-9_22_24-a.-m..png?raw=true)
 
 -   **`users`**: Almacena la información de los usuarios.
     -   `id` (PK), `name`, `username`, `email`, `password_hash`, `created_at`
@@ -112,6 +114,7 @@ A continuación se detalla la estructura de tablas y relaciones para la base de 
 -   **`/src/app`**: Rutas principales de la aplicación (App Router de Next.js).
 -   **`/src/components`**: Componentes de React reutilizables (UI, layout, etc.).
 -   **`/src/lib`**: Lógica de cliente, tipos de TypeScript y datos estáticos.
+-   **`/docs`**: Contiene documentación adicional, como el esquema SQL de la base de datos.
 -   **`/backend`**: (Directorio sugerido) Contendría la aplicación Flask, modelos de datos y lógica de la API.
 
 ---
@@ -153,7 +156,7 @@ A continuación se detalla la estructura de tablas y relaciones para la base de 
 3.  **Configura la base de datos:**
     -   Crea una base de datos en tu servidor MySQL.
     -   Configura la cadena de conexión en un archivo `.env` dentro de la carpeta `backend`.
-    -   Ejecuta las migraciones para crear las tablas: `flask db upgrade`
+    -   Ejecuta el script `docs/schema.sql` en tu cliente de MySQL para crear las tablas.
 4.  **Inicia el servidor de Flask:**
     ```bash
     flask run
