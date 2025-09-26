@@ -8,7 +8,7 @@ import type { ForumThread, UserProfile, GamificationStats } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PlusCircle, MessageSquare, Trophy, Users, GitMerge, Star, Rocket, LayoutGrid } from "lucide-react";
+import { PlusCircle, MessageSquare, Trophy, Users, GitMerge, Star, Rocket, LayoutGrid, Hash } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -135,16 +135,38 @@ function LeaderboardTab() {
     );
 }
 
-function ProjectsTab() {
+function ChatChannelsTab() {
+    const channels = [
+        { name: 'general', description: 'Charla sobre cualquier tema con otros miembros de la comunidad.' },
+        { name: 'react', description: 'Discusiones sobre React, Next.js y el ecosistema de desarrollo frontend.' },
+        { name: 'python', description: 'Para todo lo relacionado con Python, desde data science hasta backend.' },
+        { name: 'diseño-ux', description: 'Comparte tus diseños, pide feedback y habla sobre UX/UI.' },
+        { name: 'ayuda-codigo', description: '¿Atascado en un problema? Pide ayuda a la comunidad aquí.' },
+        { name: 'proyectos', description: 'Muestra tus proyectos, busca colaboradores y comparte tu progreso.' },
+    ]
     return (
-         <Card className="mt-6 text-center py-20">
+         <Card className="mt-6">
+            <CardHeader>
+                <CardTitle>Canales de Chat</CardTitle>
+                <CardDescription>Únete a la conversación en tiempo real. Un espacio para colaborar, pedir ayuda y compartir ideas.</CardDescription>
+            </CardHeader>
             <CardContent>
-                <Rocket className="mx-auto h-16 w-16 text-muted-foreground" />
-                <h3 className="mt-6 text-xl font-semibold">Proyectos Colaborativos</h3>
-                <p className="mt-2 text-muted-foreground max-w-md mx-auto">
-                    Únete a otros estudiantes para trabajar en proyectos del mundo real. Una gran oportunidad para construir tu portafolio y aprender en equipo.
-                </p>
-                <Button className="mt-6" disabled>Buscar Proyectos (Próximamente)</Button>
+                <div className="space-y-4">
+                    {channels.map(channel => (
+                        <Card key={channel.name} className="hover:bg-accent/50">
+                            <CardContent className="p-4 flex items-center justify-between">
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <Hash className="w-5 h-5 text-muted-foreground" />
+                                        <h3 className="font-semibold text-lg">{channel.name}</h3>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground ml-7">{channel.description}</p>
+                                </div>
+                                <Button variant="outline" disabled>Unirse (Próximamente)</Button>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
             </CardContent>
         </Card>
     )
@@ -181,18 +203,18 @@ export default function CommunityPage() {
             <Tabs defaultValue="forums" className="w-full">
                 <TabsList className="grid w-full grid-cols-4">
                     <TabsTrigger value="forums"><MessageSquare className="mr-2"/>Foros de Discusión</TabsTrigger>
-                    <TabsTrigger value="leaderboard"><Trophy className="mr-2"/>Tabla de Clasificación</TabsTrigger>
-                    <TabsTrigger value="projects"><Users className="mr-2"/>Proyectos Colaborativos</TabsTrigger>
-                    <TabsTrigger value="gallery"><GitMerge className="mr-2"/>Galería de Proyectos</TabsTrigger>
+                    <TabsTrigger value="channels"><Users className="mr-2"/>Canales de Chat</TabsTrigger>
+                    <TabsTrigger value="leaderboard"><Trophy className="mr-2"/>Clasificación</TabsTrigger>
+                    <TabsTrigger value="gallery"><GitMerge className="mr-2"/>Galería</TabsTrigger>
                 </TabsList>
                 <TabsContent value="forums">
                     <ForumList />
                 </TabsContent>
+                 <TabsContent value="channels">
+                   <ChatChannelsTab />
+                </TabsContent>
                 <TabsContent value="leaderboard">
                    <LeaderboardTab />
-                </TabsContent>
-                <TabsContent value="projects">
-                   <ProjectsTab />
                 </TabsContent>
                 <TabsContent value="gallery">
                     <GalleryTab />

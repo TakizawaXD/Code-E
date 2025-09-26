@@ -92,7 +92,7 @@ export default function NewThreadPage() {
         <Button variant="ghost" asChild>
             <Link href="/community">
                 <ArrowLeft className="mr-2"/>
-                Volver a los foros
+                Volver a la comunidad
             </Link>
         </Button>
       </div>
