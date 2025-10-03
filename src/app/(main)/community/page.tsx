@@ -57,16 +57,14 @@ function ForumList() {
                     <CardContent className="p-4 flex items-start justify-between">
                         <div className="flex items-start gap-4">
                             <Avatar>
-                                <AvatarImage src={thread.authorAvatarUrl} alt={thread.authorName} />
-                                <AvatarFallback>{thread.authorName?.charAt(0).toUpperCase()}</AvatarFallback>
-
+                                <AvatarFallback>?</AvatarFallback>
                             </Avatar>
                             <div>
                                 <Link href={`/community/threads/${thread.id}`}>
                                     <h3 className="font-semibold text-lg hover:underline">{thread.title}</h3>
                                 </Link>
                                 <p className="text-sm text-muted-foreground">
-                                    Iniciado por {thread.authorName}
+                                    Iniciado
                                 </p>
                             </div>
                         </div>

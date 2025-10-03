@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useFirebase, useUser, useDoc, useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { useUser, useDoc, useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 import { doc, collection, query, orderBy, serverTimestamp, updateDoc, addDoc } from "firebase/firestore";
 import { notFound, useRouter } from "next/navigation";
 import type { ForumThread, ForumPost } from "@/lib/types";
@@ -52,8 +52,8 @@ export default function ThreadPage({ params: { id } }: { params: { id: string } 
             const postData = {
                 content: newPostContent.trim(),
                 authorId: user.uid,
-                authorName: user.displayName || user.email,
-                authorAvatarUrl: user.photoURL || '',
+                authorName: "Anónimo",
+                authorAvatarUrl: "",
                 createdAt: now,
             };
 
@@ -97,10 +97,9 @@ export default function ThreadPage({ params: { id } }: { params: { id: string } 
                 <div className="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                         <Avatar className="h-6 w-6">
-                            <AvatarImage src={thread.authorAvatarUrl} alt={thread.authorName} />
-                            <AvatarFallback>{thread.authorName?.charAt(0).toUpperCase()}</AvatarFallback>
+                            <AvatarFallback>?</AvatarFallback>
                         </Avatar>
-                        <span>Iniciado por <span className="font-semibold text-foreground">{thread.authorName}</span></span>
+                        <span>Iniciado por <span className="font-semibold text-foreground">Anónimo</span></span>
                     </div>
                     <span>•</span>
                     <span>{thread.createdAt ? format(thread.createdAt.toDate(), "d 'de' MMMM 'de' yyyy", { locale: es }) : ''}</span>
@@ -126,8 +125,7 @@ export default function ThreadPage({ params: { id } }: { params: { id: string } 
                             <h3 className="text-lg font-semibold mb-4">Añadir una respuesta</h3>
                             <div className="flex gap-4">
                                 <Avatar>
-                                    {user.photoURL && <AvatarImage src={user.photoURL} alt={user.displayName || "User"} />}
-                                    <AvatarFallback>{user.displayName?.charAt(0).toUpperCase()}</AvatarFallback>
+                                    <AvatarFallback>{user.displayName?.charAt(0).toUpperCase() || 'A'}</AvatarFallback>
                                 </Avatar>
                                 <div className="w-full space-y-2">
                                     <Textarea 

@@ -41,8 +41,8 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
         
         const commentData = {
             userId: user.uid,
-            userName: user.displayName || user.email,
-            userAvatarUrl: user.photoURL || '',
+            userName: "Anónimo",
+            userAvatarUrl: "",
             text: newComment.trim(),
             createdAt: serverTimestamp(),
         };
@@ -59,7 +59,6 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
                 <Card>
                     <CardContent className="p-4 flex gap-4">
                         <Avatar>
-                            {user.photoURL && <AvatarImage src={user.photoURL} alt={user.displayName || "User"} />}
                             <AvatarFallback>{userInitial}</AvatarFallback>
                         </Avatar>
                         <div className="w-full space-y-2">
@@ -91,12 +90,11 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
                 {comments?.map(comment => (
                     <div key={comment.id} className="flex gap-4">
                         <Avatar>
-                            {comment.userAvatarUrl && <AvatarImage src={comment.userAvatarUrl} alt={comment.userName} />}
-                            <AvatarFallback>{comment.userName?.charAt(0).toUpperCase()}</AvatarFallback>
+                            <AvatarFallback>?</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
                             <div className="flex items-center gap-2">
-                                <p className="font-semibold">{comment.userName}</p>
+                                <p className="font-semibold">Anónimo</p>
                                 <p className="text-xs text-muted-foreground">
                                     {comment.createdAt ? formatDistanceToNow(comment.createdAt.toDate(), { addSuffix: true, locale: es }) : ''}
                                 </p>
@@ -109,5 +107,3 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
         </div>
     );
 }
-
-    

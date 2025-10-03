@@ -15,12 +15,13 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import React from "react";
-import { Code, BrainCircuit, PenTool, Cloud, Users, Briefcase, BookText, Shield, Smartphone, Blocks, Landmark, Paintbrush, TrendingUp, Film, Laptop, Rocket } from "lucide-react";
+import { Code, BrainCircuit, PenTool, Cloud, Users, Briefcase, BookText, Shield, Smartphone, Blocks, Landmark, Paintbrush, TrendingUp, Film, Laptop, Rocket, FileCode } from "lucide-react";
 
 const mainNavItems: NavItem[] = [
   { title: "Rutas de Aprendizaje", href: "/paths" },
   { title: "Cursos", href: "/courses" },
   { title: "Comunidad", href: "/community" },
+  { title: "Guía IA", href: "/guides" },
   { title: "Mi Panel", href: "/dashboard" },
   { title: "Precios", href: "/pricing"},
 ];
