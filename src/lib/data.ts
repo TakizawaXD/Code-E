@@ -92,7 +92,7 @@ const courseData: Omit<Course, 'modules'>[] = [
     order: 1,
     content: '<h1>Introducción a React</h1><p>React es una librería de JavaScript para construir interfaces de usuario. En esta lección, aprenderás los conceptos fundamentales de React, incluyendo componentes, JSX y el DOM virtual. Prepárate para el cuestionario al final.</p>',
     imageUrl: images['course-web-react'],
-    youtubeVideoId: "nAe_a1mdNDY",
+    youtubeVideoId: "GMnWXlJnbNo",
     quiz: {
       id: 'react-quiz-1',
       title: 'Cuestionario de React Básico',
@@ -131,7 +131,7 @@ const pythonModules: CourseModule[] = [
         lessons: [
             { id: 'py-b1', title: '¡Hola, mundo!', duration: '5 min', difficulty: 'Fácil', content: '<h1>¡Hola, mundo!</h1><p>Tu primer programa en cualquier lenguaje de programación. Escribe un script que imprima el texto "¡Hola, mundo!" en la consola. Te familiarizarás con la función `print()`.</p>', order: 1, 
               imageUrl: images['lesson-default'],
-              youtubeVideoId: "I2wURD4_T4I",
+              youtubeVideoId: "Kp4Mvapo5kc",
               quiz: {
                     id: 'python-quiz-1',
                     title: 'Cuestionario de "Hola, Mundo"',
@@ -210,7 +210,7 @@ const javascriptModules: CourseModule[] = [
         lessons: [
             { id: 'js-b1', title: 'Cambiar Color de Fondo', duration: '5 min', difficulty: 'Fácil', content: '<h1>Cambiar Color de Fondo</h1><p>Manipulación del DOM. Escribe una función en un archivo .js que, al ser llamada por el `onclick` de un botón en tu HTML, cambie el color de fondo (`backgroundColor`) del `<body>` de la página a un color aleatorio.</p>', order: 1, 
               imageUrl: images['lesson-default'],
-              youtubeVideoId: "3x9AtR_bK-g",
+              youtubeVideoId: "BisJdN2LWEY",
             },
             { id: 'js-b2', title: 'Validar Formulario Simple', duration: '5 min', difficulty: 'Fácil', content: '<h1>Validar Formulario Simple</h1><p>Eventos y validación. Crea un formulario HTML con un campo de email y un botón de envío. Usa JavaScript para interceptar el evento `submit` y mostrar una alerta si el campo de email está vacío, previniendo el envío del formulario.</p>', order: 2,
               imageUrl: images['lesson-default'],
@@ -288,7 +288,7 @@ const javaModules: CourseModule[] = [
                 content: '<h1>¡Hola, mundo! en Java</h1><p>Tu primer paso en Java. Aprenderás sobre la estructura básica de una clase de Java, el método `main`, y cómo usar `System.out.println()` para mostrar texto en la consola.</p>',
                 order: 1,
                 imageUrl: images['lesson-default'],
-                youtubeVideoId: 'r3GGV2TG_vw',
+                youtubeVideoId: 'grEKMHGYyns',
                 quiz: {
                     id: 'java-quiz-1',
                     title: 'Cuestionario Básico de Java',
@@ -356,7 +356,7 @@ const typescriptModules: CourseModule[] = [
                 content: '<h1>Introducción a Tipos en TypeScript</h1><p>Aprende a usar tipos básicos como `string`, `number` y `boolean` para hacer tu código JavaScript más seguro. Tiparás variables y funciones simples.</p>',
                 order: 1,
                 imageUrl: images['lesson-default'],
-                youtubeVideoId: 'S5w-k_Q3x6g',
+                youtubeVideoId: 'BwuLxPH8IDs',
                 quiz: {
                     id: 'ts-quiz-1',
                     title: 'Cuestionario de Tipos en TypeScript',
@@ -388,7 +388,7 @@ const phpModules: CourseModule[] = [
                 content: '<h1>¡Hola, mundo! en PHP</h1><p>Tu primer script en PHP. Aprenderás a usar la etiqueta `<?php` y la instrucción `echo` para mostrar texto en una página web generada por el servidor.</p>',
                 order: 1,
                 imageUrl: images['lesson-default'],
-                youtubeVideoId: 'BUCiSSy2U-M',
+                youtubeVideoId: 'OK_JCtrrv-c',
                 quiz: {
                     id: 'php-quiz-1',
                     title: 'Cuestionario Básico de PHP',
@@ -420,7 +420,7 @@ const rModules: CourseModule[] = [
                 content: '<h1>Introducción a R y RStudio</h1><p>Aprende qué es R y cómo usar RStudio. Crearás tus primeras variables y realizarás operaciones matemáticas básicas en la consola.</p>',
                 order: 1,
                 imageUrl: images['lesson-default'],
-                youtubeVideoId: '704_GjBj-bA',
+                youtubeVideoId: '_V8eKsto3Ug',
                 quiz: {
                     id: 'r-quiz-1',
                     title: 'Cuestionario Básico de R',
@@ -452,7 +452,7 @@ const sqlModules: CourseModule[] = [
                 content: '<h1>La Sentencia SELECT en SQL</h1><p>La base de todas las consultas. Aprenderás a usar `SELECT` para recuperar columnas específicas de una tabla y `SELECT *` para obtener todas las columnas.</p>',
                 order: 1,
                 imageUrl: images['lesson-default'],
-                youtubeVideoId: 'c2Z64y2y2aY',
+                youtubeVideoId: 'HXV3zeQKqGY',
                 quiz: {
                     id: 'sql-quiz-1',
                     title: 'Cuestionario de SELECT',
@@ -484,7 +484,7 @@ const swiftModules: CourseModule[] = [
                 content: '<h1>Introducción a Swift</h1><p>Tu primer contacto con el lenguaje de Apple. Aprenderás a declarar variables con `let` y `var`, y a imprimir en la consola con la función `print()`.</p>',
                 order: 1,
                 imageUrl: images['lesson-default'],
-                youtubeVideoId: 'UroPdj45n-A',
+                youtubeVideoId: 'comQ1-x2a1Q',
                 quiz: {
                     id: 'swift-quiz-1',
                     title: 'Cuestionario Básico de Swift',
@@ -516,7 +516,7 @@ const kotlinModules: CourseModule[] = [
                 content: '<h1>Introducción a Kotlin</h1><p>El lenguaje moderno para Android. Aprenderás la estructura básica de una función `main` y cómo imprimir en consola con `println()`.</p>',
                 order: 1,
                 imageUrl: images['lesson-default'],
-                youtubeVideoId: 'sBwGLF-2fkA',
+                youtubeVideoId: 'F9UC9DY-vIU',
                 quiz: {
                     id: 'kotlin-quiz-1',
                     title: 'Cuestionario Básico de Kotlin',
@@ -548,7 +548,7 @@ const dartModules: CourseModule[] = [
                 content: '<h1>Introducción a Dart</h1><p>El lenguaje detrás de Flutter. Aprenderás a escribir una función `main`, declarar variables y usar `print()` para la salida en consola.</p>',
                 order: 1,
                 imageUrl: images['lesson-default'],
-                youtubeVideoId: '5KlnlCq2M5Q',
+                youtubeVideoId: 'Ej_Pcr4uC2Q',
                 quiz: {
                     id: 'dart-quiz-1',
                     title: 'Cuestionario Básico de Dart',
@@ -580,7 +580,7 @@ const solidityModules: CourseModule[] = [
                 content: '<h1>Estructura de un Smart Contract</h1><p>Aprende la estructura básica de un contrato inteligente en Solidity, incluyendo la versión del compilador, la palabra clave `contract` y las variables de estado.</p>',
                 order: 1,
                 imageUrl: images['lesson-default'],
-                youtubeVideoId: 'd_i-gQ9fA_o',
+                youtubeVideoId: 'aGonv5DP910',
                 quiz: {
                     id: 'solidity-quiz-1',
                     title: 'Cuestionario de Smart Contracts',
@@ -637,6 +637,7 @@ const allModules: Record<string, CourseModule[]> = {
     'prog-java': javaModules,
     'prog-cpp': cppModules,
     'web-react': [{ id: 'react-m1', title: 'Fundamentos de React', order: 1, lessons: [pythonReactQuiz] }],
+    'web-node': [{ id: 'node-m1', title: 'Fundamentos de Node', order: 1, lessons: [{ id: 'node-l1', title: 'Intro a Node.js', duration: '12 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'TlB_eWDSMt4' }] }],
     'web-typescript': typescriptModules,
     'web-php': phpModules,
     'ia-r': rModules,
@@ -646,7 +647,14 @@ const allModules: Record<string, CourseModule[]> = {
     'movil-dart': dartModules,
     'web3-solidity': solidityModules,
     'web3-rust': rustModules,
-    // Add other courses here and map them to their modules
+    'ia-ml': [{ id: 'ml-m1', title: 'Fundamentos de ML', order: 1, lessons: [{ id: 'ml-l1', title: 'Intro a ML', duration: '15 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'Gv9_4yMHFhI' }] }],
+    'ia-datascience-python': [{ id: 'ds-py-m1', title: 'Intro a Python para DS', order: 1, lessons: [{ id: 'ds-py-l1', title: 'Pandas y Numpy', duration: '20 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'ua-CiDNNj30' }] }],
+    'ux-investigacion': [{ id: 'ux-inv-m1', title: 'Investigación de Usuarios', order: 1, lessons: [{ id: 'ux-inv-l1', title: 'User Personas', duration: '15 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'u8zQ3bhyX1U' }] }],
+    'ux-figma': [{ id: 'ux-figma-m1', title: 'Diseño en Figma', order: 1, lessons: [{ id: 'ux-figma-l1', title: 'Prototipado', duration: '18 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: '4W4LvJnNegI' }] }],
+    'cloud-aws': [{ id: 'aws-m1', title: 'Intro a AWS', order: 1, lessons: [{ id: 'aws-l1', title: 'EC2 y S3', duration: '20 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'PLVHgQku8Z935QbKFvttpxUF1WlNWt1dZ9' }] }],
+    'cloud-docker': [{ id: 'docker-m1', title: 'Intro a Docker', order: 1, lessons: [{ id: 'docker-l1', title: 'Contenedores', duration: '15 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'pGyN1pa7c8Q' }] }],
+    'cyber-intro': [{ id: 'cyber-m1', title: 'Fundamentos de Ciberseguridad', order: 1, lessons: [{ id: 'cyber-l1', title: 'Amenazas Comunes', duration: '15 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'inWWhr5tnEA' }] }],
+    'web-vue': [{ id: 'vue-m1', title: 'Fundamentos de Vue', order: 1, lessons: [{ id: 'vue-l1', title: 'Intro a Vue', duration: '10 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: '4deVCNJq3qc' }] }],
 };
 
 export const courses: Course[] = courseData.map(course => ({
@@ -666,5 +674,7 @@ export const courses: Course[] = courseData.map(course => ({
         }]
     }]
 }));
+
+    
 
     
