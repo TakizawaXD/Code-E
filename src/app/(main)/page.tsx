@@ -9,6 +9,7 @@ import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/com
 import { CourseCard } from "@/components/course-card";
 import { courses as allCourses, learningPaths as allLearningPaths } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import images from "@/lib/placeholder-images.json";
 
 function PopularCourses() {
     // Taking the first 3 courses as "popular"
@@ -122,7 +123,7 @@ function CodeExamples() {
 
 export default function HomePage() {
   const learningPaths = allLearningPaths;
-  const heroImage = "https://images.unsplash.com/photo-1558459654-c430be5b0a44";
+  const heroImage = images['hero-image'];
 
   return (
     <div className="flex flex-col min-h-screen">
