@@ -199,7 +199,21 @@ const pythonModules: CourseModule[] = [
               youtubeVideoId: "s_ht4AKnWZg"
             },
         ]
-    }
+    },
+    {
+        id: 'python-m4',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 4,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `py-p${i + 1}`,
+            title: `Proyecto ${i + 1} en Python`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en Python</h1><p>Crea una aplicación en Python que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en Python.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
 ];
 
 const javascriptModules: CourseModule[] = [
@@ -271,7 +285,21 @@ const javascriptModules: CourseModule[] = [
               youtubeVideoId: "Rpl22B4r3E8"
             },
         ]
-    }
+    },
+    {
+        id: 'javascript-m4',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 4,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `js-p${i + 1}`,
+            title: `Proyecto ${i + 1} en JavaScript`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en JavaScript</h1><p>Crea una aplicación en JavaScript que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en JavaScript.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
 ];
 
 const javaModules: CourseModule[] = [
@@ -307,7 +335,21 @@ const javaModules: CourseModule[] = [
               youtubeVideoId: 'K-qB4mY-XlA'
             },
         ]
-    }
+    },
+    {
+        id: 'java-m2',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 2,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `java-p${i + 1}`,
+            title: `Proyecto ${i + 1} en Java`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en Java</h1><p>Crea una aplicación en Java que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en Java.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
 ];
 
 const cppModules: CourseModule[] = [
@@ -339,7 +381,21 @@ const cppModules: CourseModule[] = [
                 }
             }
         ]
-    }
+    },
+    {
+        id: 'cpp-m2',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 2,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `cpp-p${i + 1}`,
+            title: `Proyecto ${i + 1} en C++`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en C++</h1><p>Crea una aplicación en C++ que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en C++.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
 ];
 
 const typescriptModules: CourseModule[] = [
@@ -371,7 +427,21 @@ const typescriptModules: CourseModule[] = [
                 }
             }
         ]
-    }
+    },
+    {
+        id: 'ts-m2',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 2,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `ts-p${i + 1}`,
+            title: `Proyecto ${i + 1} en TypeScript`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en TypeScript</h1><p>Crea una aplicación en TypeScript que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en TypeScript.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
 ];
 
 const phpModules: CourseModule[] = [
@@ -403,7 +473,21 @@ const phpModules: CourseModule[] = [
                 }
             }
         ]
-    }
+    },
+    {
+        id: 'php-m2',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 2,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `php-p${i + 1}`,
+            title: `Proyecto ${i + 1} en PHP`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en PHP</h1><p>Crea una aplicación en PHP que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en PHP.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
 ];
 
 const rModules: CourseModule[] = [
@@ -435,7 +519,21 @@ const rModules: CourseModule[] = [
                 }
             }
         ]
-    }
+    },
+    {
+        id: 'r-m2',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 2,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `r-p${i + 1}`,
+            title: `Proyecto ${i + 1} en R`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en R</h1><p>Crea una aplicación en R que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en R.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
 ];
 
 const sqlModules: CourseModule[] = [
@@ -467,7 +565,21 @@ const sqlModules: CourseModule[] = [
                 }
             }
         ]
-    }
+    },
+    {
+        id: 'sql-m2',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 2,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `sql-p${i + 1}`,
+            title: `Proyecto ${i + 1} en SQL`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en SQL</h1><p>Crea una aplicación en SQL que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en SQL.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
 ];
 
 const swiftModules: CourseModule[] = [
@@ -499,7 +611,21 @@ const swiftModules: CourseModule[] = [
                 }
             }
         ]
-    }
+    },
+    {
+        id: 'swift-m2',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 2,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `swift-p${i + 1}`,
+            title: `Proyecto ${i + 1} en Swift`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en Swift</h1><p>Crea una aplicación en Swift que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en Swift.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
 ];
 
 const kotlinModules: CourseModule[] = [
@@ -531,7 +657,21 @@ const kotlinModules: CourseModule[] = [
                 }
             }
         ]
-    }
+    },
+    {
+        id: 'kotlin-m2',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 2,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `kotlin-p${i + 1}`,
+            title: `Proyecto ${i + 1} en Kotlin`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en Kotlin</h1><p>Crea una aplicación en Kotlin que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en Kotlin.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
 ];
 
 const dartModules: CourseModule[] = [
@@ -563,7 +703,21 @@ const dartModules: CourseModule[] = [
                 }
             }
         ]
-    }
+    },
+    {
+        id: 'dart-m2',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 2,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `dart-p${i + 1}`,
+            title: `Proyecto ${i + 1} en Dart`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en Dart</h1><p>Crea una aplicación en Dart que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en Dart.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
 ];
 
 const solidityModules: CourseModule[] = [
@@ -595,7 +749,21 @@ const solidityModules: CourseModule[] = [
                 }
             }
         ]
-    }
+    },
+    {
+        id: 'solidity-m2',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 2,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `solidity-p${i + 1}`,
+            title: `Proyecto ${i + 1} en Solidity`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en Solidity</h1><p>Crea una aplicación en Solidity que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en Solidity.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
 ];
 
 const rustModules: CourseModule[] = [
@@ -627,8 +795,115 @@ const rustModules: CourseModule[] = [
                 }
             }
         ]
-    }
+    },
+    {
+        id: 'rust-m2',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 2,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `rust-p${i + 1}`,
+            title: `Proyecto ${i + 1} en Rust`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en Rust</h1><p>Crea una aplicación en Rust que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en Rust.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
 ];
+
+const nodeModules: CourseModule[] = [
+    {
+        id: 'node-m1',
+        title: 'Fundamentos de Node',
+        order: 1,
+        lessons: [{ id: 'node-l1', title: 'Intro a Node.js', duration: '12 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'TlB_eWDSMt4' }]
+    },
+    {
+        id: 'node-m2',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 2,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `node-p${i + 1}`,
+            title: `Proyecto ${i + 1} en Node.js`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en Node.js</h1><p>Crea una aplicación en Node.js que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en Node.js.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
+];
+
+const reactModules: CourseModule[] = [
+    {
+        id: 'react-m1',
+        title: 'Fundamentos de React',
+        order: 1,
+        lessons: [pythonReactQuiz]
+    },
+    {
+        id: 'react-m2',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 2,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `react-p${i + 1}`,
+            title: `Proyecto ${i + 1} en React`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en React</h1><p>Crea una aplicación en React que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en React.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
+];
+
+const vueModules: CourseModule[] = [
+    {
+        id: 'vue-m1',
+        title: 'Fundamentos de Vue',
+        order: 1,
+        lessons: [{ id: 'vue-l1', title: 'Intro a Vue', duration: '10 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: '4deVCNJq3qc' }]
+    },
+    {
+        id: 'vue-m2',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 2,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `vue-p${i + 1}`,
+            title: `Proyecto ${i + 1} en Vue`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en Vue</h1><p>Crea una aplicación en Vue que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en Vue.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
+];
+
+const flutterModules: CourseModule[] = [
+    {
+        id: 'flutter-m1',
+        title: 'Fundamentos de Flutter',
+        order: 1,
+        lessons: [{ id: 'flutter-l1', title: 'Intro a Flutter', duration: '10 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: '5izffRVgc0k' }]
+    },
+    {
+        id: 'flutter-m2',
+        title: 'Proyectos Prácticos (Avanzado)',
+        order: 2,
+        lessons: Array.from({ length: 10 }, (_, i) => ({
+            id: `flutter-p${i + 1}`,
+            title: `Proyecto ${i + 1} en Flutter`,
+            duration: '120 min',
+            difficulty: 'Difícil',
+            content: '<h1>Proyecto Avanzado en Flutter</h1><p>Crea una aplicación en Flutter que resuelva un problema complejo del mundo real. Debe incluir pruebas automatizadas, documentación clara y buenas prácticas de arquitectura. Este proyecto forma parte de la certificación avanzada en Flutter.</p>',
+            order: i + 1,
+            imageUrl: images['lesson-default'],
+        })),
+    },
+];
+
 
 // Combine all modules
 const allModules: Record<string, CourseModule[]> = {
@@ -636,8 +911,8 @@ const allModules: Record<string, CourseModule[]> = {
     'prog-javascript': javascriptModules,
     'prog-java': javaModules,
     'prog-cpp': cppModules,
-    'web-react': [{ id: 'react-m1', title: 'Fundamentos de React', order: 1, lessons: [pythonReactQuiz] }],
-    'web-node': [{ id: 'node-m1', title: 'Fundamentos de Node', order: 1, lessons: [{ id: 'node-l1', title: 'Intro a Node.js', duration: '12 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'TlB_eWDSMt4' }] }],
+    'web-react': reactModules,
+    'web-node': nodeModules,
     'web-typescript': typescriptModules,
     'web-php': phpModules,
     'ia-r': rModules,
@@ -647,6 +922,8 @@ const allModules: Record<string, CourseModule[]> = {
     'movil-dart': dartModules,
     'web3-solidity': solidityModules,
     'web3-rust': rustModules,
+    'movil-flutter': flutterModules,
+    'web-vue': vueModules,
     'ia-ml': [{ id: 'ml-m1', title: 'Fundamentos de ML', order: 1, lessons: [{ id: 'ml-l1', title: 'Intro a ML', duration: '15 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'Gv9_4yMHFhI' }] }],
     'ia-datascience-python': [{ id: 'ds-py-m1', title: 'Intro a Python para DS', order: 1, lessons: [{ id: 'ds-py-l1', title: 'Pandas y Numpy', duration: '20 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'ua-CiDNNj30' }] }],
     'ux-investigacion': [{ id: 'ux-inv-m1', title: 'Investigación de Usuarios', order: 1, lessons: [{ id: 'ux-inv-l1', title: 'User Personas', duration: '15 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'u8zQ3bhyX1U' }] }],
@@ -654,7 +931,6 @@ const allModules: Record<string, CourseModule[]> = {
     'cloud-aws': [{ id: 'aws-m1', title: 'Intro a AWS', order: 1, lessons: [{ id: 'aws-l1', title: 'EC2 y S3', duration: '20 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'PLVHgQku8Z935QbKFvttpxUF1WlNWt1dZ9' }] }],
     'cloud-docker': [{ id: 'docker-m1', title: 'Intro a Docker', order: 1, lessons: [{ id: 'docker-l1', title: 'Contenedores', duration: '15 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'pGyN1pa7c8Q' }] }],
     'cyber-intro': [{ id: 'cyber-m1', title: 'Fundamentos de Ciberseguridad', order: 1, lessons: [{ id: 'cyber-l1', title: 'Amenazas Comunes', duration: '15 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'inWWhr5tnEA' }] }],
-    'web-vue': [{ id: 'vue-m1', title: 'Fundamentos de Vue', order: 1, lessons: [{ id: 'vue-l1', title: 'Intro a Vue', duration: '10 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: '4deVCNJq3qc' }] }],
 };
 
 export const courses: Course[] = courseData.map(course => ({
@@ -674,6 +950,8 @@ export const courses: Course[] = courseData.map(course => ({
         }]
     }]
 }));
+
+    
 
     
 
