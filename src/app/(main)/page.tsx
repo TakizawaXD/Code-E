@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import Link from "next/link";
@@ -155,6 +156,7 @@ export default function HomePage() {
                 height="400"
                 alt="Hero"
                 className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last lg:aspect-square"
+                style={{ width: "auto", height: "auto" }}
                 data-ai-hint="programming abstract"
                 priority
               />
