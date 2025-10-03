@@ -16,7 +16,7 @@ export default function GuidesPage() {
             // Wait for Lucide and Marked to be available
             await new Promise(resolve => {
                 const interval = setInterval(() => {
-                    if (window.lucide && window.marked) {
+                    if (window.lucide && window.marked && window.CodeMirror) {
                         clearInterval(interval);
                         resolve(true);
                     }
@@ -25,7 +25,7 @@ export default function GuidesPage() {
             
              // --- DATA ---
             const contentData = {
-                'welcome': `<h1>Bienvenido a la Guía Potenciada por IA</h1><p>Esta es una versión mejorada de la guía de preparación para entrevistas técnicas. Ahora, puedes ejecutar los ejemplos de código directamente en el navegador y usar la IA para obtener explicaciones, generar casos de prueba y resumir secciones.</p><p>Usa el menú de la izquierda para navegar. Cuando encuentres un bloque de código, siéntete libre de modificarlo y hacer clic en "Ejecutar" para ver cómo funciona. ¡La experimentación es clave para el aprendizaje!</p><div class="mt-8 p-4 bg-indigo-900/50 border border-indigo-700 rounded-lg"><h3 class="text-lg font-semibold text-indigo-300">Nuevas Funciones con IA ✨</h3><ul class="list-disc list-inside text-indigo-200"><li><strong>Explicación con IA:</strong> Obtén un análisis detallado de cada algoritmo.</li><li><strong>Generar Caso de Prueba:</strong> Crea nuevos tests para probar los límites del código.</li><li><strong>Resumir Sección:</strong> Consigue un resumen rápido de los conceptos clave de la página actual.</li></ul></div>`,
+                'welcome': `<h1>Bienvenido a la Guía Potenciada por IA</h1><p>Esta es una versión mejorada de la guía de preparación para entrevistas técnicas. Ahora, puedes ejecutar los ejemplos de código directamente en el navegador y usar la IA para obtener explicaciones, generar casos de prueba y resumir secciones.</p><p>Usa el menú de la izquierda para navegar. Cuando encuentres un bloque de código, siéntete libre de modificarlo y hacer clic en "Ejecutar" para ver cómo funciona. ¡La experimentación es clave para el aprendizaje!</p><div class="mt-8 p-4 bg-indigo-900/50 border border-indigo-700 rounded-lg"><h3 class="text-lg font-semibold text-indigo-300">Nuevas Funciones con IA ✨ (Desactivado Temporalmente)</h3><ul class="list-disc list-inside text-indigo-200"><li><strong>Explicación con IA:</strong> Obtén un análisis detallado de cada algoritmo.</li><li><strong>Generar Caso de Prueba:</strong> Crea nuevos tests para probar los límites del código.</li><li><strong>Resumir Sección:</strong> Consigue un resumen rápido de los conceptos clave de la página actual.</li></ul></div>`,
                 'part1-sec1': `<h1>Parte I: La Fundación</h1><h2>Sección 1: Dominando el Proceso de Aprendizaje</h2><p>El enfoque moderno para la preparación de entrevistas técnicas ha experimentado una transformación fundamental, alejándose de la memorización de soluciones específicas hacia el desarrollo de una comprensión profunda de los patrones de resolución de problemas subyacentes...</p>`,
                 'part1-sec2': `<h2>Sección 2: Los Pilares - Estructuras de Datos Fundamentales</h2><p>El dominio de las estructuras de datos es el requisito previo indispensable para la resolución de problemas algorítmicos. Son las herramientas fundamentales con las que un ingeniero organiza y manipula la información.</p>`,
                 'part1-sec3': `<h2>Sección 3: El Conjunto de Herramientas - Algoritmos Fundamentales</h2><p>Los algoritmos son los procedimientos paso a paso que operan sobre las estructuras de datos para resolver problemas. Una sólida comprensión de estos algoritmos fundamentales es esencial para construir soluciones eficientes.</p>`,
@@ -60,35 +60,37 @@ export default function GuidesPage() {
             let editors = {};
             let currentSectionId = 'welcome';
 
-            // --- Gemini API Call ---
+            // --- Gemini API Call (Deactivated) ---
             async function callGemini(prompt) {
-                const apiKey = ""; // Leave empty, handled by the environment
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                console.error("Gemini API call is deactivated. An API key is required.");
+                return `Error: La llamada a la API de Gemini está desactivada. Se requiere una clave de API.`;
+                // const apiKey = ""; // Leave empty, handled by the environment
+                // const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                 
-                const payload = {
-                    contents: [{ role: "user", parts: [{ text: prompt }] }]
-                };
+                // const payload = {
+                //     contents: [{ role: "user", parts: [{ text: prompt }] }]
+                // };
 
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
+                // try {
+                //     const response = await fetch(apiUrl, {
+                //         method: 'POST',
+                //         headers: { 'Content-Type': 'application/json' },
+                //         body: JSON.stringify(payload)
+                //     });
 
-                    if (!response.ok) {
-                        throw new Error(`API request failed with status ${response.status}`);
-                    }
+                //     if (!response.ok) {
+                //         throw new Error(`API request failed with status ${response.status}`);
+                //     }
 
-                    const result = await response.json();
-                    if (result.candidates && result.candidates.length > 0) {
-                        return result.candidates[0].content.parts[0].text;
-                    }
-                    throw new Error("Invalid response from API");
-                } catch (error) {
-                    console.error("Gemini API call failed:", error);
-                    return `Error al contactar la IA: ${error.message}`;
-                }
+                //     const result = await response.json();
+                //     if (result.candidates && result.candidates.length > 0) {
+                //         return result.candidates[0].content.parts[0].text;
+                //     }
+                //     throw new Error("Invalid response from API");
+                // } catch (error) {
+                //     console.error("Gemini API call failed:", error);
+                //     return `Error al contactar la IA: ${error.message}`;
+                // }
             }
 
             function showModal(title, content) {
@@ -157,6 +159,8 @@ export default function GuidesPage() {
             }
 
             summarizeBtn.addEventListener('click', handleSummarizeSection);
+            // Deactivate AI buttons
+            summarizeBtn.disabled = true;
 
             function generateNav() {
                 let navHtml = '';
@@ -185,8 +189,8 @@ export default function GuidesPage() {
                         <textarea id="editor-${id}"></textarea>
                         <div class="flex items-center justify-between bg-gray-800 p-2 rounded-b-md -mt-2">
                             <div>
-                                <button class="explain-btn gemini-btn">✨ Explicación con IA</button>
-                                <button class="testcase-btn gemini-btn ml-2">✨ Generar Caso de Prueba</button>
+                                <button class="explain-btn gemini-btn" disabled>✨ Explicación con IA</button>
+                                <button class="testcase-btn gemini-btn ml-2" disabled>✨ Generar Caso de Prueba</button>
                             </div>
                             <div>
                                 <button class="reset-btn text-sm py-1 px-3 rounded-md bg-gray-600 hover:bg-gray-500 mr-2">Reiniciar</button>
@@ -206,8 +210,8 @@ export default function GuidesPage() {
 
                     container.querySelector('.run-btn').addEventListener('click', () => executeCode(id));
                     container.querySelector('.reset-btn').addEventListener('click', () => editors[id].setValue(codeExamples[id]));
-                    container.querySelector('.explain-btn').addEventListener('click', () => handleExplainCode(id));
-                    container.querySelector('.testcase-btn').addEventListener('click', () => handleGenerateTest(id));
+                    // container.querySelector('.explain-btn').addEventListener('click', () => handleExplainCode(id));
+                    // container.querySelector('.testcase-btn').addEventListener('click', () => handleGenerateTest(id));
                 });
                 window.lucide.createIcons();
             }
