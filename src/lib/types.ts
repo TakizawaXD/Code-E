@@ -1,5 +1,3 @@
-
-
 import { FieldValue, Timestamp } from "firebase/firestore";
 
 export type NavItem = {
@@ -48,7 +46,6 @@ export type Course = {
   instructor: string;
   instructorAvatarUrl: string;
   imageUrl: string;
-  modules: CourseModule[];
   pathId: string;
 };
 

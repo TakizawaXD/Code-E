@@ -6,7 +6,6 @@ import React, { useState, useMemo, useEffect, Suspense } from "react";
 import Image from "next/image";
 import { useFirebase, useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from "@/firebase";
 import { setDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
-import { courses as allCourses } from "@/lib/data";
 import type { Course, Lesson, CourseModule, Progress } from "@/lib/types";
 import {
   Accordion,
@@ -29,14 +28,14 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { QuizComponent } from "@/components/quiz";
 import { Badge } from "@/components/ui/badge";
-import { collection, query, where, doc, getDocs, serverTimestamp, addDoc } from "firebase/firestore";
+import { collection, query, where, doc, getDocs, serverTimestamp, orderBy } from "firebase/firestore";
 import { CommentSection } from "@/components/comment-section";
 
-function getNextLesson(course: Course, currentModuleId: string, currentLessonId: string): { moduleId: string; lessonId: string } | null {
-  const currentModuleIndex = course.modules.findIndex(m => m.id === currentModuleId);
+function getNextLesson(modules: CourseModule[], currentModuleId: string, currentLessonId: string): { moduleId: string; lessonId: string } | null {
+  const currentModuleIndex = modules.findIndex(m => m.id === currentModuleId);
   if (currentModuleIndex === -1) return null;
 
-  const currentModule = course.modules[currentModuleIndex];
+  const currentModule = modules[currentModuleIndex];
   const currentLessonIndex = currentModule.lessons.findIndex(l => l.id === currentLessonId);
   if (currentLessonIndex === -1) return null;
 
@@ -44,8 +43,8 @@ function getNextLesson(course: Course, currentModuleId: string, currentLessonId:
     return { moduleId: currentModuleId, lessonId: currentModule.lessons[currentLessonIndex + 1].id };
   }
 
-  if (currentModuleIndex < course.modules.length - 1) {
-    const nextModule = course.modules[currentModuleIndex + 1];
+  if (currentModuleIndex < modules.length - 1) {
+    const nextModule = modules[currentModuleIndex + 1];
     if (nextModule.lessons.length > 0) {
       return { moduleId: nextModule.id, lessonId: nextModule.lessons[0].id };
     }
@@ -61,9 +60,58 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
     const { user } = useUser();
     const firestore = useFirestore();
 
-    const course = useMemo(() => {
-        return allCourses.find(c => c.id === courseId) || null;
-    }, [courseId]);
+    const courseRef = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return doc(firestore, `courses/${courseId}`);
+    }, [firestore, courseId]);
+
+    const modulesRef = useMemoFirebase(() => {
+        if(!courseRef) return null;
+        return collection(courseRef, "modules");
+    }, [courseRef]);
+    
+    const modulesQuery = useMemoFirebase(() => {
+        if(!modulesRef) return null;
+        return query(modulesRef, orderBy("order"));
+    }, [modulesRef]);
+    
+    const { data: course, isLoading: isCourseLoading } = useDoc<Course>(courseRef);
+    const { data: modules, isLoading: areModulesLoading } = useCollection<CourseModule>(modulesQuery);
+    
+    // This part is tricky. We need to fetch lessons for ALL modules.
+    // For simplicity, we'll fetch them after modules are loaded.
+    const [allLessons, setAllLessons] = useState<{[moduleId: string]: Lesson[]}>({});
+    const [areLessonsLoading, setAreLessonsLoading] = useState(true);
+
+    useEffect(() => {
+        if (!firestore || !modules || modules.length === 0) {
+            if(!areModulesLoading) setAreLessonsLoading(false);
+            return;
+        };
+
+        setAreLessonsLoading(true);
+        const fetchAllLessons = async () => {
+            const lessonsData: {[moduleId: string]: Lesson[]} = {};
+            for (const module of modules) {
+                const lessonsRef = collection(firestore, `courses/${courseId}/modules/${module.id}/lessons`);
+                const lessonsQuery = query(lessonsRef, orderBy("order"));
+                const lessonsSnapshot = await getDocs(lessonsQuery);
+                lessonsData[module.id] = lessonsSnapshot.docs.map(d => ({ id: d.id, ...d.data() } as Lesson));
+            }
+            setAllLessons(lessonsData);
+            setAreLessonsLoading(false);
+        };
+        fetchAllLessons();
+    }, [firestore, modules, courseId, areModulesLoading]);
+
+
+    const fullModules = useMemo(() => {
+        if (!modules) return [];
+        return modules.map(m => ({
+            ...m,
+            lessons: allLessons[m.id] || []
+        }));
+    }, [modules, allLessons]);
 
     const progressQuery = useMemoFirebase(() => {
         if (!user || !firestore || !courseId) return null;
@@ -79,34 +127,34 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
     } | null>(null);
 
     const { lesson, module } = useMemo(() => {
-        if (!course || !currentLesson) return { lesson: null, module: null };
-        const foundModule = course.modules.find(m => m.id === currentLesson.moduleId);
+        if (!fullModules || !currentLesson) return { lesson: null, module: null };
+        const foundModule = fullModules.find(m => m.id === currentLesson.moduleId);
         if (!foundModule) return { lesson: null, module: null };
         const foundLesson = foundModule.lessons.find(l => l.id === currentLesson.lessonId);
         return { lesson: foundLesson, module: foundModule };
-    }, [course, currentLesson]);
+    }, [fullModules, currentLesson]);
 
     useEffect(() => {
-        if (!course) return;
+        if (areModulesLoading || areLessonsLoading) return;
         const moduleId = searchParams.get("module");
         const lessonId = searchParams.get("lesson");
 
         if (moduleId && lessonId) {
             setCurrentLesson({ moduleId, lessonId });
-        } else if (course.modules.length > 0 && course.modules[0].lessons.length > 0) {
-            const firstModule = course.modules[0];
+        } else if (fullModules.length > 0 && fullModules[0].lessons.length > 0) {
+            const firstModule = fullModules[0];
             const firstLesson = firstModule.lessons[0];
             handleSetLesson(firstModule.id, firstLesson.id);
         }
-    }, [searchParams, course]);
+    }, [searchParams, fullModules, areModulesLoading, areLessonsLoading]);
 
     const completedLessons = useMemo(() => new Set(progress?.completedLessons || []), [progress]);
 
     const lastCompletedLessonIndex = useMemo(() => {
-        if (!course || !progress || progress.completedLessons.length === 0) return -1;
+        if (!fullModules || !progress || progress.completedLessons.length === 0) return -1;
         let flatIndex = -1;
         let lastIndex = -1;
-        for (const mod of course.modules) {
+        for (const mod of fullModules) {
             for (const less of mod.lessons) {
                 flatIndex++;
                 if (completedLessons.has(less.id)) {
@@ -115,7 +163,7 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
             }
         }
         return lastIndex;
-    }, [course, progress, completedLessons]);
+    }, [fullModules, progress, completedLessons]);
 
     const handleSetLesson = (moduleId: string, lessonId: string) => {
         if (!courseId) return;
@@ -125,9 +173,9 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
     };
 
     const handleMarkAsCompleted = async () => {
-        if (!user || !course || !currentLesson || !firestore) return;
+        if (!user || !course || !fullModules || !currentLesson || !firestore) return;
 
-        const nextLesson = getNextLesson(course, currentLesson.moduleId, currentLesson.lessonId);
+        const nextLesson = getNextLesson(fullModules, currentLesson.moduleId, currentLesson.lessonId);
         const newCompletedLessons = Array.from(new Set([...completedLessons, currentLesson.lessonId]));
         const isCourseComplete = !nextLesson;
 
@@ -136,8 +184,8 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-            const progressDocRef = doc(progressRef);
-            setDocumentNonBlocking(progressDocRef, {
+            const progressDocRef = doc(progressRef); // Auto-generate ID
+             setDocumentNonBlocking(progressDocRef, {
                 courseId: course.id,
                 completedLessons: newCompletedLessons,
                 completed: isCourseComplete,
@@ -176,8 +224,11 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
         }
     };
     
-    if (!course || !currentLesson) {
+    if (isCourseLoading || areModulesLoading || areLessonsLoading || !currentLesson) {
         return <div className="container flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin" /></div>;
+    }
+     if (!course) {
+        notFound();
     }
 
     const instructorAvatar = { imageUrl: course.instructorAvatarUrl, name: course.instructor };
@@ -206,10 +257,10 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
                 className="w-full"
                 value={currentLesson?.moduleId || ""}
                 >
-                {course.modules.map((moduleItem, moduleIndex) => {
+                {fullModules.map((moduleItem, moduleIndex) => {
                     let lessonFlatIndexOffset = 0;
                     for(let i = 0; i < moduleIndex; i++) {
-                        lessonFlatIndexOffset += course.modules[i].lessons.length;
+                        lessonFlatIndexOffset += fullModules[i].lessons.length;
                     }
 
                     return (
@@ -378,5 +429,3 @@ export default function CourseDetailPage({ params: { id } }: { params: { id: str
     </Suspense>
   );
 }
-
-    

@@ -3,20 +3,25 @@
 
 import { CourseCard } from "@/components/course-card";
 import { Button } from "@/components/ui/button";
-import { courses as allCourses, learningPaths as allLearningPaths } from "@/lib/data";
 import type { Course, LearningPath } from "@/lib/types";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { collection, query, orderBy } from "firebase/firestore";
+import { useMemo } from "react";
 
-function PathCourses({ pathId }: { pathId: string }) {
-    const courses = allCourses.filter(c => c.pathId === pathId);
+function PathCourses({ pathId, allCourses }: { pathId: string, allCourses: Course[] | null }) {
+    const courses = useMemo(() => {
+        if (!allCourses) return [];
+        return allCourses.filter(c => c.pathId === pathId);
+    }, [allCourses, pathId]);
 
     if (courses.length === 0) {
-        return <p>No hay cursos disponibles en esta ruta.</p>;
+        return <p className="text-muted-foreground">No hay cursos disponibles en esta ruta.</p>;
     }
 
     return (
-         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {courses.map((course) => (
                 <CourseCard key={course.id} course={course} />
               ))}
@@ -25,12 +30,25 @@ function PathCourses({ pathId }: { pathId: string }) {
 }
 
 export default function PathsPage() {
-    const learningPaths = allLearningPaths;
+    const firestore = useFirestore();
+
+    const learningPathsQuery = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return query(collection(firestore, "learningPaths"), orderBy("title"));
+    }, [firestore]);
+
+    const coursesQuery = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return query(collection(firestore, "courses"));
+    }, [firestore]);
+
+    const { data: learningPaths, isLoading: isLoadingPaths } = useCollection<LearningPath>(learningPathsQuery);
+    const { data: allCourses, isLoading: isLoadingCourses } = useCollection<Course>(coursesQuery);
 
   return (
     <div className="container py-8 md:py-12">
       <header className="mb-8 md:mb-12 text-center">
-        <h1 className="text-4xl font-bold tracking-tight font-headline lg-text-5xl">
+        <h1 className="text-4xl font-bold tracking-tight font-headline lg:text-5xl">
           Rutas de Aprendizaje
         </h1>
         <p className="mt-3 text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -39,15 +57,17 @@ export default function PathsPage() {
       </header>
       
       <div className="space-y-16">
-        {learningPaths.length === 0 && <p>No se encontraron rutas de aprendizaje.</p>}
+        {(isLoadingPaths || isLoadingCourses) && <p>Cargando rutas de aprendizaje...</p>}
+        {learningPaths && learningPaths.length === 0 && !isLoadingPaths && <p>No se encontraron rutas de aprendizaje.</p>}
+        
         {learningPaths?.map((path) => (
-          <section key={path.id} className="border-b last:border-b-0 pb-12 last:pb-0">
+          <section key={path.id} id={path.id} className="border-b last:border-b-0 pb-12 last:pb-0 scroll-mt-20">
             <div className="mb-6">
               <h2 className="text-3xl font-bold tracking-tight font-headline">{path.title}</h2>
               <p className="mt-2 text-muted-foreground max-w-3xl">{path.description}</p>
             </div>
             
-            <PathCourses pathId={path.id} />
+            <PathCourses pathId={path.id} allCourses={allCourses} />
             
             <div className="mt-6 text-center">
                 <Button variant="outline" asChild>
