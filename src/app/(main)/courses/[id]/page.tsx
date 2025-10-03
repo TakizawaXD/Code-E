@@ -28,7 +28,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { QuizComponent } from "@/components/quiz";
 import { Badge } from "@/components/ui/badge";
-import { collection, query, where, doc, getDocs, serverTimestamp, orderBy } from "firebase/firestore";
+import { collection, query, where, doc, getDocs, serverTimestamp, orderBy, increment } from "firebase/firestore";
 import { CommentSection } from "@/components/comment-section";
 
 function getNextLesson(modules: CourseModule[], currentModuleId: string, currentLessonId: string): { moduleId: string; lessonId: string } | null {
@@ -173,16 +173,20 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
     };
 
     const handleMarkAsCompleted = async () => {
-        if (!user || !course || !fullModules || !currentLesson || !firestore) return;
-
+        if (!user || !course || !fullModules || !currentLesson || !firestore || completedLessons.has(currentLesson.lessonId)) return;
+    
         const nextLesson = getNextLesson(fullModules, currentLesson.moduleId, currentLesson.lessonId);
         const newCompletedLessons = Array.from(new Set([...completedLessons, currentLesson.lessonId]));
         const isCourseComplete = !nextLesson;
-
+    
         const progressRef = collection(firestore, `users/${user.uid}/progress`);
         const q = query(progressRef, where("courseId", "==", course.id));
         const querySnapshot = await getDocs(q);
-
+    
+        // Award points
+        const userRef = doc(firestore, "users", user.uid);
+        setDocumentNonBlocking(userRef, { points: increment(10) }, { merge: true });
+    
         if (querySnapshot.empty) {
             const progressDocRef = doc(progressRef); // Auto-generate ID
              setDocumentNonBlocking(progressDocRef, {
@@ -200,20 +204,24 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
                 ...(isCourseComplete && { completedAt: serverTimestamp() })
             }, { merge: true });
         }
-
+    
         if (isCourseComplete) {
+            // Award bonus points for completing a course
+            setDocumentNonBlocking(userRef, { points: increment(50) }, { merge: true });
+    
             const notificationsRef = collection(firestore, `users/${user.uid}/notifications`);
             addDocumentNonBlocking(notificationsRef, {
                 title: `¡Curso completado!`,
-                description: `Has completado "${course.title}". ¡Tu certificado ya está disponible!`,
+                description: `Has completado "${course.title}". ¡Tu certificado ya está disponible! (+50 puntos)`,
                 date: serverTimestamp(),
             });
         }
-
+    
         if (nextLesson) {
             handleSetLesson(nextLesson.moduleId, nextLesson.lessonId);
         }
     };
+    
 
     const getDifficultyBadge = (difficulty: 'Fácil' | 'Medio' | 'Difícil' | undefined) => {
         switch (difficulty) {
@@ -343,7 +351,7 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
                     {lesson?.difficulty && getDifficultyBadge(lesson.difficulty)}
                     <Button variant="outline" onClick={handleMarkAsCompleted} disabled={completedLessons.has(lesson?.id || "")}>
                         <CheckCircle2 className="mr-2"/>
-                        Marcar como completada
+                        {completedLessons.has(lesson?.id || "") ? "Completada" : "Marcar como completada"}
                     </Button>
                 </div>
             </div>
@@ -429,3 +437,5 @@ export default function CourseDetailPage({ params: { id } }: { params: { id: str
     </Suspense>
   );
 }
+
+    

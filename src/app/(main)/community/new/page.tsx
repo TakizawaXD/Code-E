@@ -6,7 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
 import { useFirebase, useUser, useFirestore } from "@/firebase";
-import { collection, serverTimestamp, addDoc } from "firebase/firestore";
+import { collection, serverTimestamp, addDoc, doc, increment } from "firebase/firestore";
+import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import {
   Form,
   FormControl,
@@ -61,9 +62,13 @@ export default function NewThreadPage() {
       
       const docRef = await addDoc(threadsRef, newThread);
 
+      // Award points for creating a new thread
+      const userRef = doc(firestore, "users", user.uid);
+      setDocumentNonBlocking(userRef, { points: increment(5) }, { merge: true });
+
       toast({
         title: "¡Discusión creada!",
-        description: "Tu nuevo tema ha sido publicado en el foro.",
+        description: "Tu nuevo tema ha sido publicado en el foro. (+5 puntos)",
       });
 
       router.push(`/community/threads/${docRef.id}`);
@@ -143,3 +148,5 @@ export default function NewThreadPage() {
     </div>
   );
 }
+
+    
