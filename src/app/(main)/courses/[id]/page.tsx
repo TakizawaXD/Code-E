@@ -367,9 +367,7 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
     );
 }
 
-export default function CourseDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params;
-
+export default function CourseDetailPage({ params: { id } }: { params: { id: string } }) {
   if (!id) {
     notFound();
   }
@@ -380,3 +378,5 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
     </Suspense>
   );
 }
+
+    
