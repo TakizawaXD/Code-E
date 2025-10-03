@@ -9,7 +9,7 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 function PathCourses({ pathId }: { pathId: string }) {
-    const courses = allCourses.filter(c => c.pathId === pathId).slice(0, 4);
+    const courses = allCourses.filter(c => c.pathId === pathId);
 
     if (courses.length === 0) {
         return <p>No hay cursos disponibles en esta ruta.</p>;
