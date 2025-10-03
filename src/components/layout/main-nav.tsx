@@ -21,7 +21,7 @@ const mainNavItems: NavItem[] = [
   { title: "Rutas de Aprendizaje", href: "/paths" },
   { title: "Cursos", href: "/courses" },
   { title: "Comunidad", href: "/community" },
-  { title: "Guía IA", href: "/guides" },
+  { title: "Guía de Entrevistas", href: "/guides" },
   { title: "Mi Panel", href: "/dashboard" },
   { title: "Precios", href: "/pricing"},
 ];
@@ -127,3 +127,5 @@ const ListItem = React.forwardRef<
   )
 })
 ListItem.displayName = "ListItem"
+
+    
