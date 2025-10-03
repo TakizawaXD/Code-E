@@ -3,7 +3,7 @@
 "use client";
 
 import { useFirebase, useUser, useDoc, useCollection, useFirestore, useMemoFirebase } from "@/firebase";
-import { doc, collection, query, orderBy, serverTimestamp, updateDoc, addDoc } from "firebase/firestore";
+import { doc, collection, query, orderBy, serverTimestamp, updateDoc, addDoc, increment } from "firebase/firestore";
 import { notFound, useRouter } from "next/navigation";
 import type { ForumThread, ForumPost } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -17,6 +17,8 @@ import Link from "next/link";
 import { ArrowLeft, Loader2, Send } from "lucide-react";
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ThreadPage({ params }: { params: { id: string } }) {
     const { user } = useUser();
@@ -24,6 +26,7 @@ export default function ThreadPage({ params }: { params: { id: string } }) {
     const router = useRouter();
     const [newPostContent, setNewPostContent] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { toast } = useToast();
 
     const threadRef = useMemoFirebase(() => {
         if (!firestore) return null;
@@ -53,7 +56,7 @@ export default function ThreadPage({ params }: { params: { id: string } }) {
             const postData = {
                 content: newPostContent.trim(),
                 authorId: user.uid,
-                authorName: user.displayName || user.email,
+                authorName: user.displayName || "Usuario Anónimo",
                 authorAvatarUrl: user.photoURL || '',
                 createdAt: now,
             };
@@ -64,6 +67,15 @@ export default function ThreadPage({ params }: { params: { id: string } }) {
             await updateDoc(threadRef, {
                 postCount: (thread.postCount || 1) + 1,
                 lastPostAt: now,
+            });
+
+            // Award points for replying
+            const userRef = doc(firestore, "users", user.uid);
+            setDocumentNonBlocking(userRef, { points: increment(2) }, { merge: true });
+
+            toast({
+                title: "¡Respuesta publicada!",
+                description: "Has ganado 2 puntos por participar.",
             });
 
             setNewPostContent("");
@@ -109,7 +121,7 @@ export default function ThreadPage({ params }: { params: { id: string } }) {
             </header>
 
             <div className="space-y-6">
-                <ForumPostCard post={{...thread, content: thread.content, id: thread.id}} />
+                <ForumPostCard post={{...thread, id: thread.id}} />
 
                 <Separator />
                 

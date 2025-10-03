@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { useUser, useCollection, useMemoFirebase, useFirestore } from "@/firebase";
 import { collection, query, orderBy } from "firebase/firestore";
-import type { ForumThread, UserProfile, GamificationStats } from "@/lib/types";
+import type { ForumThread, UserProfile } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -57,14 +57,15 @@ function ForumList() {
                     <CardContent className="p-4 flex items-start justify-between">
                         <div className="flex items-start gap-4">
                             <Avatar>
-                                <AvatarFallback>?</AvatarFallback>
+                                <AvatarImage src={thread.authorAvatarUrl} alt={thread.authorName}/>
+                                <AvatarFallback>{thread.authorName.charAt(0).toUpperCase()}</AvatarFallback>
                             </Avatar>
                             <div>
                                 <Link href={`/community/threads/${thread.id}`}>
                                     <h3 className="font-semibold text-lg hover:underline">{thread.title}</h3>
                                 </Link>
                                 <p className="text-sm text-muted-foreground">
-                                    Iniciado
+                                    Iniciado por <span className="font-medium text-foreground">{thread.authorName}</span>
                                 </p>
                             </div>
                         </div>
@@ -85,12 +86,10 @@ function LeaderboardTab() {
     const firestore = useFirestore();
     const usersQuery = useMemoFirebase(() => {
         if (!firestore) return null;
-        // This query structure assumes gamification stats are duplicated in a top-level `users` collection.
-        // A collectionGroup query would be better but is harder to secure.
         return query(collection(firestore, "users"), orderBy("points", "desc"), orderBy("name", "asc"));
     }, [firestore]);
 
-    const { data: users, isLoading } = useCollection<UserProfile & GamificationStats>(usersQuery);
+    const { data: users, isLoading } = useCollection<UserProfile>(usersQuery);
 
     return (
         <Card className="mt-6">

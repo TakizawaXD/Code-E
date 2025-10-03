@@ -17,9 +17,10 @@ export function ForumPostCard({ post }: ForumPostCardProps) {
             <CardHeader className="p-4 flex flex-row items-center justify-between bg-muted/50 border-b">
                 <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
-                        <AvatarFallback>?</AvatarFallback>
+                        <AvatarImage src={post.authorAvatarUrl} alt={post.authorName}/>
+                        <AvatarFallback>{post.authorName.charAt(0).toUpperCase()}</AvatarFallback>
                     </Avatar>
-                    <p className="font-semibold">Anónimo</p>
+                    <p className="font-semibold">{post.authorName}</p>
                 </div>
                 <p className="text-xs text-muted-foreground">
                     {post.createdAt ? formatDistanceToNow(post.createdAt.toDate(), { addSuffix: true, locale: es }) : ''}
