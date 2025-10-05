@@ -82,6 +82,18 @@ const courseData: Omit<Course, 'modules'>[] = [
   
     // Ciberseguridad
     { id: 'cyber-intro', pathId: 'ciberseguridad', title: 'Fundamentos de Ciberseguridad', description: 'Entiende los principios de la seguridad digital, desde la encriptación hasta la defensa contra ataques.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/23/150/150', imageUrl: images['course-cyber-intro'] },
+
+    // Recursos Humanos
+    { id: 'rh-reclutamiento', pathId: 'recursos-humanos', title: 'Reclutamiento y Selección de Talento Tech', description: 'Aprende a identificar, atraer y contratar a los mejores perfiles tecnológicos del mercado.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/24/150/150', imageUrl: images['course-rh-reclutamiento'] },
+    { id: 'rh-cultura', pathId: 'recursos-humanos', title: 'Cultura Organizacional en Startups', description: 'Diseña y mantiene una cultura de trabajo que fomente la innovación y el crecimiento.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/25/150/150', imageUrl: images['course-rh-cultura'] },
+    
+    // Negocios
+    { id: 'neg-finanzas', pathId: 'negocios', title: 'Finanzas para Emprendedores', description: 'Entiende los estados financieros, proyecciones y métricas clave para la toma de decisiones.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/26/150/150', imageUrl: images['course-negocios-finanzas'] },
+    { id: 'neg-estrategia', pathId: 'negocios', title: 'Estrategias de Crecimiento para Startups', description: 'Descubre y aplica frameworks de growth hacking para escalar tu negocio de forma acelerada.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/27/150/150', imageUrl: images['course-negocios-estrategia'] },
+
+    // English Academy
+    { id: 'eng-entrevistas', pathId: 'english-academy', title: 'Inglés para Entrevistas de Trabajo', description: 'Prepara y practica las respuestas a las preguntas más comunes en entrevistas técnicas en inglés.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/28/150/150', imageUrl: images['course-english-entrevistas'] },
+    { id: 'eng-comunicacion', pathId: 'english-academy', title: 'Comunicación de Negocios en Inglés', description: 'Mejora tus habilidades para escribir correos, dar presentaciones y participar en reuniones en inglés.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/29/150/150', imageUrl: images['course-english-comunicacion'] },
 ];
 
   const pythonReactQuiz: Lesson = {
@@ -931,6 +943,12 @@ const allModules: Record<string, CourseModule[]> = {
     'cloud-aws': [{ id: 'aws-m1', title: 'Intro a AWS', order: 1, lessons: [{ id: 'aws-l1', title: 'EC2 y S3', duration: '20 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'PLVHgQku8Z935QbKFvttpxUF1WlNWt1dZ9' }] }],
     'cloud-docker': [{ id: 'docker-m1', title: 'Intro a Docker', order: 1, lessons: [{ id: 'docker-l1', title: 'Contenedores', duration: '15 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'pGyN1pa7c8Q' }] }],
     'cyber-intro': [{ id: 'cyber-m1', title: 'Fundamentos de Ciberseguridad', order: 1, lessons: [{ id: 'cyber-l1', title: 'Amenazas Comunes', duration: '15 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'inWWhr5tnEA' }] }],
+    'rh-reclutamiento': [{ id: 'rh-rec-m1', title: 'Intro a Reclutamiento Tech', order: 1, lessons: [{ id: 'rh-rec-l1', title: 'El Rol del Reclutador Tech', duration: '15 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'abcdef12345' }] }],
+    'rh-cultura': [{ id: 'rh-cult-m1', title: 'Cultura Organizacional', order: 1, lessons: [{ id: 'rh-cult-l1', title: '¿Qué es la Cultura Organizacional?', duration: '12 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'abcdef12345' }] }],
+    'neg-finanzas': [{ id: 'neg-fin-m1', title: 'Finanzas para No Financieros', order: 1, lessons: [{ id: 'neg-fin-l1', title: 'Conceptos Financieros Clave', duration: '20 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'abcdef12345' }] }],
+    'neg-estrategia': [{ id: 'neg-est-m1', title: 'Estrategia de Negocios', order: 1, lessons: [{ id: 'neg-est-l1', title: 'Análisis FODA', duration: '18 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'abcdef12345' }] }],
+    'eng-entrevistas': [{ id: 'eng-int-m1', title: 'Job Interview Prep', order: 1, lessons: [{ id: 'eng-int-l1', title: 'Common Questions', duration: '15 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'abcdef12345' }] }],
+    'eng-comunicacion': [{ id: 'eng-com-m1', title: 'Business Communication', order: 1, lessons: [{ id: 'eng-com-l1', title: 'Writing Professional Emails', duration: '15 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'abcdef12345' }] }],
 };
 
 export const courses: Course[] = courseData.map(course => ({
@@ -958,3 +976,4 @@ export const courses: Course[] = courseData.map(course => ({
     
 
     
+

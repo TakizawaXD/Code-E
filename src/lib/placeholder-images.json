@@ -33,6 +33,11 @@
   "course-movil-kotlin": "https://picsum.photos/seed/kotlin/600/400",
   "course-movil-dart": "https://picsum.photos/seed/dart/600/400",
   "course-web3-rust": "https://picsum.photos/seed/rust/600/400",
+  "course-rh-reclutamiento": "https://picsum.photos/seed/recruitment/600/400",
+  "course-rh-cultura": "https://picsum.photos/seed/culture/600/400",
+  "course-negocios-estrategia": "https://picsum.photos/seed/strategy/600/400",
+  "course-english-entrevistas": "https://picsum.photos/seed/interview/600/400",
+  "course-english-comunicacion": "https://picsum.photos/seed/communication/600/400",
   "hero-image": "https://picsum.photos/seed/hero/600/400",
   "lesson-default": "https://picsum.photos/seed/lesson/600/400"
 }
