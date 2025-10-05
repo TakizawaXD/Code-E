@@ -52,11 +52,19 @@ export type Course = {
   level?: 'básico' | 'intermedio' | 'avanzado';
 };
 
+export type Project = {
+  title: string;
+  description: string;
+  level: 'Fácil' | 'Intermedio' | 'Avanzado';
+  githubUrl: string;
+};
+
 export type LearningPath = {
   id: string;
   title: string;
   description: string;
   courses: Course[];
+  projects?: Project[];
 };
 
 export type School = {

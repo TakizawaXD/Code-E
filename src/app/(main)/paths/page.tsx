@@ -5,10 +5,23 @@
 import { CourseCard } from "@/components/course-card";
 import { Button } from "@/components/ui/button";
 import { allSchools } from "@/lib/data";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Github } from "lucide-react";
 import Link from "next/link";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default function PathsPage() {
+
+  const getLevelBadge = (level: 'Fácil' | 'Intermedio' | 'Avanzado') => {
+    switch (level) {
+      case 'Fácil': return <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">Fácil</Badge>;
+      case 'Intermedio': return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300">Intermedio</Badge>;
+      case 'Avanzado': return <Badge variant="secondary" className="bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">Avanzado</Badge>;
+      default: return null;
+    }
+  };
+
+
   return (
     <div className="container py-8 md:py-12">
       <header className="mb-8 md:mb-12 text-center">
@@ -42,9 +55,34 @@ export default function PathsPage() {
                             <p className="text-muted-foreground">No hay cursos disponibles para esta ruta.</p>
                         )}
                         
-                        <div className="mt-6">
-                             <Button variant="outline" size="sm">Agregar ruta</Button>
-                        </div>
+                        {path.projects && path.projects.length > 0 && (
+                          <div className="mt-12">
+                            <h4 className="text-xl font-semibold mb-4">Proyectos Prácticos Recomendados</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                              {path.projects.map((project, index) => (
+                                <Card key={index} className="flex flex-col">
+                                  <CardHeader>
+                                    <div className="flex justify-between items-start">
+                                      <CardTitle className="text-lg">{project.title}</CardTitle>
+                                      {getLevelBadge(project.level)}
+                                    </div>
+                                  </CardHeader>
+                                  <CardContent className="flex-grow">
+                                    <CardDescription>{project.description}</CardDescription>
+                                  </CardContent>
+                                  <CardFooter>
+                                    <Button asChild variant="outline" className="w-full">
+                                      <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                                        <Github className="mr-2 h-4 w-4" />
+                                        Ver en GitHub
+                                      </a>
+                                    </Button>
+                                  </CardFooter>
+                                </Card>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                     </div>
                 ))}
             </div>

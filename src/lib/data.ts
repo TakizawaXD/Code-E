@@ -1,3 +1,4 @@
+
 import type { Notification, LearningPath, Course, CourseModule, Lesson, School } from "@/lib/types";
 import images from '@/app/lib/placeholder-images.json';
 import videos from '@/app/lib/placeholder-videos.json';
@@ -87,6 +88,13 @@ export const allSchools: School[] = [
           { id: 'java-spring', title: 'Curso de Java Spring', instructor: 'Code-E BOT', level: 'intermedio', pathId: 'desarrollo-web', imageUrl: images['java-spring'], modules: [] },
           { id: 'java-spring-data-jpa', title: 'Curso de Java Spring Data JPA: Bases de Datos', instructor: 'Code-E BOT', level: 'intermedio', pathId: 'desarrollo-web', imageUrl: images['java-spring-data-jpa'], modules: [] },
           { id: 'java-spring-security', title: 'Curso de Java Spring Security: Autenticación y Seguridad Web', instructor: 'Code-E BOT', level: 'avanzado', pathId: 'desarrollo-web', imageUrl: images['java-spring-security'], modules: [] },
+        ],
+        projects: [
+          { title: "API REST para un Blog", description: "Crea una API REST simple con Spring Boot para gestionar posts y comentarios.", level: "Fácil", githubUrl: "https://github.com/example/java-blog-api" },
+          { title: "Sistema de Reservas de Hotel", description: "Desarrolla una aplicación web para gestionar reservas de habitaciones, clientes y disponibilidad.", level: "Intermedio", githubUrl: "https://github.com/example/java-hotel-booking" },
+          { title: "Clon de Twitter (Backend)", description: "Implementa las funcionalidades básicas de Twitter, como tweets, follows y un timeline, usando Java.", level: "Intermedio", githubUrl: "https://github.com/example/java-twitter-clone" },
+          { title: "Microservicio de Autenticación", description: "Crea un servicio dedicado para manejar el registro y login de usuarios con JWT.", level: "Intermedio", githubUrl: "https://github.com/example/java-auth-microservice" },
+          { title: "Librería de Conversión de Moneda", description: "Construye una librería simple que consulte una API externa para convertir entre diferentes divisas.", level: "Fácil", githubUrl: "https://github.com/example/java-currency-converter" },
         ]
       },
       {
@@ -135,6 +143,13 @@ export const allSchools: School[] = [
             { id: 'laravel-tdd', title: 'Curso de Desarrollo en Laravel con Test Driven Development', instructor: 'Code-E BOT', level: 'avanzado', pathId: 'desarrollo-web', imageUrl: images['laravel-tdd'], modules: [] },
             { id: 'practico-symfony', title: 'Curso Práctico de Symfony', instructor: 'Code-E BOT', level: 'intermedio', pathId: 'desarrollo-web', imageUrl: images['practico-symfony'], modules: [] },
             { id: 'symfony-framework', title: 'Curso de Symfony Framework', instructor: 'Code-E BOT', level: 'básico', pathId: 'desarrollo-web', imageUrl: images['symfony-framework'], modules: [] },
+        ],
+        projects: [
+          { title: "Sistema de Gestión de Tareas (To-Do List)", description: "Crea una aplicación web con Laravel para gestionar una lista de tareas con autenticación de usuarios.", level: "Fácil", githubUrl: "https://github.com/example/php-todo-list" },
+          { title: "Framework de Blog desde Cero", description: "Construye un micro-framework en PHP puro con un enrutador y un sistema de plantillas para un blog.", level: "Intermedio", githubUrl: "https://github.com/example/php-blog-framework" },
+          { title: "Acortador de URLs", description: "Desarrolla un servicio que toma una URL larga y genera una corta, almacenando la relación en una base de datos.", level: "Fácil", githubUrl: "https://github.com/example/php-url-shortener" },
+          { title: "API REST para una Tienda Online", description: "Crea una API con Symfony o Laravel para gestionar productos, pedidos y clientes.", level: "Intermedio", githubUrl: "https://github.com/example/php-ecommerce-api" },
+          { title: "Galería de Imágenes con subida de archivos", description: "Implementa una aplicación que permita a los usuarios subir imágenes y mostrarlas en una galería.", level: "Fácil", githubUrl: "https://github.com/example/php-image-gallery" },
         ]
       },
       {
@@ -157,6 +172,13 @@ export const allSchools: School[] = [
             { id: 'intro-ruby-on-rails', title: 'Curso de Introducción a Ruby on Rails', instructor: 'Code-E BOT', level: 'básico', pathId: 'desarrollo-web', imageUrl: images['intro-ruby-on-rails'], modules: [] },
             { id: 'api-ruby-on-rails', title: 'Curso de Creación de APIs con Ruby on Rails', instructor: 'Code-E BOT', level: 'básico', pathId: 'desarrollo-web', imageUrl: images['api-ruby-on-rails'], modules: [] },
             { id: 'intermedio-ruby-on-rails', title: 'Curso Intermedio de Ruby on Rails', instructor: 'Code-E BOT', level: 'intermedio', pathId: 'desarrollo-web', imageUrl: images['intermedio-ruby-on-rails'], modules: [] },
+        ],
+        projects: [
+          { title: "Aplicación de Blog", description: "Crea un blog completo con artículos, comentarios y autenticación de usuarios usando Ruby on Rails.", level: "Fácil", githubUrl: "https://github.com/example/rails-blog" },
+          { title: "Clon de Instagram", description: "Desarrolla una versión simplificada de Instagram donde los usuarios pueden subir fotos y seguir a otros.", level: "Intermedio", githubUrl: "https://github.com/example/rails-instagram-clone" },
+          { title: "Marketplace de Anuncios Clasificados", description: "Construye una plataforma donde los usuarios puedan publicar y buscar anuncios.", level: "Intermedio", githubUrl: "https://github.com/example/rails-marketplace" },
+          { title: "API para una Lista de Tareas", description: "Crea una API en modo 'API-only' de Rails para gestionar tareas.", level: "Fácil", githubUrl: "https://github.com/example/rails-todo-api" },
+          { title: "Sistema de Gestión de Proyectos", description: "Una aplicación para crear proyectos, asignar tareas y hacer seguimiento del progreso.", level: "Intermedio", githubUrl: "https://github.com/example/rails-project-manager" },
         ]
       },
       {
@@ -342,6 +364,13 @@ export const allSchools: School[] = [
                 { id: 'prog-python', pathId: 'programacion', title: 'Curso de Fundamentos de Python', instructor: 'Code-E BOT', level: 'básico', imageUrl: images['course-prog-python'], modules: [] },
                 { id: 'prog-python-comp', pathId: 'programacion', title: 'Curso de Python: Comprehensions, Funciones y Manejo de Errores', instructor: 'Code-E BOT', level: 'básico', imageUrl: images['prog-python-comp'], modules: [] },
                 { id: 'prog-python-pip', pathId: 'programacion', title: 'Curso de Python: PIP y Entornos Virtuales', instructor: 'Code-E BOT', level: 'intermedio', imageUrl: images['prog-python-pip'], modules: [] },
+            ],
+            projects: [
+              { title: "Analizador de Texto", description: "Crea una herramienta de línea de comandos que cuenta palabras, caracteres y oraciones en un archivo de texto.", level: "Fácil", githubUrl: "https://github.com/example/python-text-analyzer" },
+              { title: "Juego del Ahorcado", description: "Implementa el clásico juego del ahorcado en la consola, con una lista de palabras predefinida.", level: "Fácil", githubUrl: "https://github.com/example/python-hangman-game" },
+              { title: "Web Scraper de Noticias", description: "Desarrolla un script con Beautiful Soup o Scrapy para extraer titulares de tu sitio de noticias favorito.", level: "Intermedio", githubUrl: "https://github.com/example/python-news-scraper" },
+              { title: "API REST con Flask o FastAPI", description: "Construye una API simple para gestionar una colección de libros o películas, con endpoints para CRUD.", level: "Intermedio", githubUrl: "https://github.com/example/python-simple-api" },
+              { title: "Bot de Telegram o Discord", description: "Crea un bot que responda a comandos básicos, como mostrar el clima o contar un chiste.", level: "Intermedio", githubUrl: "https://github.com/example/python-discord-bot" },
             ]
         },
         {
@@ -351,6 +380,13 @@ export const allSchools: School[] = [
             courses: [
                 { id: 'prog-javascript', pathId: 'programacion', title: 'Curso de Fundamentos de JavaScript', instructor: 'Code-E BOT', level: 'básico', imageUrl: images['course-prog-javascript'], modules: [] },
                 { id: 'prog-js-closures', pathId: 'programacion', title: 'Curso de Closures y Scope en JavaScript', instructor: 'Code-E BOT', level: 'básico', imageUrl: images['prog-js-closures'], modules: [] },
+            ],
+            projects: [
+              { title: "Calculadora Interactiva", description: "Construye una calculadora funcional en una página web utilizando HTML, CSS y JavaScript puro.", level: "Fácil", githubUrl: "https://github.com/example/js-calculator" },
+              { title: "Aplicación del Clima", description: "Crea una app que consulte una API de clima gratuita y muestre la temperatura y el pronóstico de una ciudad.", level: "Intermedio", githubUrl: "https://github.com/example/js-weather-app" },
+              { title: "Juego de Memoria (Memorama)", description: "Desarrolla un juego de tarjetas de memoria que el usuario debe voltear para encontrar los pares.", level: "Intermedio", githubUrl: "https://github.com/example/js-memory-game" },
+              { title: "Generador de Paletas de Colores", description: "Crea una herramienta que genere esquemas de colores aleatorios y permita al usuario copiarlos.", level: "Fácil", githubUrl: "https://github.com/example/js-color-palette-generator" },
+              { title: "Lista de Tareas con LocalStorage", description: "Una aplicación de 'To-Do' que guarda las tareas en el almacenamiento local del navegador para que persistan.", level: "Fácil", githubUrl: "https://github.com/example/js-todo-list-localstorage" },
             ]
         }
     ]
@@ -493,4 +529,5 @@ const coursesWithDetailedModules = allSchools.flatMap(school =>
 export const courses: Course[] = coursesWithDetailedModules;
 const allLearningPathsList = allSchools.flatMap(school => school.learningPaths.map(path => ({ ...path, courses: undefined, description: path.description || "" })));
 export const learningPaths: Omit<LearningPath, 'courses'>[] = allLearningPathsList;
+
 
