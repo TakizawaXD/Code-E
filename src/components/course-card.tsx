@@ -53,14 +53,16 @@ export function CourseCard({ course, className, progress }: CourseCardProps) {
       <CardHeader className="p-0">
         <Link href={`/courses/${course.id}`} aria-label={course.title}>
           <div className="relative">
-            <Image
-              src={course.imageUrl ?? ""}
-              alt={course.title ?? "Course thumbnail"}
-              width={600}
-              height={400}
-              className="object-cover w-full h-40"
-              data-ai-hint={`${course.pathId} course`}
-            />
+            {course.imageUrl && (
+              <Image
+                src={course.imageUrl}
+                alt={course.title ?? "Course thumbnail"}
+                width={600}
+                height={400}
+                className="object-cover w-full h-40"
+                data-ai-hint={`${course.pathId} course`}
+              />
+            )}
           </div>
         </Link>
       </CardHeader>
