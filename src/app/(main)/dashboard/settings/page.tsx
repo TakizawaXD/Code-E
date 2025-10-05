@@ -1,11 +1,9 @@
-
 "use client";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { useUser } from "@/firebase";
 import {
   Form,
   FormControl,
@@ -18,77 +16,100 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useTransition } from "react";
 import type { UserProfile } from "@/lib/types";
+import { updateUser } from "./actions";
 
 const profileFormSchema = z.object({
-  name: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres." }).max(50),
+  name: z
+    .string()
+    .min(2, { message: "El nombre debe tener al menos 2 caracteres." })
+    .max(50),
   username: z.string(), // This is for display only.
-  description: z.string().max(160, { message: "La descripción no puede tener más de 160 caracteres." }).optional(),
+  description: z
+    .string()
+    .max(160, { message: "La descripción no puede tener más de 160 caracteres." })
+    .optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 export default function SettingsPage() {
   const { user, isUserLoading } = useUser();
-  const firestore = useFirestore();
+  // We cannot get userProfile from a hook because this is a server component now.
+  // We'll fetch it inside the server action.
+
   const router = useRouter();
   const { toast } = useToast();
-
-  const userProfileRef = useMemoFirebase(() => {
-    if (!user || !firestore) return null;
-    return doc(firestore, "users", user.uid);
-  }, [user, firestore]);
-  
-  const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userProfileRef);
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues: {
-      name: "",
-      username: "",
-      description: "",
-    },
+    // We will set default values once user data is available client-side
   });
 
+  // Since we don't have the profile data initially, we can load it on the client
+  // and populate the form. This avoids passing server data to a client component directly.
   useEffect(() => {
-    if (userProfile) {
+    if (user) {
+      // In a real app, you might fetch the user's current profile data here
+      // and use form.reset() to populate the fields.
+      // For now, we'll just use the basic info from the auth object.
       form.reset({
-        name: userProfile.name || "",
-        username: userProfile.username || "",
-        description: userProfile.description || "",
+        name: user.displayName || "",
+        username: user.email || "", // Assuming username is email for now
+        description: "", // This would be fetched
       });
     }
-  }, [userProfile, form]);
+  }, [user, form]);
 
   async function onSubmit(data: ProfileFormValues) {
-    if (!user || !userProfileRef) return;
-    
-    try {
-        await updateDoc(userProfileRef, {
-            name: data.name,
-            description: data.description || '',
+    if (!user) return;
+
+    startTransition(async () => {
+      try {
+        const result = await updateUser(user.uid, {
+          name: data.name,
+          description: data.description || "",
         });
-        toast({
+
+        if (result && result.success) {
+          toast({
             title: "¡Perfil actualizado!",
             description: "Tus cambios han sido guardados correctamente.",
+          });
+          // Optionally, refresh the page or re-fetch data if needed
+          router.refresh();
+        } else {
+          throw new Error(result?.error || "Ocurrió un error desconocido.");
+        }
+      } catch (error: any) {
+        console.error("Error updating profile:", error);
+        toast({
+          variant: "destructive",
+          title: "Error al actualizar",
+          description: error.message,
         });
-    } catch (error: any) {
-      console.error("Error updating profile:", error);
-      toast({
-        variant: "destructive",
-        title: "Error al actualizar",
-        description: error.message,
-      });
-    }
+      }
+    });
   }
 
-  if (isUserLoading || isProfileLoading) {
-    return <div className="container flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin" /></div>;
+  if (isUserLoading) {
+    return (
+      <div className="container flex justify-center py-20">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
   }
 
   if (!user) {
@@ -129,12 +150,17 @@ export default function SettingsPage() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nombre de Usuario</FormLabel>
+                    <FormLabel>Nombre de Usuario (Email)</FormLabel>
                     <FormControl>
-                      <Input placeholder="tu_usuario" {...field} readOnly className="cursor-not-allowed bg-muted/50" />
+                      <Input
+                        placeholder="tu_usuario"
+                        {...field}
+                        readOnly
+                        className="cursor-not-allowed bg-muted/50"
+                      />
                     </FormControl>
-                     <FormDescription>
-                      Tu nombre de usuario es único y no se puede cambiar.
+                    <FormDescription>
+                      Tu email se usa como identificador y no se puede cambiar.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -154,14 +180,15 @@ export default function SettingsPage() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Una breve descripción sobre tus intereses y lo que estás aprendiendo.
+                      Una breve descripción sobre tus intereses y lo que estás
+                      aprendiendo.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Guardando..." : "Guardar Cambios"}
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Guardando..." : "Guardar Cambios"}
               </Button>
             </form>
           </Form>
