@@ -93,6 +93,7 @@ function CourseDetailContent() {
             const firstLesson = firstModule.lessons[0];
             handleSetLesson(firstModule.id, firstLesson.id, 'replace');
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams, course]);
 
 
@@ -242,16 +243,16 @@ function CourseDetailContent() {
         <main className="space-y-6 min-w-0">
              {!lesson && currentLesson ? (
                 <div className="flex justify-center items-center h-96"><Loader2 className="w-8 h-8 animate-spin" /></div>
-            ) : (
+            ) : lesson ? (
                 <>
                     <div className="flex justify-between items-start flex-wrap gap-4">
-                        <h1 className="text-2xl font-bold font-headline animate-in fade-in slide-in-from-top-4 duration-500">{lesson?.title || course.title}</h1>
+                        <h1 className="text-2xl font-bold font-headline animate-in fade-in slide-in-from-top-4 duration-500">{lesson.title}</h1>
                         <div className="flex gap-2 items-center animate-in fade-in slide-in-from-top-4 duration-500">
-                            {lesson?.difficulty && getDifficultyBadge(lesson.difficulty)}
+                            {lesson.difficulty && getDifficultyBadge(lesson.difficulty)}
                             {user && (
-                                <Button variant="outline" onClick={handleMarkAsCompleted} disabled={completedLessons.has(lesson?.id || "")}>
+                                <Button variant="outline" onClick={handleMarkAsCompleted} disabled={completedLessons.has(lesson.id)}>
                                     <CheckCircle2 className="mr-2"/>
-                                    {completedLessons.has(lesson?.id || "") ? "Completada" : "Marcar como completada"}
+                                    {completedLessons.has(lesson.id) ? "Completada" : "Marcar como completada"}
                                 </Button>
                             )}
                         </div>
@@ -260,7 +261,7 @@ function CourseDetailContent() {
                     <Separator />
 
                     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
-                        {lesson?.imageUrl && !lesson.youtubeVideoId && (
+                        {lesson.imageUrl && !lesson.youtubeVideoId && (
                         <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
                             <Image
                             src={lesson.imageUrl}
@@ -273,7 +274,7 @@ function CourseDetailContent() {
                         </div>
                         )}
 
-                        {lesson?.youtubeVideoId && (
+                        {lesson.youtubeVideoId && (
                         <div className="aspect-video w-full">
                             <iframe
                             className="w-full h-full rounded-lg border"
@@ -286,16 +287,16 @@ function CourseDetailContent() {
                         </div>
                         )}
 
-                        {lesson?.content ? (
+                        {lesson.content ? (
                             <Card>
                                 <CardContent className="prose dark:prose-invert max-w-none pt-6" dangerouslySetInnerHTML={{ __html: lesson.content }} />
                             </Card>
                         ) : null}
 
-                        {lesson?.quiz ? (
+                        {lesson.quiz ? (
                           <QuizComponent quiz={lesson.quiz} />
                         ) : (
-                           !lesson?.content && !lesson.imageUrl && !lesson.youtubeVideoId && (
+                           !lesson.content && !lesson.imageUrl && !lesson.youtubeVideoId && (
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Contenido de la Lección</CardTitle>
@@ -319,6 +320,13 @@ function CourseDetailContent() {
                         </div>
                     )}
                 </>
+            ) : (
+                 <div className="flex justify-center items-center h-96">
+                    <div className="text-center">
+                        <h2 className="text-xl font-semibold">Bienvenido a {course.title}</h2>
+                        <p className="text-muted-foreground mt-2">Selecciona una lección en la barra lateral para comenzar.</p>
+                    </div>
+                </div>
             )}
         </main>
       </div>
@@ -341,3 +349,4 @@ export default function CourseDetailPage() {
     </Suspense>
   );
 }
+
