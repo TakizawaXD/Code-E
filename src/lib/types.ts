@@ -77,6 +77,12 @@ export type UserProfile = {
   role?: 'student' | 'instructor' | 'admin';
 };
 
+// Type for updating the user profile via server action
+export type UpdateUserProfile = {
+  name: string;
+  description: string;
+}
+
 export type Notification = {
   id: string;
   title: string;

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc } from "firebase/firestore";
 import {
   Form,
   FormControl,
@@ -21,15 +21,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { Loader2, AlertTriangle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
-import type { UserProfile } from "@/lib/types";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-
+import type { UserProfile, UpdateUserProfile } from "@/lib/types";
+import { updateUser } from "./actions";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres." }).max(50),
-  username: z.string(), // This is for display only, not for submission.
+  username: z.string(), // This is for display only.
   description: z.string().max(160, { message: "La descripción no puede tener más de 160 caracteres." }).optional(),
 });
 
@@ -68,35 +67,31 @@ export default function SettingsPage() {
   }, [userProfile, form]);
 
   async function onSubmit(data: ProfileFormValues) {
-    toast({
-        variant: "destructive",
-        title: "Función en Mantenimiento",
-        description: "La actualización de perfiles está temporalmente deshabilitada.",
-    });
+    if (!user) return;
     
-    // =================================================================
-    // TEMPORARILY DISABLED DUE TO PERSISTENT PERMISSION ERRORS
-    // =================================================================
-    // if (!user || !userProfileRef) return;
+    const profileData: UpdateUserProfile = {
+        name: data.name,
+        description: data.description || "",
+    };
 
-    // try {
-    //   await updateDoc(userProfileRef, {
-    //     name: data.name,
-    //     description: data.description || "",
-    //   });
-
-    //   toast({
-    //     title: "¡Perfil actualizado!",
-    //     description: "Tus cambios han sido guardados correctamente.",
-    //   });
-    // } catch (error: any) {
-    //   console.error("Error updating profile:", error);
-    //   toast({
-    //     variant: "destructive",
-    //     title: "Error al actualizar",
-    //     description: "No se pudo guardar tu perfil. Es posible que no tengas permisos.",
-    //   });
-    // }
+    try {
+        const result = await updateUser(profileData);
+        if (result.success) {
+            toast({
+                title: "¡Perfil actualizado!",
+                description: "Tus cambios han sido guardados correctamente.",
+            });
+        } else {
+            throw new Error(result.error || "Ocurrió un error desconocido.");
+        }
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      toast({
+        variant: "destructive",
+        title: "Error al actualizar",
+        description: error.message,
+      });
+    }
   }
 
   if (isUserLoading || isProfileLoading) {
@@ -110,13 +105,6 @@ export default function SettingsPage() {
 
   return (
     <div className="container max-w-2xl py-12 md:py-20">
-        <Alert variant="destructive" className="mb-8">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Función en Mantenimiento</AlertTitle>
-            <AlertDescription>
-                La funcionalidad para actualizar perfiles está temporalmente deshabilitada. Pedimos disculpas por las molestias.
-            </AlertDescription>
-        </Alert>
       <Card>
         <CardHeader>
           <CardTitle>Ajustes de Perfil</CardTitle>
@@ -179,7 +167,7 @@ export default function SettingsPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={true || form.formState.isSubmitting}>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? "Guardando..." : "Guardar Cambios"}
               </Button>
             </form>
@@ -189,4 +177,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
