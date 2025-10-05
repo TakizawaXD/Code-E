@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  devIndicators: {
+    'preflight-response': false,
+  },
   images: {
     remotePatterns: [
       {
