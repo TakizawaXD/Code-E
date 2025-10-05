@@ -1,51 +1,66 @@
 
 "use client";
 
-import { useUser } from "@/firebase";
+import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CourseCard } from "@/components/course-card";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Award, BookOpen, Download, Loader2 } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import type { Course } from "@/lib/types";
-import { courses as allCourses } from "@/lib/data";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Loader2, Edit, BookOpen, HelpCircle, GraduationCap } from "lucide-react";
+import type { UserProfile, ForumThread } from "@/lib/types";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
+import { collection, query, where } from "firebase/firestore";
+import Link from "next/link";
+import { CourseCard } from "@/components/course-card";
+import { courses } from "@/lib/data";
+
+function UserStats() {
+    const { user } = useUser();
+    const firestore = useFirestore();
+
+    const userProfileQuery = useMemoFirebase(() => {
+        if (!user || !firestore) return null;
+        return query(collection(firestore, "users"), where("email", "==", user.email));
+    }, [user, firestore]);
+    const { data: userProfileData } = useCollection<UserProfile>(userProfileQuery);
+    const userProfile = userProfileData?.[0];
+
+    const userThreadsQuery = useMemoFirebase(() => {
+        if (!user || !firestore) return null;
+        return query(collection(firestore, "forumThreads"), where("authorId", "==", user.uid));
+    }, [user, firestore]);
+
+    const { data: userThreads } = useCollection<ForumThread>(userThreadsQuery);
+
+    // Note: Counting replies would be inefficient. We'll stick to questions for now.
+    const questionsCount = userThreads?.length ?? 0;
+    const repliesCount = 0; // Placeholder
+
+    return (
+        <Card className="bg-muted/50">
+            <CardContent className="p-4 flex justify-around text-center">
+                <div className="w-20">
+                    <p className="text-2xl font-bold text-green-500">{userProfile?.points ?? 0}</p>
+                    <p className="text-xs text-muted-foreground">Puntos</p>
+                </div>
+                <div className="w-20">
+                    <p className="text-2xl font-bold">{questionsCount}</p>
+                    <p className="text-xs text-muted-foreground">Preguntas</p>
+                </div>
+                <div className="w-20">
+                    <p className="text-2xl font-bold">{repliesCount}</p>
+                    <p className="text-xs text-muted-foreground">Respuestas</p>
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
 
 export default function DashboardPage() {
     const { user, isUserLoading } = useUser();
     
-    // Mocking progress data
-    const progressData = useMemo(() => {
-        if (!user) return [];
-        // In a real app, this would be fetched from Firestore
-        return [
-            { courseId: 'prog-python', progress: 60, completed: false },
-            { courseId: 'web-react', progress: 100, completed: true },
-        ];
-    }, [user]);
+    // Mocking progress data for suggested course
+    const suggestedCourse = useMemo(() => courses.find(c => c.id === 'english-entrevistas'), []);
 
-    const { coursesInProgress, completedCourses } = useMemo(() => {
-        if (!progressData) return { coursesInProgress: [], completedCourses: [] };
-
-        const inProgress: (Course & { progress: number })[] = [];
-        const completed: Course[] = [];
-
-        progressData.forEach(progressItem => {
-            const course = allCourses.find(c => c.id === progressItem.courseId);
-            if (!course) return;
-
-            if (progressItem.completed) {
-                completed.push(course);
-            } else {
-                inProgress.push({ ...course, progress: progressItem.progress });
-            }
-        });
-
-        return { coursesInProgress: inProgress, completedCourses: completed };
-    }, [progressData]);
-    
     if (isUserLoading) {
         return (
             <div className="container py-8 text-center flex justify-center items-center h-64">
@@ -62,80 +77,105 @@ export default function DashboardPage() {
     const userInitial = displayName ? displayName.charAt(0).toUpperCase() : '?';
 
     return (
-        <div className="container py-8 md:py-12">
-            <header className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
-                <div className="flex items-center gap-4">
-                    <Avatar className="h-20 w-20">
-                        {user.photoURL && <AvatarImage src={user.photoURL} alt={displayName || "User"} />}
-                        <AvatarFallback className="text-3xl">{userInitial}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                        <p className="text-sm text-muted-foreground">Bienvenido de nuevo,</p>
-                        <h1 className="text-3xl font-bold tracking-tight font-headline">{displayName}</h1>
-                    </div>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Cursos Completados</CardTitle>
-                            <Award className="h-4 w-4 text-muted-foreground" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">{completedCourses.length}</div>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Cursos en Progreso</CardTitle>
-                            <BookOpen className="h-4 w-4 text-muted-foreground" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">{coursesInProgress.length}</div>
-                        </CardContent>
-                    </Card>
-                </div>
-            </header>
-
-            <Separator className="my-8" />
-
-            <Tabs defaultValue="in-progress" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 md:w-[400px]">
-                    <TabsTrigger value="in-progress">En Progreso</TabsTrigger>
-                    <TabsTrigger value="certificates">Certificados</TabsTrigger>
-                </TabsList>
-                <TabsContent value="in-progress">
-                    <section className="mt-6">
-                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                            {coursesInProgress.map((course) => (
-                                <CourseCard key={course.id} course={course} progress={course.progress} />
-                            ))}
+        <div className="bg-secondary/40">
+            <div className="bg-background">
+                <div className="container py-6">
+                    <header className="flex flex-col sm:flex-row items-center gap-6">
+                        <Avatar className="h-24 w-24 border-4 border-primary">
+                            {user.photoURL && <AvatarImage src={user.photoURL} alt={displayName || "User"} />}
+                            <AvatarFallback className="text-4xl">{userInitial}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 text-center sm:text-left">
+                            <h1 className="text-3xl font-bold tracking-tight">{displayName}</h1>
+                            <Button variant="outline" size="sm" className="mt-2">
+                                <Edit className="mr-2 h-3 w-3" />
+                                Completa tu perfil
+                            </Button>
                         </div>
-                        {coursesInProgress.length === 0 && <p className="text-muted-foreground mt-4">Aún no has comenzado ningún curso.</p>}
-                    </section>
-                </TabsContent>
-                <TabsContent value="certificates">
-                <section className="mt-6">
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {completedCourses.map((course) => (
-                            <Card key={course.id} className="flex flex-col justify-between overflow-hidden">
-                                <CardContent className="p-6 text-center flex flex-col items-center justify-center flex-grow">
-                                    <Award className="w-16 h-16 text-yellow-500 mb-4" />
-                                    <p className="font-semibold text-lg">Certificado de Finalización</p>
-                                    <p className="text-muted-foreground text-sm mt-1">{course.title}</p>
-                                </CardContent>
-                                <CardHeader className="p-0">
-                                    <Button variant="secondary" className="w-full rounded-t-none">
-                                        <Download className="mr-2 h-4 w-4" />
-                                        Descargar Certificado
+                        <div className="w-full sm:w-auto">
+                            <UserStats />
+                        </div>
+                    </header>
+                </div>
+            </div>
+            
+            <div className="container py-8 md:py-12">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                    {/* Left Column */}
+                    <div className="lg:col-span-2 space-y-10">
+                        <Card className="bg-gradient-to-r from-teal-500 to-cyan-500 text-primary-foreground">
+                            <CardContent className="p-6 flex items-center justify-between">
+                                <div>
+                                    <h3 className="text-xl font-semibold">Aprende diseño, desarrollo y marketing con líderes de la industria</h3>
+                                </div>
+                                <Button asChild variant="secondary" className="bg-green-400 hover:bg-green-500 text-black font-bold">
+                                    <Link href="/pricing">$1.499.000 al año</Link>
+                                </Button>
+                            </CardContent>
+                        </Card>
+
+                        <section>
+                            <h2 className="text-2xl font-bold mb-4">Tus cursos</h2>
+                            {suggestedCourse ? (
+                                 <Card className="overflow-hidden">
+                                     <CardContent className="p-4 flex flex-col sm:flex-row items-center gap-4">
+                                        <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <BookOpen className="w-8 h-8 text-muted-foreground"/>
+                                        </div>
+                                        <div className="flex-1 text-center sm:text-left">
+                                            <p className="text-sm text-muted-foreground">Te sugerimos iniciar con el</p>
+                                            <p className="font-semibold">{suggestedCourse.title}</p>
+                                        </div>
+                                        <Button asChild className="bg-green-500 hover:bg-green-600">
+                                            <Link href={`/courses/${suggestedCourse.id}`}>Comenzar ahora</Link>
+                                        </Button>
+                                     </CardContent>
+                                 </Card>
+                            ): (
+                                <p className="text-muted-foreground">No tienes cursos en progreso.</p>
+                            )}
+                        </section>
+
+                        <section>
+                            <h2 className="text-2xl font-bold mb-4">Tus carreras</h2>
+                            <Card className="border-2 border-dashed">
+                               <CardContent className="p-6 text-center">
+                                    <div className="w-24 h-24 bg-muted rounded-lg mx-auto mb-4 flex items-center justify-center">
+                                        <GraduationCap className="w-12 h-12 text-muted-foreground"/>
+                                    </div>
+                                    <p className="text-muted-foreground mb-4">Te recomendamos iniciar:</p>
+                                    <Button variant="outline" asChild className="bg-green-100 dark:bg-green-900/50 border-green-500 text-green-700 dark:text-green-400 hover:bg-green-200">
+                                        <Link href="/paths">Ver cursos</Link>
                                     </Button>
-                                </CardHeader>
+                               </CardContent>
                             </Card>
-                        ))}
+                        </section>
+
                     </div>
-                    {completedCourses.length === 0 && <p className="text-muted-foreground mt-4">No has completado ningún curso todavía.</p>}
-                </section>
-                </TabsContent>
-            </Tabs>
+
+                    {/* Right Column */}
+                    <div className="space-y-10">
+                        <section>
+                            <h2 className="text-2xl font-bold mb-4">Tutoriales</h2>
+                            <Card>
+                                <CardContent className="p-6">
+                                    <p className="font-semibold">Aún no has creado tutoriales</p>
+                                    <p className="text-sm text-muted-foreground mt-1">Comparte tus conocimientos. Tus tutoriales pueden ser parte de los cursos y llegar a muchas personas.</p>
+                                </CardContent>
+                            </Card>
+                        </section>
+                        <section>
+                            <h2 className="text-2xl font-bold mb-4">Tus preguntas</h2>
+                            <Card>
+                                 <CardContent className="p-6">
+                                     <p className="font-semibold">Aún no has hecho preguntas</p>
+                                     <p className="text-sm text-muted-foreground mt-1">La comunidad de profesores y estudiantes responderá a todas tus dudas.</p>
+                                 </CardContent>
+                            </Card>
+                        </section>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
