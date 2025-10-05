@@ -27,7 +27,7 @@ import type { UserProfile } from "@/lib/types";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres." }).max(50),
-  username: z.string(), // No validation needed, it's read-only
+  username: z.string(), // This is for display only, not for submission.
   description: z.string().max(160, { message: "La descripción no puede tener más de 160 caracteres." }).optional(),
 });
 
@@ -69,9 +69,8 @@ export default function SettingsPage() {
     if (!user || !userProfileRef) return;
 
     try {
-      // THE FIX: Only update the Firestore document.
-      // Do not attempt to update the Firebase Auth profile object (user).
-      // The user's profile data should live exclusively in Firestore as the source of truth.
+      // The ONLY source of truth for the user profile is Firestore.
+      // We ONLY update the fields that are meant to be editable.
       await updateDoc(userProfileRef, {
         name: data.name,
         description: data.description || "",
@@ -86,7 +85,7 @@ export default function SettingsPage() {
       toast({
         variant: "destructive",
         title: "Error al actualizar",
-        description: error.message || "Ocurrió un error inesperado.",
+        description: "No se pudo guardar tu perfil. Es posible que no tengas permisos.",
       });
     }
   }

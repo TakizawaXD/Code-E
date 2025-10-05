@@ -1,62 +1,82 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function to check ownership
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-
-    // Users can only read their own data, but can create their own user document.
-    // They can only update/delete their own document.
+    // Regla para la colección de usuarios
+    // Permite que un usuario lea y actualice su propio documento.
+    // La creación se maneja a través de funciones del backend o reglas más específicas.
     match /users/{userId} {
-      allow read, update, delete: if isOwner(userId);
-      allow create: if request.auth != null;
+      allow read: if request.auth != null;
+      allow update: if request.auth != null && request.auth.uid == userId;
+      // Por lo general, la creación y eliminación se controlan de forma más estricta.
+      // Permitimos la creación si el usuario está creando su propio documento.
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow delete: if false; // Nadie puede eliminar perfiles de usuario directamente.
+
+      // Reglas para subcolecciones de usuarios (notificaciones, progreso, etc.)
+      match /{allSubcollections=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
 
-    // Courses, modules and lessons are public.
+    // Regla para rutas de aprendizaje
+    // Cualquiera puede leer las rutas de aprendizaje.
+    match /learningPaths/{pathId} {
+      allow read: if true;
+      allow write: if false; // Solo se escriben desde el script de seed
+    }
+
+    // Regla para cursos y su contenido
+    // Cualquiera puede leer los cursos, módulos y lecciones.
     match /courses/{courseId} {
       allow read: if true;
-      
+      allow write: if false; // Solo se escriben desde el script de seed
+
+      // Reglas para subcolecciones de cursos (módulos, lecciones)
       match /modules/{moduleId} {
         allow read: if true;
-        
-        match /lessons/{lessonId} {
-          allow read: if true;
+        allow write: if false; // Solo se escriben desde el script de seed
 
-          // Comments can be created by any authenticated user.
-          // Users can only update/delete their own comments.
-          match /comments/{commentId} {
+        match /lessons/{lessonId} {
             allow read: if true;
-            allow create: if request.auth != null;
-            allow update, delete: if isOwner(request.resource.data.userId);
-          }
+            allow write: if false; // Solo se escriben desde el script de seed
+
+            // Regla para comentarios en lecciones
+            // Un usuario autenticado puede leer y escribir comentarios.
+            match /comments/{commentId} {
+                allow read: if request.auth != null;
+                allow create: if request.auth != null;
+                // Solo el autor del comentario puede editarlo o eliminarlo.
+                allow update, delete: if request.auth != null && resource.data.authorId == request.auth.uid;
+            }
         }
       }
     }
-
-    // Learning paths are public.
-    match /learningPaths/{pathId} {
+    
+    // Reglas para el foro
+    match /forumThreads/{threadId} {
+      // Cualquiera puede leer los hilos del foro.
       allow read: if true;
+      // Solo usuarios autenticados pueden crear, actualizar o eliminar sus propios hilos.
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && resource.data.authorId == request.auth.uid;
+
+      // Reglas para las respuestas (posts) dentro de un hilo
+      match /posts/{postId} {
+        // Cualquiera puede leer las respuestas.
+        allow read: if true;
+        // Solo usuarios autenticados pueden crear respuestas.
+        allow create: if request.auth != null;
+        // Solo el autor de la respuesta puede editarla o eliminarla.
+        allow update, delete: if request.auth != null && resource.data.authorId == request.auth.uid;
+      }
     }
 
-    // Forum threads can be read by anyone.
-    // Authenticated users can create threads.
-    // Authors can update/delete their own threads.
-    match /forumThreads/{threadId} {
-      allow read: if true;
-      allow create: if request.auth != null;
-      allow update, delete: if isOwner(resource.data.authorId);
-
-      // Forum posts can be read by anyone.
-      // Authenticated users can create posts.
-      // Authors can update/delete their own posts.
-      match /posts/{postId} {
-        allow read: if true;
-        allow create: if request.auth != null;
-        allow update, delete: if isOwner(resource.data.authorId);
-      }
+    // Regla genérica de denegación para cualquier otra ruta
+    match /{path=**} {
+      allow read, write: if false;
     }
   }
 }
