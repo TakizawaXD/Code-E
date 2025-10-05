@@ -7,28 +7,19 @@ import Image from "next/image";
 import { useUser } from "@/firebase";
 import { courses as allCourses } from "@/lib/data";
 import type { Course, Lesson, CourseModule } from "@/lib/types";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  PlayCircle,
   CheckCircle2,
-  Lock,
-  MessageSquare,
-  BarChart3,
-  Youtube,
   Loader2,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { QuizComponent } from "@/components/quiz";
 import { Badge } from "@/components/ui/badge";
 import { CommentSection } from "@/components/comment-section";
+import { BottomBar } from "@/components/layout/bottom-bar";
+import { MobileCourseNav } from "@/components/layout/mobile-course-nav";
 
 function getNextLesson(modules: CourseModule[], currentModuleId: string, currentLessonId: string): { moduleId: string; lessonId: string } | null {
   const currentModuleIndex = modules.findIndex(m => m.id === currentModuleId);
@@ -73,6 +64,8 @@ function CourseDetailContent() {
         lessonId: string;
     } | null>(null);
 
+     const [isNavOpen, setIsNavOpen] = useState(false);
+
     const { lesson, module } = useMemo(() => {
         if (!course || !currentLesson) return { lesson: null, module: null };
         const foundModule = course.modules.find(m => m.id === currentLesson.moduleId);
@@ -100,21 +93,6 @@ function CourseDetailContent() {
     // Mock progress state
     const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
 
-    const lastCompletedLessonIndex = useMemo(() => {
-        if (!course || completedLessons.size === 0) return -1;
-        let flatIndex = -1;
-        let lastIndex = -1;
-        for (const mod of course.modules) {
-            for (const less of mod.lessons) {
-                flatIndex++;
-                if (completedLessons.has(less.id)) {
-                    lastIndex = flatIndex;
-                }
-            }
-        }
-        return lastIndex;
-    }, [course, completedLessons]);
-
     const handleSetLesson = (moduleId: string, lessonId: string, method: 'push' | 'replace' = 'push') => {
         if (!course) return;
         setCurrentLesson({ moduleId, lessonId });
@@ -124,6 +102,7 @@ function CourseDetailContent() {
         } else {
           router.replace(newUrl, { scroll: false });
         }
+        setIsNavOpen(false); // Close nav on selection
     };
 
     const handleMarkAsCompleted = () => {
@@ -153,92 +132,12 @@ function CourseDetailContent() {
         return <div className="container flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin" /></div>;
     }
 
-    const instructorName = "Code-E BOT";
+    const completedCount = completedLessons.size;
+    const totalLessons = course.modules.reduce((acc, mod) => acc + mod.lessons.length, 0);
+    const courseProgress = totalLessons > 0 ? (completedCount / totalLessons) * 100 : 0;
 
     return (
-    <div className="container mx-auto py-8">
-      <div className="grid lg:grid-cols-[350px_1fr] gap-12">
-        
-        <aside className="lg:sticky top-24 h-fit">
-            <h2 className="text-xl font-bold mb-2">{course.title}</h2>
-             <div className="flex items-center gap-4 mb-4">
-                <Avatar>
-                    <AvatarFallback>B</AvatarFallback>
-                </Avatar>
-                <div>
-                    <p className="font-semibold text-sm">{instructorName}</p>
-                    <p className="text-xs text-muted-foreground">Instructor Experto</p>
-                </div>
-            </div>
-            
-            <Accordion
-            type="single"
-            collapsible
-            defaultValue={currentLesson?.moduleId}
-            className="w-full"
-            value={currentLesson?.moduleId || ""}
-            >
-            {course.modules.map((moduleItem, moduleIndex) => {
-                let lessonFlatIndexOffset = 0;
-                for(let i = 0; i < moduleIndex; i++) {
-                    lessonFlatIndexOffset += course.modules[i].lessons.length;
-                }
-
-                return (
-                <AccordionItem value={moduleItem.id} key={moduleItem.id}>
-                <AccordionTrigger className="text-base font-semibold hover:no-underline">
-                    <div className="text-left">
-                    <p className="text-sm text-muted-foreground">
-                        Sección {moduleIndex + 1}
-                    </p>
-                    <p>{moduleItem.title}</p>
-                    </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                    <ul className="space-y-1 -ml-4 -mr-4">
-                    {moduleItem.lessons.map((lessonItem, lessonIndex) => {
-                        const flatIndex = lessonFlatIndexOffset + lessonIndex;
-                        const isCompleted = completedLessons.has(lessonItem.id);
-                        const isCurrent = currentLesson?.lessonId === lessonItem.id;
-                        const isLocked = !user && flatIndex > 0; // Lock all but first lesson for guests
-                        const isProgressLocked = user && !isCompleted && flatIndex > lastCompletedLessonIndex + 1;
-
-
-                        return (
-                        <li key={lessonItem.id}>
-                            <Button
-                            variant={isCurrent ? "secondary" : "ghost"}
-                            className="w-full justify-start h-auto py-2 px-4 text-left"
-                            onClick={() =>
-                                handleSetLesson(moduleItem.id, lessonItem.id)
-                            }
-                            disabled={isLocked || isProgressLocked}
-                            >
-                            <div className="flex items-center gap-3">
-                                {isLocked || isProgressLocked ? (
-                                    <Lock className="w-4 h-4 shrink-0 text-muted-foreground" />
-                                ) : isCompleted ? (
-                                    <CheckCircle2 className="w-4 h-4 shrink-0 text-green-500" />
-                                ) : (
-                                    <PlayCircle className="w-4 h-4 shrink-0 text-muted-foreground" />
-                                )}
-                                <div className="flex flex-col items-start">
-                                    <span className="font-normal text-sm leading-snug">
-                                        {lessonItem.title}
-                                    </span>
-                                </div>
-                            </div>
-                            </Button>
-                        </li>
-                        );
-                    })}
-                    </ul>
-                </AccordionContent>
-                </AccordionItem>
-            )})}
-            </Accordion>
-        </aside>
-
+    <div className="container mx-auto py-8 pb-24 md:pb-8">
         <main className="space-y-6 min-w-0">
             {(!lesson && currentLesson) ? (
                 <div className="flex justify-center items-center h-96"><Loader2 className="w-8 h-8 animate-spin" /></div>
@@ -312,9 +211,7 @@ function CourseDetailContent() {
 
                     {currentLesson && (
                         <div className="space-y-6">
-                            <h2 className="text-2xl font-bold flex items-center gap-2">
-                            <MessageSquare className="w-6 h-6" /> Comentarios
-                            </h2>
+                            <h2 className="text-2xl font-bold">Comentarios</h2>
                             <CommentSection courseId={course.id} moduleId={currentLesson.moduleId} lessonId={currentLesson.lessonId} />
                         </div>
                     )}
@@ -323,12 +220,25 @@ function CourseDetailContent() {
                  <div className="flex justify-center items-center h-96">
                     <div className="text-center">
                         <h2 className="text-xl font-semibold">Bienvenido a {course.title}</h2>
-                        <p className="text-muted-foreground mt-2">Selecciona una lección en la barra lateral para comenzar.</p>
+                        <p className="text-muted-foreground mt-2">Selecciona una lección en la barra de navegación para comenzar.</p>
                     </div>
                 </div>
             )}
         </main>
-      </div>
+
+         <MobileCourseNav
+            isOpen={isNavOpen}
+            onOpenChange={setIsNavOpen}
+            course={course}
+            currentLesson={currentLesson}
+            completedLessons={completedLessons}
+            handleSetLesson={handleSetLesson}
+        />
+        
+        <BottomBar 
+            onNavOpen={() => setIsNavOpen(true)}
+            courseProgress={courseProgress}
+        />
     </div>
     );
 }

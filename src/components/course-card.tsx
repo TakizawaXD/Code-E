@@ -3,7 +3,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Book, Clock, User } from "lucide-react";
 import type { Course } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
@@ -14,7 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 interface CourseCardProps {
   course: Course;
@@ -39,6 +37,9 @@ export function CourseCard({ course, className, progress }: CourseCardProps) {
   const level = course.level?.toLowerCase() || 'básico';
 
   const getInstructorName = () => {
+    if (Array.isArray(course.instructor) && course.instructor.length > 1) {
+      return "Varios Profesores";
+    }
     return "Code-E BOT";
   };
 
@@ -61,16 +62,13 @@ export function CourseCard({ course, className, progress }: CourseCardProps) {
         </Link>
       </CardHeader>
       <CardContent className="flex-grow p-4">
+        <Badge variant={levelVariant[level] || 'outline'} className="capitalize mb-2">{levelLabel[level] || level}</Badge>
         <Link href={`/courses/${course.id}`} className="hover:text-primary">
             <h3 className="text-base font-bold leading-tight line-clamp-2">{course.title}</h3>
         </Link>
-        <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-            <User className="h-3 w-3" />
-            <span>{getInstructorName()}</span>
-        </div>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 p-4 pt-0">
-        <Badge variant={levelVariant[level] || 'outline'} className="capitalize">{levelLabel[level] || level}</Badge>
+        <p className="text-xs text-muted-foreground">{getInstructorName()}</p>
         {progress !== undefined ? (
             <div className="w-full mt-2">
                 <Progress value={progress} className="h-2" />

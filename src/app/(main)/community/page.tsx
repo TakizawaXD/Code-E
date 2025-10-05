@@ -54,24 +54,24 @@ function ForumList() {
 
             {threads?.map((thread) => (
                 <Card key={thread.id} className="hover:bg-accent">
-                    <CardContent className="p-4 flex items-start justify-between">
-                        <div className="flex items-start gap-4">
-                            <Avatar>
+                    <CardContent className="p-4 flex items-start justify-between gap-2">
+                        <div className="flex items-start gap-3">
+                            <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
                                 <AvatarImage src={thread.authorAvatarUrl} alt={thread.authorName}/>
                                 <AvatarFallback>{thread.authorName.charAt(0).toUpperCase()}</AvatarFallback>
                             </Avatar>
                             <div>
                                 <Link href={`/community/threads/${thread.id}`}>
-                                    <h3 className="font-semibold text-lg hover:underline">{thread.title}</h3>
+                                    <h3 className="font-semibold text-base sm:text-lg hover:underline line-clamp-2">{thread.title}</h3>
                                 </Link>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-xs sm:text-sm text-muted-foreground">
                                     Iniciado por <span className="font-medium text-foreground">{thread.authorName}</span>
                                 </p>
                             </div>
                         </div>
-                        <div className="text-right flex-shrink-0">
-                            <p className="text-sm font-medium">{thread.postCount || 1} {thread.postCount === 1 ? "post" : "posts"}</p>
-                            <p className="text-xs text-muted-foreground">
+                        <div className="text-right flex-shrink-0 text-xs sm:text-sm">
+                            <p className="font-medium">{thread.postCount || 1} {thread.postCount === 1 ? "post" : "posts"}</p>
+                            <p className="text-muted-foreground">
                                 {thread.lastPostAt ? formatDistanceToNow(thread.lastPostAt.toDate(), { addSuffix: true, locale: es }) : 'N/A'}
                             </p>
                         </div>
@@ -188,22 +188,22 @@ function GalleryTab() {
 
 export default function CommunityPage() {
     return (
-        <div className="container py-12 md:py-20">
-            <header className="text-left mb-12">
-                <h1 className="text-4xl font-bold tracking-tight font-headline sm:text-5xl">
+        <div className="container py-8 md:py-12">
+            <header className="text-center md:text-left mb-8 md:mb-12">
+                <h1 className="text-3xl font-bold tracking-tight font-headline sm:text-4xl">
                     Comunidad Code-E
                 </h1>
-                <p className="mt-4 text-lg text-muted-foreground">
+                <p className="mt-4 text-base text-muted-foreground sm:text-lg">
                     Conecta, colabora y crece con otros estudiantes y profesionales.
                 </p>
             </header>
 
             <Tabs defaultValue="forums" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
-                    <TabsTrigger value="forums"><MessageSquare className="mr-2"/>Foros de Discusión</TabsTrigger>
-                    <TabsTrigger value="channels"><Users className="mr-2"/>Canales de Chat</TabsTrigger>
-                    <TabsTrigger value="leaderboard"><Trophy className="mr-2"/>Clasificación</TabsTrigger>
-                    <TabsTrigger value="gallery"><GitMerge className="mr-2"/>Galería</TabsTrigger>
+                 <TabsList className="grid w-full grid-cols-2 h-auto md:grid-cols-4 md:h-10">
+                    <TabsTrigger value="forums" className="py-2"><MessageSquare className="mr-2"/>Foros</TabsTrigger>
+                    <TabsTrigger value="channels" className="py-2"><Users className="mr-2"/>Canales</TabsTrigger>
+                    <TabsTrigger value="leaderboard" className="py-2"><Trophy className="mr-2"/>Clasificación</TabsTrigger>
+                    <TabsTrigger value="gallery" className="py-2"><GitMerge className="mr-2"/>Galería</TabsTrigger>
                 </TabsList>
                 <TabsContent value="forums">
                     <ForumList />

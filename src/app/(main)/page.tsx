@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import Link from "next/link";
@@ -44,7 +43,7 @@ const learningCategories = [
 
 function LearningCategories() {
     return (
-        <section className="w-full py-12 md:py-24 lg:py-32">
+        <section className="w-full py-12 md:py-24">
             <div className="container px-4 md:px-6">
                 <div className="flex flex-col items-center justify-center space-y-4 text-center">
                     <div className="space-y-2">
@@ -82,7 +81,7 @@ export default function HomePage() {
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-[1fr_550px]">
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-4">
-                  <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none font-headline">
+                  <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl xl:text-5xl/none font-headline">
                     Domina las habilidades más demandadas del mercado laboral
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
@@ -113,7 +112,7 @@ export default function HomePage() {
 
         <LearningCategories />
 
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-secondary/50">
+        <section className="w-full py-12 md:py-24 bg-secondary/50">
           <div className="container px-4 md:px-6">
              <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
