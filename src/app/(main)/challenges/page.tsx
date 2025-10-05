@@ -232,14 +232,6 @@ export default function WeeklyChallengePage() {
                                             <li>Análisis de decisiones técnicas y compromisos (trade-offs).</li>
                                         </ul>
                                     </div>
-                                     <div className="text-center pt-4">
-                                        <Button asChild>
-                                            <a href={selectedChallenge.inspirationUrl} target="_blank" rel="noopener noreferrer">
-                                                <Github className="mr-2 h-4 w-4" />
-                                                Ver Repositorio de Inspiración
-                                            </a>
-                                        </Button>
-                                    </div>
                                 </div>
                                 <ChallengeSubmissionForm challenge={selectedChallenge} />
                             </CardContent>
