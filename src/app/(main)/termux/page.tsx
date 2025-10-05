@@ -98,9 +98,39 @@ export default function TermuxGuidePage() {
                             <CodeBlock code="pkg install rust" />
                         </div>
                         <div>
+                            <h3 className="font-semibold text-lg">PHP</h3>
+                            <p className="text-muted-foreground mt-1 mb-2">Ampliamente utilizado para el desarrollo web del lado del servidor.</p>
+                            <CodeBlock code="pkg install php" />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-lg">Ruby</h3>
+                            <p className="text-muted-foreground mt-1 mb-2">Conocido por su elegancia y el popular framework Ruby on Rails.</p>
+                            <CodeBlock code="pkg install ruby" />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-lg">Java</h3>
+                            <p className="text-muted-foreground mt-1 mb-2">Instala OpenJDK para compilar y ejecutar aplicaciones Java.</p>
+                            <CodeBlock code="pkg install openjdk-17" />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-lg">Kotlin</h3>
+                            <p className="text-muted-foreground mt-1 mb-2">El lenguaje moderno preferido para el desarrollo de Android, también usable en servidor.</p>
+                            <CodeBlock code="pkg install kotlin" />
+                        </div>
+                        <div>
                             <h3 className="font-semibold text-lg">C/C++</h3>
                             <p className="text-muted-foreground mt-1 mb-2">Instala el compilador Clang para trabajar con C y C++.</p>
                             <CodeBlock code="pkg install clang" />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-lg">Perl</h3>
+                            <p className="text-muted-foreground mt-1 mb-2">Un lenguaje veterano y potente para el procesamiento de texto y scripting.</p>
+                            <CodeBlock code="pkg install perl" />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-lg">Lua</h3>
+                            <p className="text-muted-foreground mt-1 mb-2">Un lenguaje de script ligero y rápido, popular en el desarrollo de videojuegos.</p>
+                            <CodeBlock code="pkg install lua" />
                         </div>
                     </CardContent>
                 </Card>
