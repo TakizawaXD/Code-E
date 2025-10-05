@@ -3,7 +3,7 @@
 
 import { useMemo, Suspense } from "react";
 import { CourseCard } from "@/components/course-card";
-import { courses as allCourses, learningPaths } from "@/lib/data";
+import { courses as allCourses, allSchools } from "@/lib/data";
 import type { Course, LearningPath } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
 
@@ -12,6 +12,9 @@ function CoursesContent() {
     const pathFilter = searchParams.get('path');
     const searchQuery = searchParams.get('q');
     
+    // Flatten learning paths from schools for easier lookup
+    const allLearningPaths = useMemo(() => allSchools.flatMap(school => school.learningPaths), []);
+
     const filteredCourses = useMemo(() => {
         let courses = allCourses;
         if (pathFilter) {
@@ -19,37 +22,37 @@ function CoursesContent() {
         }
         if (searchQuery) {
             const lowercasedQuery = searchQuery.toLowerCase();
-            courses = courses.filter(c => 
-                c.title.toLowerCase().includes(lowercasedQuery) ||
-                c.description.toLowerCase().includes(lowercasedQuery) ||
-                c.instructor.toLowerCase().includes(lowercasedQuery)
-            );
+            courses = courses.filter(c => {
+                const instructorMatch = Array.isArray(c.instructor) 
+                    ? c.instructor.some(i => i.toLowerCase().includes(lowercasedQuery))
+                    : c.instructor.toLowerCase().includes(lowercasedQuery);
+                
+                return c.title.toLowerCase().includes(lowercasedQuery) ||
+                       (c.description || '').toLowerCase().includes(lowercasedQuery) ||
+                       instructorMatch;
+            });
         }
         return courses;
     }, [pathFilter, searchQuery]);
 
     const coursesByPath = useMemo(() => {
         return filteredCourses.reduce((acc, course) => {
-            const path = learningPaths.find(p => p.id === course.pathId);
+            const path = allLearningPaths.find(p => p.id === course.pathId);
             if (path) {
                 if (!acc[path.id]) {
+                    // Use a structure that matches LearningPath but adds courses
                     acc[path.id] = { ...path, courses: [] };
                 }
                 acc[path.id].courses.push(course);
             }
             return acc;
         }, {} as { [key: string]: LearningPath & { courses: Course[] } });
-
-    }, [filteredCourses]);
+    }, [filteredCourses, allLearningPaths]);
     
-    let pathsToRender;
-    if (pathFilter) {
-        pathsToRender = learningPaths.filter(p => p.id === pathFilter);
-    } else if (searchQuery) {
-        pathsToRender = learningPaths.filter(p => coursesByPath[p.id]?.courses.length > 0);
-    } else {
-        pathsToRender = learningPaths;
-    }
+    const pathsToRender = useMemo(() => {
+        const pathIdsWithCourses = new Set(Object.keys(coursesByPath));
+        return allLearningPaths.filter(p => pathIdsWithCourses.has(p.id));
+    }, [coursesByPath, allLearningPaths]);
     
     const pageTitle = searchQuery ? `Resultados para "${searchQuery}"` : "Catálogo de Cursos";
     const pageDescription = searchQuery 
@@ -78,9 +81,6 @@ function CoursesContent() {
                                 <CourseCard key={course.id} course={course} />
                             ))}
                         </div>
-                        {(!coursesByPath[path.id]?.courses || coursesByPath[path.id].courses.length === 0) && (
-                            <p className="text-muted-foreground">No hay cursos disponibles en esta ruta de aprendizaje por el momento.</p>
-                        )}
                     </section>
                 )) : (
                     <div className="text-center py-10">
