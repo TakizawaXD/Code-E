@@ -3,12 +3,12 @@
 
 import Link from "next/link";
 import { useUser, useCollection, useMemoFirebase, useFirestore } from "@/firebase";
-import { collection, query, orderBy } from "firebase/firestore";
+import { collection, query, orderBy, limit } from "firebase/firestore";
 import type { ForumThread, UserProfile } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PlusCircle, MessageSquare, Trophy, Users, GitMerge, Star, Rocket, LayoutGrid, Hash } from "lucide-react";
+import { PlusCircle, MessageSquare, Trophy, Users, GitMerge, LayoutGrid, Hash } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -86,7 +86,8 @@ function LeaderboardTab() {
     const firestore = useFirestore();
     const usersQuery = useMemoFirebase(() => {
         if (!firestore) return null;
-        return query(collection(firestore, "users"), orderBy("points", "desc"), orderBy("name", "asc"));
+        // This query is efficient and allowed by the security rules
+        return query(collection(firestore, "users"), orderBy("points", "desc"), limit(20));
     }, [firestore]);
 
     const { data: users, isLoading } = useCollection<UserProfile>(usersQuery);

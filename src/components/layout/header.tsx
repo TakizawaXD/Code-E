@@ -18,12 +18,12 @@ import {
 import { MainNav } from "@/components/layout/main-nav";
 import { UserNav } from "@/components/layout/user-nav";
 import { CodeELogo } from "@/components/icons";
-import { useFirebase, useUser, useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { useFirebase, useUser, useCollection, useFirestore, useMemoFirebase, useDoc } from "@/firebase";
 import type { Notification, UserProfile } from "@/lib/types";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { collection, query, orderBy, doc, updateDoc, writeBatch, where } from "firebase/firestore";
+import { collection, query, orderBy, doc, writeBatch } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState, useMemo } from "react";
 
@@ -33,12 +33,11 @@ export function Header() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const userProfileQuery = useMemoFirebase(() => {
+  const userProfileRef = useMemoFirebase(() => {
     if (!user || !firestore) return null;
-    return query(collection(firestore, "users"), where("email", "==", user.email));
+    return doc(firestore, "users", user.uid);
   }, [user, firestore]);
-  const { data: userProfileData } = useCollection<UserProfile>(userProfileQuery);
-  const userProfile = userProfileData?.[0];
+  const { data: userProfile } = useDoc<UserProfile>(userProfileRef);
 
   const notificationsQuery = useMemoFirebase(() => {
     if (!user || !firestore) return null;
@@ -47,7 +46,7 @@ export function Header() {
 
   const { data: notifications, isLoading: isLoadingNotifications } = useCollection<Notification>(notificationsQuery);
   
-  const hasUnread = useMemoFirebase(() => {
+  const hasUnread = useMemo(() => {
       return notifications?.some(n => !n.read);
   }, [notifications]);
 

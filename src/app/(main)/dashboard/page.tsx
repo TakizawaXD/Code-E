@@ -1,14 +1,14 @@
 
 "use client";
 
-import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { useUser, useFirestore, useDoc, useMemoFirebase, useCollection } from "@/firebase";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2, Edit, BookOpen, HelpCircle, GraduationCap } from "lucide-react";
 import type { UserProfile, ForumThread } from "@/lib/types";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { collection, query, where } from "firebase/firestore";
+import { collection, query, where, doc } from "firebase/firestore";
 import Link from "next/link";
 import { CourseCard } from "@/components/course-card";
 import { courses } from "@/lib/data";
@@ -17,12 +17,12 @@ function UserStats() {
     const { user } = useUser();
     const firestore = useFirestore();
 
-    const userProfileQuery = useMemoFirebase(() => {
+    // Directly get the user's profile document. This is more efficient.
+    const userProfileRef = useMemoFirebase(() => {
         if (!user || !firestore) return null;
-        return query(collection(firestore, "users"), where("email", "==", user.email));
+        return doc(firestore, "users", user.uid);
     }, [user, firestore]);
-    const { data: userProfileData } = useCollection<UserProfile>(userProfileQuery);
-    const userProfile = userProfileData?.[0];
+    const { data: userProfile } = useDoc<UserProfile>(userProfileRef);
 
     const userThreadsQuery = useMemoFirebase(() => {
         if (!user || !firestore) return null;

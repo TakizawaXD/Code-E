@@ -3,66 +3,60 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Regla para la colección de usuarios
+    // Helper function to check ownership
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // Users can only read their own data, but can create their own user document.
+    // They can only update/delete their own document.
     match /users/{userId} {
-      // CUALQUIERA puede leer (get) y listar (list) los perfiles de usuario.
-      // Esto es necesario para la tabla de clasificación y para ver perfiles públicos.
-      allow read: if true;
-
-      // SOLO el usuario autenticado y propietario del documento puede escribir en él.
-      allow write: if request.auth != null && request.auth.uid == userId;
+      allow read, update, delete: if isOwner(userId);
+      allow create: if request.auth != null;
     }
 
-    // Reglas para rutas de aprendizaje, cursos, módulos y lecciones
-    // Se permite la lectura pública para que todos puedan ver el catálogo de cursos.
-    match /learningPaths/{pathId} {
-      allow read: if true;
-      allow write: if false; // Proteger contra escritura desde el cliente
-    }
-
+    // Courses, modules and lessons are public.
     match /courses/{courseId} {
       allow read: if true;
-      allow write: if false; // Proteger contra escritura desde el cliente
+      
+      match /modules/{moduleId} {
+        allow read: if true;
+        
+        match /lessons/{lessonId} {
+          allow read: if true;
+
+          // Comments can be created by any authenticated user.
+          // Users can only update/delete their own comments.
+          match /comments/{commentId} {
+            allow read: if true;
+            allow create: if request.auth != null;
+            allow update, delete: if isOwner(request.resource.data.userId);
+          }
+        }
+      }
     }
 
-    match /courses/{courseId}/modules/{moduleId} {
+    // Learning paths are public.
+    match /learningPaths/{pathId} {
       allow read: if true;
-      allow write: if false; // Proteger contra escritura desde el cliente
-    }
-    
-    match /courses/{courseId}/modules/{moduleId}/lessons/{lessonId} {
-      allow read: if true;
-      allow write: if false; // Proteger contra escritura desde el cliente
     }
 
-    // Reglas para los comentarios de las lecciones
-    match /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}/comments/{commentId} {
-      allow read: if true;
-      // Solo usuarios autenticados pueden crear comentarios.
-      // Permitir que el autor del comentario lo edite/borre en el futuro.
-      allow write: if request.auth != null;
-    }
-
-    // Reglas para los foros
+    // Forum threads can be read by anyone.
+    // Authenticated users can create threads.
+    // Authors can update/delete their own threads.
     match /forumThreads/{threadId} {
       allow read: if true;
-      // Solo usuarios autenticados pueden crear hilos.
-      // Solo el autor puede actualizar o borrar su propio hilo.
       allow create: if request.auth != null;
-      allow update, delete: if request.auth != null && request.resource.data.authorId == request.auth.uid;
-    }
+      allow update, delete: if isOwner(resource.data.authorId);
 
-    match /forumThreads/{threadId}/posts/{postId} {
+      // Forum posts can be read by anyone.
+      // Authenticated users can create posts.
+      // Authors can update/delete their own posts.
+      match /posts/{postId} {
         allow read: if true;
-        // Solo usuarios autenticados pueden crear respuestas.
         allow create: if request.auth != null;
-        allow update, delete: if request.auth != null && request.resource.data.authorId == request.auth.uid;
-    }
-
-    // Reglas para las notificaciones del usuario
-    match /users/{userId}/notifications/{notificationId} {
-        // Un usuario solo puede acceder a sus propias notificaciones
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow update, delete: if isOwner(resource.data.authorId);
+      }
     }
   }
 }
