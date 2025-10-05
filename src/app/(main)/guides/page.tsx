@@ -29,21 +29,43 @@ export default function GuidesPage() {
                     <p>Bienvenido a la guía de preparación para entrevistas técnicas de Code-E. Este no es solo un repositorio de algoritmos, es una herramienta viva construida con una filosofía de <strong>aprendizaje práctico y transparente</strong>.</p>
                     
                     <h3>Propósito y Visión</h3>
-                    <p>El objetivo es simple: diseñar un sitio web para que desarrolladores, similares a ti y a mí, tengan un lugar gratuito para aprender y dominar los conceptos clave para una entrevista técnica. Aquí, no solo leerás teoría, sino que podrás <strong>ejecutar, modificar y probar</strong> cada ejemplo de código directamente en tu navegador.</p>
+                    <p>El objetivo es diseñar un sitio web para que desarrolladores, similares a ti y a mí, tengan un lugar gratuito para aprender y dominar los conceptos clave para una entrevista técnica. Requiere inicio de sesión con Google, lo que nos permite capturar métricas de uso de forma anónima. En el futuro, estos datos alimentarán dashboards para entender qué secciones son más útiles y dónde podemos mejorar. Todo el desarrollo se realiza en un <strong>repositorio público</strong>, fomentando la transparencia.</p>
                     
                     <div class="mt-6 mb-6 p-4 bg-secondary/50 border border-border rounded-lg">
                         <h4 class="font-semibold text-foreground">La Misión de este Proyecto</h4>
                         <p class="text-muted-foreground mt-2">"Pienso que lo ideal es que el producto salga a producción después de que tú mismo hayas puesto en práctica los conceptos en entrevistas reales, hayas refinado el sitio y hayas conseguido trabajo. Al desarrollar esto, espero que entiendas los conceptos y las prácticas, y así te vuelvas un experto en el tema."</p>
                     </div>
 
-                    <h3>Arquitectura y Métricas</h3>
-                    <p>Este proyecto se construye sobre una base de Next.js, React y Firebase. Requiere inicio de sesión con Google, lo que nos permite capturar métricas de uso de forma anónima. En el futuro, estos datos alimentarán dashboards para entender qué secciones son más útiles y dónde podemos mejorar. Todo el desarrollo se realiza en un <strong>repositorio público</strong>, fomentando la transparencia.</p>
-
                     <p>Esta guía es un testimonio del propio proceso de aprendizaje. Cada algoritmo, cada explicación y cada prueba ha sido implementada y refinada con la ayuda de IA, y luego revisada manualmente, siguiendo el mismo ciclo de feedback que tú experimentarás en tu carrera.</p>
                     <p>Usa el menú de la izquierda para navegar. ¡La experimentación es la clave!</p>`,
                 'part1-sec1': `<h1>Parte I: La Fundación</h1><h2>Sección 1: Dominando el Proceso de Aprendizaje</h2><p>El enfoque moderno para la preparación de entrevistas técnicas ha experimentado una transformación fundamental, alejándose de la memorización de soluciones específicas hacia el desarrollo de una comprensión profunda de los patrones de resolución de problemas subyacentes...</p>`,
                 'part1-sec2': `<h2>Sección 2: Los Pilares - Estructuras de Datos Fundamentales</h2><p>El dominio de las estructuras de datos es el requisito previo indispensable para la resolución de problemas algorítmicos. Son las herramientas fundamentales con las que un ingeniero organiza y manipula la información.</p>`,
                 'part1-sec3': `<h2>Sección 3: El Conjunto de Herramientas - Algoritmos Fundamentales</h2><p>Los algoritmos son los procedimientos paso a paso que operan sobre las estructuras de datos para resolver problemas. Una sólida comprensión de estos algoritmos fundamentales es esencial para construir soluciones eficientes.</p>`,
+                 'part1-quiz': `
+                    <h2>Cuestionario: La Fundación</h2>
+                    <div class="quiz-container">
+                        <p><strong>1. ¿Qué estructura de datos sigue el principio LIFO (Last-In, First-Out)?</strong></p>
+                        <ul><li>a) Cola (Queue)</li><li>b) Pila (Stack)</li><li>c) Lista Enlazada</li><li>d) Árbol</li></ul>
+                        <p><strong>2. ¿Cuál es la complejidad temporal promedio para buscar un elemento en un Hash Table?</strong></p>
+                        <ul><li>a) O(1)</li><li>b) O(n)</li><li>c) O(log n)</li><li>d) O(n^2)</li></ul>
+                        <p><strong>3. ¿Qué estructura de datos es más adecuada para implementar una cola de prioridad?</strong></p>
+                        <ul><li>a) Array no ordenado</li><li>b) Pila (Stack)</li><li>c) Montículo (Heap)</li><li>d) Hash Table</li></ul>
+                        <p><strong>4. ¿En qué consiste el principio de "divide y vencerás"?</strong></p>
+                        <ul><li>a) Dividir un problema en subproblemas más pequeños, resolverlos y combinar las soluciones.</li><li>b) Iterar sobre un problema hasta encontrar la solución.</li><li>c) Almacenar resultados de subproblemas para evitar recalcularlos.</li><li>d) Probar todas las soluciones posibles una por una.</li></ul>
+                        <p><strong>5. Un nodo en un árbol binario de búsqueda, ¿qué propiedad cumple?</strong></p>
+                        <ul><li>a) Todos los nodos a su izquierda son mayores.</li><li>b) Todos los nodos a su derecha son menores.</li><li>c) Todos los nodos en su subárbol izquierdo son menores que el nodo.</li><li>d) No tiene ninguna propiedad de orden.</li></ul>
+                        <p><strong>6. ¿Cuál de los siguientes algoritmos de ordenamiento tiene una complejidad en el peor de los casos de O(n log n)?</strong></p>
+                        <ul><li>a) Bubble Sort</li><li>b) Insertion Sort</li><li>c) Merge Sort</li><li>d) Selection Sort</li></ul>
+                        <p><strong>7. ¿Para qué se utiliza principalmente una estructura de datos de tipo Grafo?</strong></p>
+                        <ul><li>a) Para almacenar datos de forma jerárquica.</li><li>b) Para modelar relaciones y conexiones entre entidades.</li><li>c) Para operaciones de acceso rápido por clave.</li><li>d) Para mantener elementos en un orden específico.</li></ul>
+                        <p><strong>8. En una lista doblemente enlazada, cada nodo apunta a:</strong></p>
+                        <ul><li>a) Solo al siguiente nodo.</li><li>b) Al nodo anterior y al siguiente.</li><li>c) Al primer nodo de la lista.</li><li>d) A un nodo aleatorio.</li></ul>
+                        <p><strong>9. ¿Qué significa que un algoritmo sea "estable" (stable)?</strong></p>
+                        <ul><li>a) Que siempre devuelve el mismo resultado.</li><li>b) Que no utiliza memoria adicional.</li><li>c) Que preserva el orden relativo de elementos con claves iguales.</li><li>d) Que su rendimiento no varía con el tipo de entrada.</li></ul>
+                        <p><strong>10. ¿Cuál es la principal ventaja de un Array Dinámico sobre un Array Estático?</strong></p>
+                        <ul><li>a) Acceso más rápido a los elementos.</li><li>b) Menor uso de memoria.</li><li>c) Puede cambiar de tamaño automáticamente.</li><li>d) Es más fácil de implementar.</li></ul>
+                    </div>
+                `,
                 'part2-sec4': `<h1>Parte II: La Aplicación</h1><h2>Sección 4: Deconstruyendo Problemas: Los Patrones "Grokking"</h2>
                     <h3>4.1 Ventana Deslizante (Sliding Window)</h3><p>Este patrón se utiliza para realizar una operación en una subsección contigua de un array o cadena. La ventana se desliza sobre los datos.</p><h4>Ejemplo: Máxima Suma de Subarray de Tamaño K</h4><div class="code-container" data-id="sliding-window-1"></div>
                     <h3>4.2 Dos Punteros (Two Pointers)</h3><p>Utiliza dos punteros que se mueven a través de una estructura de datos (generalmente un array ordenado).</p><h4>Ejemplo: Par con Suma Objetivo</h4><div class="code-container" data-id="two-pointers-1"></div>
@@ -53,10 +75,85 @@ export default function GuidesPage() {
                     <h3>4.6 Búsqueda en Profundidad (Depth-First Search - DFS)</h3><p>Este patrón explora tan profundamente como sea posible a lo largo de cada rama antes de retroceder. Se implementa comúnmente con recursión o una pila.</p><h4>Ejemplo: Recorrido de Árbol Pre-orden</h4><div class="code-container" data-id="dfs-1"></div>
                     `,
                 'part2-sec5': `<h2>Sección 5: Dominios de Conocimiento Especializados y Avanzados</h2><p>Para destacar en entrevistas en empresas de primer nivel o para roles de mayor antigüedad, el dominio de los patrones fundamentales debe complementarse con conocimientos en áreas más especializadas.</p>`,
+                'part2-quiz': `
+                    <h2>Cuestionario: La Aplicación</h2>
+                    <div class="quiz-container">
+                        <p><strong>1. El patrón "Sliding Window" (Ventana Deslizante) es más útil para problemas que involucran:</strong></p>
+                        <ul><li>a) Listas enlazadas con ciclos.</li><li>b) Subarrays o substrings contiguos.</li><li>c) Árboles y grafos.</li><li>d) Ordenamiento de elementos.</li></ul>
+                        <p><strong>2. ¿En qué tipo de array el patrón "Two Pointers" (Dos Punteros) es especialmente efectivo?</strong></p>
+                        <ul><li>a) En un array no ordenado.</li><li>b) En un array ordenado.</li><li>c) Solo en arrays de strings.</li><li>d) En arrays multidimensionales.</li></ul>
+                        <p><strong>3. El algoritmo de la "Liebre y la Tortuga" (punteros rápidos y lentos) es un método clásico para:</strong></p>
+                        <ul><li>a) Encontrar el elemento medio de un array.</li><li>b) Fusionar dos intervalos.</li><li>c) Detectar un ciclo en una lista enlazada.</li><li>d) Recorrer un árbol nivel por nivel.</li></ul>
+                        <p><strong>4. ¿Cuál es el primer paso crucial antes de aplicar el patrón "Merge Intervals" (Fusión de Intervalos)?</strong></p>
+                        <ul><li>a) Ordenar los intervalos por su punto de inicio.</li><li>b) Invertir el orden de los intervalos.</li><li>c) Eliminar los intervalos más pequeños.</li><li>d) Contar el número total de intervalos.</li></ul>
+                        <p><strong>5. ¿Qué estructura de datos es fundamental para implementar BFS (Breadth-First Search)?</strong></p>
+                        <ul><li>a) Pila (Stack).</li><li>b) Cola (Queue).</li><li>c) Montículo (Heap).</li><li>d) Hash Map.</li></ul>
+                        <p><strong>6. ¿Para qué tipo de recorrido es ideal el patrón DFS (Depth-First Search)?</strong></p>
+                        <ul><li>a) Encontrar el camino más corto en un grafo sin pesos.</li><li>b) Explorar todos los nodos vecinos antes de profundizar.</li><li>c) Explorar una rama hasta el final antes de retroceder.</li><li>d) Recorrer un árbol por niveles.</li></ul>
+                        <p><strong>7. En un problema para encontrar un par de números que suman un objetivo en un array ordenado, ¿cómo se mueven los dos punteros (izquierdo y derecho) si la suma actual es MENOR que el objetivo?</strong></p>
+                        <ul><li>a) El puntero derecho se mueve a la izquierda.</li><li>b) Ambos punteros se mueven hacia el centro.</li><li>c) El puntero izquierdo se mueve a la derecha.</li><li>d) Ambos punteros se reinician.</li></ul>
+                        <p><strong>8. En un problema de "máxima suma de subarray de tamaño k", cuando la ventana deslizante se mueve, ¿qué operaciones se realizan?</strong></p>
+                        <ul><li>a) Se recalcula la suma de toda la ventana.</li><li>b) Se añade el nuevo elemento y se resta el elemento que sale.</li><li>c) Solo se añade el nuevo elemento.</li><li>d) Se ordena la ventana y se suman los k mayores.</li></ul>
+                        <p><strong>9. ¿Cuál es una característica de la implementación recursiva de DFS?</strong></p>
+                        <ul><li>a) Utiliza explícitamente una cola.</li><li>b) Utiliza la pila de llamadas del sistema (call stack) implícitamente.</li><li>c) Es siempre más eficiente en memoria que la versión iterativa.</li><li>d) Es inmune a los desbordamientos de pila (stack overflow).</li></ul>
+                        <p><strong>10. El patrón BFS es ideal para encontrar...</strong></p>
+                        <ul><li>a) el camino más largo entre dos nodos.</li><li>b) todos los ciclos en un grafo.</li><li>c) la componente conectada más grande.</li><li>d) el camino más corto en un grafo no ponderado.</li></ul>
+                    </div>
+                `,
                 'part3-sec6': `<h1>Parte III: El Arquitecto</h1><h2>Sección 6: Fundamentos del Diseño de Sistemas</h2><p>Esta habilidad es un requisito fundamental para ingenieros de nivel medio y superior, ya que evalúa la capacidad de pensar en términos de arquitectura, escalabilidad y fiabilidad.</p>`,
                 'part3-sec7': `<h2>Sección 7: El Manual de Juego de la Entrevista de Diseño de Sistemas</h2><p>Una entrevista de diseño de sistemas es una simulación de una reunión de planificación técnica. El proceso es más importante que el resultado final.</p>`,
+                 'part3-quiz': `
+                    <h2>Cuestionario: El Arquitecto</h2>
+                    <div class="quiz-container">
+                        <p><strong>1. ¿Qué significa "Escalabilidad Vertical" (Vertical Scaling)?</strong></p>
+                        <ul><li>a) Añadir más máquinas al sistema.</li><li>b) Aumentar los recursos (CPU, RAM) de una máquina existente.</li><li>c) Distribuir la carga entre diferentes regiones geográficas.</li><li>d) Reducir el número de servicios.</li></ul>
+                        <p><strong>2. Un "Balanceador de Carga" (Load Balancer) se utiliza principalmente para:</strong></p>
+                        <ul><li>a) Distribuir el tráfico de red entre varios servidores.</li><li>b) Almacenar en caché las solicitudes frecuentes.</li><li>c) Proteger contra ataques de denegación de servicio (DDoS).</li><li>d) Autenticar usuarios.</li></ul>
+                        <p><strong>3. ¿Cuál es el propósito principal de una CDN (Content Delivery Network)?</strong></p>
+                        <ul><li>a) Servir contenido estático desde ubicaciones cercanas al usuario para reducir la latencia.</li><li>b) Ejecutar la lógica de negocio de la aplicación.</li><li>c) Almacenar la base de datos principal.</li><li>d) Procesar pagos.</li></ul>
+                        <p><strong>4. En el contexto de bases de datos, ¿qué es el "Sharding"?</strong></p>
+                        <ul><li>a) Crear una copia exacta de la base de datos.</li><li>b) Dividir una base de datos grande en partes más pequeñas y manejables (shards).</li><li>c) Almacenar los datos en memoria para un acceso más rápido.</li><li>d) Separar las operaciones de lectura de las de escritura.</li></ul>
+                        <p><strong>5. ¿Qué problema resuelve principalmente un sistema de "Caché"?</strong></p>
+                        <ul><li>a) La seguridad de los datos.</li><li>b) La durabilidad de los datos a largo plazo.</li><li>c) La reducción de la latencia y la carga en los servicios de backend.</li><li>d) El cifrado de la comunicación.</li></ul>
+                        <p><strong>6. ¿Cuál es una de las principales ventajas de una arquitectura de "Microservicios"?</strong></p>
+                        <ul><li>a) Despliegue y escalado independiente de los servicios.</li><li>b) Menor complejidad en la comunicación entre servicios.</li><li>c) Es más fácil de depurar que un monolito.</li><li>d) Requiere menos infraestructura.</li></ul>
+                        <p><strong>7. El teorema CAP en sistemas distribuidos se refiere al equilibrio entre:</strong></p>
+                        <ul><li>a) Costo, Rendimiento y Fiabilidad.</li><li>b) Consistencia, Disponibilidad y Tolerancia a particiones.</li><li>c) CPU, Almacenamiento y Red.</li><li>d) Cliente, API y Protocolo.</li></ul>
+                        <p><strong>8. ¿Para qué se utiliza un "Message Queue" (Cola de Mensajes) en una arquitectura de sistemas?</strong></p>
+                        <ul><li>a) Para almacenar datos de usuario de forma permanente.</li><li>b) Para permitir la comunicación asíncrona y desacoplada entre servicios.</li><li>c) Para servir páginas web estáticas.</li><li>d) Para realizar búsquedas de texto completo.</li></ul>
+                        <p><strong>9. ¿Qué es la "Idempotencia" en el diseño de APIs?</strong></p>
+                        <ul><li>a) Que una operación solo puede ser llamada una vez.</li><li>b) Que una operación puede ser repetida múltiples veces sin cambiar el resultado más allá de la primera ejecución.</li><li>c) Que una operación es extremadamente rápida.</li><li>d) Que una operación no devuelve ningún dato.</li></ul>
+                        <p><strong>10. En diseño de sistemas, ¿qué es una base de datos "Read Replica"?</strong></p>
+                        <ul><li>a) Una base de datos optimizada solo para escrituras.</li><li>b) Una copia de la base de datos principal que solo se usa para descargar las operaciones de lectura.</li><li>c) Una copia de seguridad que se guarda en otra región.</li><li>d) Una base de datos que no usa SQL.</li></ul>
+                    </div>
+                `,
                 'part4-sec8': `<h1>Parte IV: El Elemento Humano</h1><h2>Sección 8: Dominando la Entrevista de Comportamiento</h2><p>Las entrevistas de comportamiento se basan en la premisa de que el comportamiento pasado es el mejor predictor del rendimiento futuro.</p>`,
                 'part4-sec9': `<h2>Sección 9: El Proceso de Entrevista Desmitificado (El Metajuego)</h2><p>Comprender la logística y la psicología del proceso de entrevista es una ventaja estratégica.</p>`,
+                'part4-quiz': `
+                    <h2>Cuestionario: El Elemento Humano</h2>
+                    <div class="quiz-container">
+                        <p><strong>1. ¿Cuál es el propósito principal de una entrevista de comportamiento?</strong></p>
+                        <ul><li>a) Evaluar tus habilidades técnicas en algoritmos.</li><li>b) Entender cómo has manejado situaciones pasadas para predecir tu rendimiento futuro.</li><li>c) Ponerte a prueba con acertijos y preguntas trampa.</li><li>d) Conocer tus hobbies e intereses personales.</li></ul>
+                        <p><strong>2. El método STAR, usado para estructurar respuestas, significa:</strong></p>
+                        <ul><li>a) Situation, Task, Action, Result.</li><li>b) Skill, Talent, Ambition, Role.</li><li>c) Story, Time, Audience, Reaction.</li><li>d) Start, Talk, Argue, Resolve.</li></ul>
+                        <p><strong>3. Cuando un entrevistador te pregunta sobre un fracaso o un error, ¿qué busca evaluar principalmente?</strong></p>
+                        <ul><li>a) Si eres perfecto y nunca cometes errores.</li><li>b) Tu capacidad de autocrítica, aprendizaje y resiliencia.</li><li>c) A quién le echaste la culpa del problema.</li><li>d) Si el error le costó dinero a tu empresa anterior.</li></ul>
+                        <p><strong>4. ¿Qué es una buena práctica al final de una entrevista?</strong></p>
+                        <ul><li>a) Salir rápidamente sin decir nada más.</li><li>b) Hacer preguntas inteligentes sobre el equipo, la cultura y los desafíos del rol.</li><li>c) Pedir saber inmediatamente si conseguiste el trabajo.</li><li>d) Criticar algún aspecto del proceso de entrevista.</li></ul>
+                        <p><strong>5. Si te preguntan sobre un conflicto con un compañero de trabajo, ¿qué deberías enfatizar en tu respuesta?</strong></p>
+                        <ul><li>a) Que tenías toda la razón y tu compañero estaba equivocado.</li><li>b) Cómo escalaste el problema a tu jefe inmediatamente.</li><li>c) Los pasos que tomaste para entender la otra perspectiva y llegar a una solución profesional.</li><li>d) Cómo evitaste a ese compañero de trabajo a partir de entonces.</li></ul>
+                        <p><strong>6. ¿Qué significa "el metajuego" de la entrevista?</strong></p>
+                        <ul><li>a) El juego de mesa que se juega en la oficina.</li><li>b) Las reglas no escritas, la psicología y la estrategia del proceso de selección.</li><li>c) Los videojuegos que juega el equipo de ingeniería.</li><li>d) Una prueba de lógica avanzada.</li></ul>
+                        <p><strong>7. Al describir un logro técnico (Action en STAR), ¿qué es más efectivo?</strong></p>
+                        <ul><li>a) Usar "nosotros" para dar crédito a todo el equipo.</li><li>b) Describir en detalle tu contribución personal y específica: "Yo diseñé...", "Yo implementé...".</li><li>c) Limitarte a describir la tecnología que usaste.</li><li>d) Atribuir todo el éxito a tu jefe.</li></ul>
+                        <p><strong>8. ¿Por qué es importante investigar la empresa y al entrevistador antes de la entrevista?</strong></p>
+                        <ul><li>a) No es importante, ellos te tienen que evaluar a ti.</li><li>b) Para demostrar interés genuino y poder hacer preguntas más relevantes.</li><li>c) Para encontrar información personal y usarla en la conversación.</li><li>d) Solo para saber la dirección de la oficina.</li></ul>
+                        <p><strong>9. ¿Cuál es un "red flag" o mala señal en una respuesta a una pregunta de comportamiento?</strong></p>
+                        <ul><li>a) Ser honesto sobre un desafío.</li><li>b) Tomar un momento para pensar antes de responder.</li><li>c) Culpar a otros, mostrar negatividad o no asumir responsabilidad.</li><li>d) Describir un resultado que no fue 100% exitoso.</li></ul>
+                        <p><strong>10. En la sección "Result" del método STAR, además del resultado, ¿qué es bueno incluir?</strong></p>
+                        <ul><li>a) Una métrica cuantificable si es posible (ej: "reduje la latencia en un 20%").</li><li>b) Una opinión personal sobre el proyecto.</li><li>c) Una lista de todas las personas involucradas.</li><li>d) El salario que esperas.</li></ul>
+                    </div>
+                `,
             };
             
             const codeExamples = {
@@ -68,7 +165,38 @@ export default function GuidesPage() {
                 'dfs-1': `/*\n  Dado un árbol binario, realiza un recorrido en pre-orden (Raíz, Izquierda, Derecha).\n*/\n\n// Definición de la clase para el nodo del árbol\nclass TreeNode {\n  constructor(val) {\n    this.val = val;\n    this.left = null;\n    this.right = null;\n  }\n}\n\nfunction traversePreOrder(root) {\n  const result = [];\n  \n  function dfs(node) {\n    if (!node) {\n      return;\n    }\n    // Visita el nodo actual (raíz del sub-árbol)\n    result.push(node.val);\n    // Recorre el sub-árbol izquierdo\n    dfs(node.left);\n    // Recorre el sub-árbol derecho\n    dfs(node.right);\n  }\n\n  dfs(root);\n  return result;\n}\n\n// --- Pruebas ---\nconst root = new TreeNode(12);\nroot.left = new TreeNode(7);\nroot.right = new TreeNode(1);\nroot.left.left = new TreeNode(9);\nroot.right.left = new TreeNode(10);\nroot.right.right = new TreeNode(5);\n\nconsole.log("Recorrido DFS (Pre-orden):", traversePreOrder(root).join(', '));\n// Salida esperada: 12, 7, 9, 1, 10, 5`
             };
 
-            const navStructure = [ { title: 'Bienvenida', id: 'welcome', icon: 'home' }, { title: 'Parte I: La Fundación', icon: 'gem', children: [ { title: '1. El Proceso de Aprendizaje', id: 'part1-sec1' }, { title: '2. Estructuras de Datos', id: 'part1-sec2' }, { title: '3. Algoritmos Fundamentales', id: 'part1-sec3' }, ] }, { title: 'Parte II: La Aplicación', icon: 'puzzle', children: [ { title: '4. Patrones de "Grokking"', id: 'part2-sec4' }, { title: '5. Temas Avanzados', id: 'part2-sec5' }, ] }, { title: 'Parte III: El Arquitecto', icon: 'network', children: [ { title: '6. Fundamentos de Sist. Diseño', id: 'part3-sec6' }, { title: '7. Manual de Sist. Diseño', id: 'part3-sec7' }, ] }, { title: 'Parte IV: El Elemento Humano', icon: 'users', children: [ { title: '8. Entrevistas de Comportamiento', id: 'part4-sec8' }, { title: '9. El Metajuego del Proceso', id: 'part4-sec9' }, ] } ];
+            const navStructure = [
+                { title: 'Bienvenida', id: 'welcome', icon: 'home' },
+                { 
+                    title: 'Parte I: La Fundación', icon: 'gem', children: [
+                        { title: '1. El Proceso de Aprendizaje', id: 'part1-sec1' },
+                        { title: '2. Estructuras de Datos', id: 'part1-sec2' },
+                        { title: '3. Algoritmos Fundamentales', id: 'part1-sec3' },
+                        { title: 'Cuestionario: La Fundación', id: 'part1-quiz' },
+                    ] 
+                },
+                { 
+                    title: 'Parte II: La Aplicación', icon: 'puzzle', children: [
+                        { title: '4. Patrones de "Grokking"', id: 'part2-sec4' },
+                        { title: '5. Temas Avanzados', id: 'part2-sec5' },
+                        { title: 'Cuestionario: La Aplicación', id: 'part2-quiz' },
+                    ] 
+                },
+                { 
+                    title: 'Parte III: El Arquitecto', icon: 'network', children: [
+                        { title: '6. Fundamentos de Sist. Diseño', id: 'part3-sec6' },
+                        { title: '7. Manual de Sist. Diseño', id: 'part3-sec7' },
+                        { title: 'Cuestionario: El Arquitecto', id: 'part3-quiz' },
+                    ] 
+                },
+                { 
+                    title: 'Parte IV: El Elemento Humano', icon: 'users', children: [
+                        { title: '8. Entrevistas de Comportamiento', id: 'part4-sec8' },
+                        { title: '9. El Metajuego del Proceso', id: 'part4-sec9' },
+                        { title: 'Cuestionario: El Elemento Humano', id: 'part4-quiz' },
+                    ] 
+                }
+            ];
 
             // --- LOGIC ---
             const navLinksContainer = document.getElementById('nav-links');
@@ -88,33 +216,6 @@ export default function GuidesPage() {
             async function callGemini(prompt) {
                 console.error("Gemini API call is deactivated. An API key is required.");
                 return `Error: La llamada a la API de Gemini está desactivada. Se requiere una clave de API.`;
-                // const apiKey = ""; // Leave empty, handled by the environment
-                // const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                // const payload = {
-                //     contents: [{ role: "user", parts: [{ text: prompt }] }]
-                // };
-
-                // try {
-                //     const response = await fetch(apiUrl, {
-                //         method: 'POST',
-                //         headers: { 'Content-Type': 'application/json' },
-                //         body: JSON.stringify(payload)
-                //     });
-
-                //     if (!response.ok) {
-                //         throw new Error(`API request failed with status ${response.status}`);
-                //     }
-
-                //     const result = await response.json();
-                //     if (result.candidates && result.candidates.length > 0) {
-                //         return result.candidates[0].content.parts[0].text;
-                //     }
-                //     throw new Error("Invalid response from API");
-                // } catch (error) {
-                //     console.error("Gemini API call failed:", error);
-                //     return `Error al contactar la IA: ${error.message}`;
-                // }
             }
 
             function showModal(title, content) {
@@ -140,7 +241,6 @@ export default function GuidesPage() {
                     button.innerHTML = `<span class="loader"></span>`;
                 } else {
                     button.disabled = false;
-                    // Restore original content based on class
                     if (button.classList.contains('explain-btn')) {
                         button.innerHTML = '✨ Explicación con IA';
                     } else if (button.classList.contains('testcase-btn')) {
@@ -150,31 +250,14 @@ export default function GuidesPage() {
                     }
                 }
             }
-
-            async function handleExplainCode(id) {
-                const button = document.querySelector(`.code-container[data-id="${id}"] .explain-btn`);
-                setButtonLoading(button, true);
-                const code = editors[id].getValue();
-                const prompt = `Eres un experto programador y profesor. Explica el siguiente código JavaScript en español, paso a paso. Detalla la lógica, el propósito de las variables clave y concluye con el análisis de complejidad temporal y espacial. Formatea tu respuesta en Markdown.\n\n\`\`\`javascript\n${code}\n\`\`\``;
-                const explanation = await callGemini(prompt);
-                showModal('Explicación del Código', window.marked.parse(explanation));
-                setButtonLoading(button, false);
-            }
-
-            async function handleGenerateTest(id) {
-                const button = document.querySelector(`.code-container[data-id="${id}"] .testcase-btn`);
-                setButtonLoading(button, true);
-                const code = editors[id].getValue();
-                const prompt = `Dado el siguiente código JavaScript, genera un nuevo y único caso de prueba (un edge case o un caso más complejo) para la función principal. Devuelve solo el código del nuevo 'console.log()' sin explicaciones adicionales, listo para ser añadido al script.\n\n\`\`\`javascript\n${code}\n\`\`\``;
-                const newTest = await callGemini(prompt);
-                const currentCode = editors[id].getValue();
-                editors[id].setValue(currentCode + '\\n\\n// --- Nuevo Caso de Prueba (IA) ---\\n' + newTest);
-                setButtonLoading(button, false);
-            }
-
+            
             async function handleSummarizeSection() {
                 setButtonLoading(summarizeBtn, true);
                 const rawContent = contentData[currentSectionId];
+                if (!rawContent) {
+                    setButtonLoading(summarizeBtn, false);
+                    return;
+                }
                 const textContent = new DOMParser().parseFromString(rawContent, "text/html").documentElement.textContent;
                 const prompt = `Eres un asistente de estudio. Resume los conceptos clave del siguiente texto en español, usando viñetas (bullet points) para mayor claridad. La respuesta debe ser concisa y directa. Formatea tu respuesta en Markdown.\\n\\nTexto:\\n${textContent}`;
                 const summary = await callGemini(prompt);
@@ -183,7 +266,6 @@ export default function GuidesPage() {
             }
 
             summarizeBtn.addEventListener('click', handleSummarizeSection);
-            // Deactivate AI buttons
             summarizeBtn.disabled = true;
 
             function generateNav() {
@@ -234,8 +316,6 @@ export default function GuidesPage() {
 
                     container.querySelector('.run-btn').addEventListener('click', () => executeCode(id));
                     container.querySelector('.reset-btn').addEventListener('click', () => editors[id].setValue(codeExamples[id]));
-                    // container.querySelector('.explain-btn').addEventListener('click', () => handleExplainCode(id));
-                    // container.querySelector('.testcase-btn').addEventListener('click', () => handleGenerateTest(id));
                 });
                 window.lucide.createIcons();
             }
@@ -323,9 +403,12 @@ export default function GuidesPage() {
                 .content h3 { font-size: 1.5rem; line-height: 2rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.75rem; }
                 .content h4 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
                 .content p { margin-bottom: 1rem; line-height: 1.75; color: #d1d5db; }
-                .content ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
+                .content ul { list-style-type: none; padding-left: 0; margin-bottom: 1rem; }
                 .content li { margin-bottom: 0.5rem; }
                 .content code:not(.cm-s-material-darker code) { background-color: #374151; color: #f3f4f6; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-size: 0.9em; }
+                .quiz-container p { margin-top: 1.5rem; }
+                .quiz-container ul { margin-top: 0.5rem; padding-left: 1.5rem; }
+                .quiz-container li { font-family: monospace; }
                 .sidebar-link.active { background-color: #374151; color: #f9fafb; font-weight: 600; }
                 #sidebar { transition: transform 0.3s ease-in-out; }
                 @media (max-width: 768px) { #sidebar { transform: translateX(-100%); position: fixed; z-index: 40; height: 100%; } #sidebar.open { transform: translateX(0); } }
