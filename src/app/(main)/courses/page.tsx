@@ -3,7 +3,7 @@
 
 import { useMemo, Suspense } from "react";
 import { CourseCard } from "@/components/course-card";
-import { courses as allCourses, allSchools } from "@/lib/data";
+import { allSchools } from "@/lib/data";
 import type { Course, LearningPath } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
 
@@ -12,14 +12,20 @@ function CoursesContent() {
     const pathFilter = searchParams.get('path');
     const searchQuery = searchParams.get('q');
     
-    // Flatten learning paths from schools for easier lookup
+    // Flatten courses and learning paths from schools for easier lookup
+    const allCourses = useMemo(() => allSchools.flatMap(school => school.learningPaths.flatMap(path => path.courses)), []);
     const allLearningPaths = useMemo(() => allSchools.flatMap(school => school.learningPaths), []);
 
     const filteredCourses = useMemo(() => {
         let courses = allCourses;
+        
         if (pathFilter) {
-            courses = courses.filter(c => c.pathId === pathFilter);
+            const school = allSchools.find(s => s.id === pathFilter);
+            if (school) {
+                courses = school.learningPaths.flatMap(p => p.courses);
+            }
         }
+
         if (searchQuery) {
             const lowercasedQuery = searchQuery.toLowerCase();
             courses = courses.filter(c => {
@@ -33,30 +39,62 @@ function CoursesContent() {
             });
         }
         return courses;
-    }, [pathFilter, searchQuery]);
+    }, [pathFilter, searchQuery, allCourses, allSchools]);
 
     const coursesByPath = useMemo(() => {
-        return filteredCourses.reduce((acc, course) => {
-            const path = allLearningPaths.find(p => p.id === course.pathId);
+        const pathsMap: { [key: string]: LearningPath & { courses: Course[] } } = {};
+        
+        filteredCourses.forEach(course => {
+            const path = allLearningPaths.find(p => p.courses.some(pc => pc.id === course.id));
             if (path) {
-                if (!acc[path.id]) {
-                    // Use a structure that matches LearningPath but adds courses
-                    acc[path.id] = { ...path, courses: [] };
+                if (!pathsMap[path.id]) {
+                    pathsMap[path.id] = { ...path, courses: [] };
                 }
-                acc[path.id].courses.push(course);
+                pathsMap[path.id].courses.push(course);
             }
-            return acc;
-        }, {} as { [key: string]: LearningPath & { courses: Course[] } });
-    }, [filteredCourses, allLearningPaths]);
+        });
+
+        // If filtering by a specific school, make sure we show all its paths, even if empty after a search
+        if (pathFilter) {
+            const school = allSchools.find(s => s.id === pathFilter);
+            school?.learningPaths.forEach(path => {
+                if (!pathsMap[path.id]) {
+                    pathsMap[path.id] = { ...path, courses: [] };
+                }
+            });
+        }
+
+        return pathsMap;
+    }, [filteredCourses, allLearningPaths, pathFilter, allSchools]);
     
     const pathsToRender = useMemo(() => {
-        const pathIdsWithCourses = new Set(Object.keys(coursesByPath));
-        return allLearningPaths.filter(p => pathIdsWithCourses.has(p.id));
-    }, [coursesByPath, allLearningPaths]);
+        const pathIds = Object.keys(coursesByPath);
+        
+        // If there are filters, render all paths that match the filters, even if they end up with no courses
+        if (searchQuery || pathFilter) {
+            return allLearningPaths
+                .filter(p => pathIds.includes(p.id))
+                .sort((a,b) => {
+                    // Prioritize paths with courses
+                    const aHasCourses = coursesByPath[a.id]?.courses.length > 0;
+                    const bHasCourses = coursesByPath[b.id]?.courses.length > 0;
+                    if (aHasCourses && !bHasCourses) return -1;
+                    if (!aHasCourses && bHasCourses) return 1;
+                    return 0;
+                });
+        }
+        
+        // If no filters, only render paths that actually have courses
+        return allLearningPaths.filter(p => coursesByPath[p.id]?.courses.length > 0);
+
+    }, [coursesByPath, allLearningPaths, searchQuery, pathFilter]);
     
-    const pageTitle = searchQuery ? `Resultados para "${searchQuery}"` : "Catálogo de Cursos";
+    const currentSchool = allSchools.find(s => s.id === pathFilter);
+    const pageTitle = currentSchool?.title || (searchQuery ? `Resultados para "${searchQuery}"` : "Catálogo de Cursos");
     const pageDescription = searchQuery 
         ? `Se encontraron ${filteredCourses.length} cursos.`
+        : currentSchool 
+        ? `Explora todos los cursos de la Escuela de ${currentSchool.title}.`
         : "Explora nuestra completa colección de cursos. Hay algo para todos, sin importar tu nivel de experiencia.";
 
     return (
@@ -76,11 +114,15 @@ function CoursesContent() {
                         <h2 className="text-2xl font-bold tracking-tight font-headline md:text-3xl border-b pb-2 mb-6">
                             {path.title}
                         </h2>
-                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                            {coursesByPath[path.id]?.courses.map((course) => (
-                                <CourseCard key={course.id} course={course} />
-                            ))}
-                        </div>
+                        {coursesByPath[path.id]?.courses.length > 0 ? (
+                             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                {coursesByPath[path.id].courses.map((course) => (
+                                    <CourseCard key={course.id} course={course} />
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-muted-foreground text-sm">No se encontraron cursos en esta ruta para tu búsqueda actual.</p>
+                        )}
                     </section>
                 )) : (
                     <div className="text-center py-10">

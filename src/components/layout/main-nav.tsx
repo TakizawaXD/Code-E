@@ -15,10 +15,9 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import React from "react";
-import { Code, BrainCircuit, PenTool, Cloud, Users, Briefcase, BookText, Shield, Smartphone, Blocks, Landmark, Paintbrush, TrendingUp, Film, Laptop, Rocket, FileCode } from "lucide-react";
+import { Code, BrainCircuit, PenTool, Cloud, Users, Briefcase, BookText, Shield, Smartphone, Blocks, Landmark, Paintbrush, TrendingUp, Film, Laptop, Rocket, FileCode, Search, Lightbulb, Video, Languages, LineChart, Scale, HeartPulse, Mic } from "lucide-react";
 
 const mainNavItems: NavItem[] = [
-  { title: "Inicio", href: "/" },
   { title: "Rutas", href: "/paths" },
   { title: "Mi Progreso", href: "/dashboard" },
   { title: "Comunidad", href: "/community" },
@@ -45,10 +44,22 @@ const categories: { title: string; href: string; description: string, icon: Reac
     icon: <PenTool />
   },
   {
-    title: "Cloud Computing y DevOps",
-    href: "/courses?path=cloud-devops",
-    description: "Despliega y escala aplicaciones en la nube.",
-    icon: <Cloud />
+    title: "Programación",
+    href: "/courses?path=programacion",
+    description: "Domina los lenguajes que construyen el futuro.",
+    icon: <Laptop />
+  },
+  {
+    title: "Startups",
+    href: "/courses?path=startups",
+    description: "Lanza y escala tu propio negocio tecnológico.",
+    icon: <Rocket />
+  },
+  {
+    title: "Marketing Digital",
+    href: "/courses?path=marketing",
+    description: "Impulsa el crecimiento con estrategias digitales.",
+    icon: <TrendingUp />
   },
 ];
 
