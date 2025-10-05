@@ -1,7 +1,7 @@
 
 "use client";
 
-import { notFound, useSearchParams, useRouter } from "next/navigation";
+import { notFound, useSearchParams, useRouter, useParams } from "next/navigation";
 import React, { useState, useMemo, useEffect, Suspense } from "react";
 import Image from "next/image";
 import { useUser } from "@/firebase";
@@ -56,10 +56,13 @@ function getNextLesson(modules: CourseModule[], currentModuleId: string, current
 }
 
 
-function CourseDetailContent({ courseId }: { courseId: string }) {
+function CourseDetailContent() {
     const router = useRouter();
+    const params = useParams();
     const searchParams = useSearchParams();
     const { user } = useUser();
+
+    const courseId = params.id as string;
 
     const course = useMemo(() => {
         return allCourses.find((c) => c.id === courseId);
@@ -307,12 +310,14 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
 
                     <Separator />
 
-                    <div className="space-y-6">
-                        <h2 className="text-2xl font-bold flex items-center gap-2">
-                          <MessageSquare className="w-6 h-6" /> Comentarios
-                        </h2>
-                        <CommentSection courseId={course.id} moduleId={currentLesson.moduleId} lessonId={currentLesson.lessonId} />
-                    </div>
+                    {currentLesson && (
+                        <div className="space-y-6">
+                            <h2 className="text-2xl font-bold flex items-center gap-2">
+                            <MessageSquare className="w-6 h-6" /> Comentarios
+                            </h2>
+                            <CommentSection courseId={course.id} moduleId={currentLesson.moduleId} lessonId={currentLesson.lessonId} />
+                        </div>
+                    )}
                 </>
             )}
         </main>
@@ -321,8 +326,9 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
     );
 }
 
-export default function CourseDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default function CourseDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
   const course = allCourses.find(c => c.id === id);
 
   if (!id || !course) {
@@ -331,7 +337,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
 
   return (
     <Suspense fallback={<div className="container flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin" /></div>}>
-        <CourseDetailContent courseId={id} />
+        <CourseDetailContent />
     </Suspense>
   );
 }
