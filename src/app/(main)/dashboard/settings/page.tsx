@@ -70,16 +70,13 @@ export default function SettingsPage() {
     if (!user || !userProfileRef) return;
 
     try {
-      // Update Firestore document, ONLY editable fields
+      // --- THE FIX ---
+      // ONLY update the Firestore document. Do NOT try to update the Auth profile object.
+      // This is the source of the permission error.
       await updateDoc(userProfileRef, {
         name: data.name,
         description: data.description || "",
       });
-
-      // Update Firebase Auth profile if displayName (which we use for the name) changed
-      if (user.displayName !== data.name) {
-        await updateProfile(user, { displayName: data.name });
-      }
 
       toast({
         title: "¡Perfil actualizado!",
