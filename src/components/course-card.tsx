@@ -22,7 +22,7 @@ interface CourseCardProps {
   progress?: number;
 }
 
-const levelVariant: { [key: string]: 'default' | 'secondary' | 'destructive' } = {
+const levelVariant: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' } = {
   'básico': 'default',
   'intermedio': 'secondary',
   'avanzado': 'destructive'
@@ -74,7 +74,7 @@ export function CourseCard({ course, className, progress }: CourseCardProps) {
         </div>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 p-4 pt-0">
-        <Badge variant={levelVariant[level] || 'default'}>{levelLabel[level] || 'Básico'}</Badge>
+        <Badge variant={levelVariant[level] || 'outline'} className="capitalize">{levelLabel[level] || level}</Badge>
         {progress !== undefined ? (
             <div className="w-full mt-2">
                 <Progress value={progress} className="h-2" />
@@ -85,5 +85,3 @@ export function CourseCard({ course, className, progress }: CourseCardProps) {
     </Card>
   );
 }
-
-    
