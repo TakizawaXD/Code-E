@@ -58,6 +58,7 @@ export type LearningPath = {
 };
 
 export type UserProfile = {
+  id?: string;
   name: string;
   username: string;
   email: string;
@@ -71,12 +72,14 @@ export type Notification = {
   title: string;
   description: string;
   date: Date | Timestamp;
+  read?: boolean;
 };
 
 export type Progress = {
-  id: string;
+  id: string; // Should match userId
   courseId: string;
   completedLessons: string[];
+  progress: number;
   completed: boolean;
   startedAt?: Timestamp;
   lastUpdatedAt?: Timestamp;

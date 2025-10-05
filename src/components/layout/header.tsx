@@ -22,7 +22,7 @@ import type { Notification } from "@/lib/types";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { collection, query, orderBy } from "firebase/firestore";
+import { collection, query, orderBy, doc, updateDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -38,13 +38,29 @@ export function Header() {
   }, [firestore, user]);
 
   const { data: notifications, isLoading: isLoadingNotifications } = useCollection<Notification>(notificationsQuery);
-  const hasUnread = notifications && notifications.length > 0;
+  
+  const hasUnread = useMemoFirebase(() => {
+      return notifications?.some(n => !n.read);
+  }, [notifications]);
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && searchQuery.trim()) {
       router.push(`/courses?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
+
+  const handleMarkNotificationsAsRead = async () => {
+    if (!user || !firestore || !notifications) return;
+    const unreadNotifications = notifications.filter(n => !n.read);
+    if (unreadNotifications.length === 0) return;
+
+    const batch = writeBatch(firestore);
+    unreadNotifications.forEach(notification => {
+        const notifRef = doc(firestore, `users/${user.uid}/notifications`, notification.id);
+        batch.update(notifRef, { read: true });
+    });
+    await batch.commit();
+  }
 
 
   return (
@@ -70,7 +86,7 @@ export function Header() {
           </div>
           <nav className="flex items-center space-x-2">
             <ThemeToggle />
-            <DropdownMenu>
+            <DropdownMenu onOpenChange={(open) => { if(open) { handleMarkNotificationsAsRead() }}}>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative">
                   <Bell className="h-5 w-5" />
@@ -121,20 +137,20 @@ export function Header() {
                     <CodeELogo className="h-6 w-auto" />
                   </Link>
                   <nav className="grid gap-6 text-base font-medium">
+                    <Link href="/" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                      Inicio
+                    </Link>
                     <Link href="/paths" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
-                      Rutas de Aprendizaje
-                    </Link>
-                    <Link href="/courses" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
-                      Cursos
-                    </Link>
-                     <Link href="/community" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
-                      Comunidad
+                      Rutas
                     </Link>
                     <Link href="/dashboard" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
-                      Mi Panel
+                      Mi Progreso
                     </Link>
-                    <Link href="/pricing" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
-                      Precios
+                    <Link href="/community" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                      Comunidad
+                    </Link>
+                    <Link href="/guides" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                      Guía de Entrevistas
                     </Link>
                   </nav>
                 </div>
