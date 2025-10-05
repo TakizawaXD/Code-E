@@ -113,9 +113,10 @@ export function QuizComponent({ quiz }: QuizProps) {
             <div
               key={index}
               className={cn(
-                "flex items-center space-x-2 p-3 rounded-md border",
-                selectedOption === index && "bg-secondary"
+                "flex items-center space-x-2 p-3 rounded-md border cursor-pointer",
+                selectedOption === index && "bg-secondary border-primary"
               )}
+              onClick={() => handleSelectOption(index)}
             >
               <RadioGroupItem value={String(index)} id={`q${currentQuestion.id}-o${index}`} />
               <Label htmlFor={`q${currentQuestion.id}-o${index}`} className="flex-1 cursor-pointer">

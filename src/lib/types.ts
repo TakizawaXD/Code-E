@@ -101,7 +101,7 @@ export type Comment = {
     authorName: string;
     authorAvatarUrl?: string;
     content: string;
-    createdAt: Timestamp;
+    createdAt: Timestamp | FieldValue;
 };
 
 // Gamification Types
@@ -148,5 +148,3 @@ export type ForumPost = {
     authorAvatarUrl?: string;
     createdAt: Timestamp;
 };
-
-    

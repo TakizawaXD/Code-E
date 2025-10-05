@@ -1,5 +1,4 @@
 
-
 import type { Notification, LearningPath, Course, CourseModule, Lesson, School } from "@/lib/types";
 import images from './placeholder-images.json';
 
@@ -166,62 +165,80 @@ export const allSchools: School[] = [
   },
 ];
 
+const youtubeVideoIds = [
+    'dQw4w9WgXcQ', '3JZ_D3ELwOQ', 'a_i6G-qP_0g', 'L_LUpnjgPso', 'k-rN74S3X-o',
+    '8sXyfY2mR2k', 'm65hbG-hW6w', '9bZkp7q19f0', '2l3x2M1b3sY', '0-S5a0eXPoc'
+];
 
-const coursesWithModules = allSchools.flatMap(school => 
-    school.learningPaths.flatMap(path => 
+// Function to generate detailed content for each lesson
+const generateDetailedLesson = (course: Course, module: CourseModule, lesson: Lesson, lessonIndex: number): Lesson => {
+    const videoId = youtubeVideoIds[(lesson.order -1) % youtubeVideoIds.length];
+    return {
+        ...lesson,
+        content: `<h3>Sobre esta lección</h3>
+<p>En esta sección del curso <strong>${course.title}</strong>, exploraremos el tema de "<em>${lesson.title}</em>". Este es un concepto fundamental para cualquier persona que aspire a dominar ${module.title}.</p>
+<p>A lo largo de esta lección, cubriremos los siguientes puntos clave:</p>
+<ul>
+    <li>Principios básicos de ${lesson.title}.</li>
+    <li>Aplicaciones prácticas en el mundo real.</li>
+    <li>Errores comunes y cómo evitarlos.</li>
+</ul>
+<p>Recomendamos ver el video adjunto y luego poner a prueba tus conocimientos con el cuestionario al final. ¡No dudes en usar la sección de comentarios si tienes alguna pregunta!</p>`,
+        youtubeVideoId: videoId,
+        quiz: {
+            id: `${lesson.id}-quiz`,
+            title: `Cuestionario: ${lesson.title}`,
+            questions: [
+                {
+                    id: `${lesson.id}-q1`,
+                    question: `¿Cuál es el concepto principal de "${lesson.title}"?`,
+                    options: ['Una técnica avanzada', 'Un principio fundamental', 'Una herramienta opcional', 'No se aplica en este contexto'],
+                    correctAnswer: 1,
+                },
+                {
+                    id: `${lesson.id}-q2`,
+                    question: `¿Es "${lesson.title}" relevante para ${course.title}?`,
+                    options: ['Sí, es crucial', 'No, no está relacionado', 'A veces', 'Solo para expertos'],
+                    correctAnswer: 0,
+                },
+            ],
+        },
+    };
+};
+
+const coursesWithDetailedModules = allSchools.flatMap(school =>
+    school.learningPaths.flatMap(path =>
         path.courses.map(course => {
-            if (course.modules && course.modules.length > 0) {
-                return course;
+            const moduleCount = Math.floor(Math.random() * 3) + 2; // 2 to 4 modules
+            const modules: CourseModule[] = [];
+            for (let i = 1; i <= moduleCount; i++) {
+                const lessonCount = Math.floor(Math.random() * 4) + 3; // 3 to 6 lessons
+                const lessons: Lesson[] = [];
+                for (let j = 1; j <= lessonCount; j++) {
+                    const lesson: Lesson = {
+                        id: `${course.id}-m${i}-l${j}`,
+                        title: `Lección ${j}: Conceptos ${j === 1 ? 'Básicos' : 'Avanzados'} de ${course.title.substring(8, 20)}`,
+                        order: j,
+                        difficulty: ['Fácil', 'Medio', 'Difícil'][(j-1) % 3] as 'Fácil' | 'Medio' | 'Difícil',
+                        imageUrl: course.imageUrl
+                    };
+                    lessons.push(generateDetailedLesson(course, {id: `${course.id}-m${i}`, title: `Módulo ${i}`, order: i, lessons: []}, lesson, j));
+                }
+                modules.push({
+                    id: `${course.id}-m${i}`,
+                    title: `Módulo ${i}: ${i === 1 ? 'Introducción' : 'Profundización'}`,
+                    order: i,
+                    lessons: lessons,
+                });
             }
-            // Add default module and lesson if none exist
             return {
                 ...course,
-                modules: [{
-                    id: `${course.id}-m1`,
-                    title: 'Módulo de Introducción',
-                    order: 1,
-                    lessons: [{
-                        id: `${course.id}-l1-intro`,
-                        title: 'Bienvenido al curso',
-                        order: 1,
-                        difficulty: 'Fácil',
-                        content: `<p>En este curso sobre <strong>${course.title}</strong>, aprenderás los conceptos fundamentales y avanzados para llevar tus habilidades al siguiente nivel.</p><p>Explora las lecciones en la barra lateral para comenzar tu viaje de aprendizaje. ¡Mucho éxito!</p>`,
-                        imageUrl: course.imageUrl
-                    },
-                    {
-                        id: `${course.id}-l2-video`,
-                        title: 'Video de Introducción',
-                        order: 2,
-                        difficulty: 'Fácil',
-                        youtubeVideoId: 'dQw4w9WgXcQ', // Rickroll as placeholder
-                        content: `<p>Este video te dará una visión general de lo que cubriremos en el curso. Presta atención a los conceptos clave presentados por el instructor.</p>`
-                    },
-                    {
-                        id: `${course.id}-l3-quiz`,
-                        title: 'Cuestionario Inicial',
-                        order: 3,
-                        difficulty: 'Fácil',
-                        quiz: {
-                            id: `${course.id}-q1`,
-                            title: 'Prueba de conocimientos previos',
-                            questions: [
-                                { id: 'q1', question: `¿Cuál es un concepto clave en ${course.title}?`, options: ['Opción A', 'Opción B', 'Opción C', 'Todas las anteriores'], correctAnswer: 3 },
-                                { id: 'q2', question: '¿Es este curso para principiantes?', options: ['Sí', 'No'], correctAnswer: 0 },
-                            ]
-                        },
-                        content: `<p>Demuestra lo que sabes antes de empezar. Este cuestionario nos ayudará a entender tu nivel actual.</p>`
-                    }
-                    ]
-                }]
+                modules,
             };
         })
     )
 );
 
-export const courses: Course[] = coursesWithModules;
+export const courses: Course[] = coursesWithDetailedModules;
 const allLearningPathsList = allSchools.flatMap(school => school.learningPaths.map(path => ({ ...path, courses: undefined, description: path.description || "" })));
 export const learningPaths: Omit<LearningPath, 'courses'>[] = allLearningPathsList;
-
-
-    
-

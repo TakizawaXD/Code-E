@@ -241,7 +241,7 @@ function CourseDetailContent() {
         </aside>
 
         <main className="space-y-6 min-w-0">
-             {!lesson && currentLesson ? (
+            {!lesson && currentLesson ? (
                 <div className="flex justify-center items-center h-96"><Loader2 className="w-8 h-8 animate-spin" /></div>
             ) : lesson ? (
                 <>
@@ -261,6 +261,19 @@ function CourseDetailContent() {
                     <Separator />
 
                     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
+                        {lesson.youtubeVideoId && (
+                        <div className="aspect-video w-full">
+                            <iframe
+                            className="w-full h-full rounded-lg border"
+                            src={`https://www.youtube.com/embed/${lesson.youtubeVideoId}`}
+                            title="YouTube video player"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            ></iframe>
+                        </div>
+                        )}
+                        
                         {lesson.imageUrl && !lesson.youtubeVideoId && (
                         <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
                             <Image
@@ -274,27 +287,14 @@ function CourseDetailContent() {
                         </div>
                         )}
 
-                        {lesson.youtubeVideoId && (
-                        <div className="aspect-video w-full">
-                            <iframe
-                            className="w-full h-full rounded-lg border"
-                            src={`https://www.youtube.com/embed/${lesson.youtubeVideoId}`}
-                            title="YouTube video player"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            ></iframe>
-                        </div>
-                        )}
-
-                        {lesson.content ? (
+                        {lesson.content && (
                             <Card>
                                 <CardContent className="prose dark:prose-invert max-w-none pt-6" dangerouslySetInnerHTML={{ __html: lesson.content }} />
                             </Card>
-                        ) : null}
+                        ) }
 
                         {lesson.quiz ? (
-                          <QuizComponent quiz={lesson.quiz} />
+                          <QuizComponent key={lesson.id} quiz={lesson.quiz} />
                         ) : (
                            !lesson.content && !lesson.imageUrl && !lesson.youtubeVideoId && (
                             <Card>

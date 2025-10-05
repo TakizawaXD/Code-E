@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection, query, orderBy, serverTimestamp, addDoc } from "firebase/firestore";
+import { collection, query, orderBy, serverTimestamp, addDoc, FieldValue } from "firebase/firestore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,7 +27,7 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const commentsRef = useMemoFirebase(() => {
-        if (!firestore) return null;
+        if (!firestore || !courseId || !moduleId || !lessonId) return null;
         return collection(firestore, 'courses', courseId, 'modules', moduleId, 'lessons', lessonId, 'comments');
     }, [firestore, courseId, moduleId, lessonId]);
 
@@ -43,7 +43,7 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
         
         setIsSubmitting(true);
         try {
-            const commentData = {
+            const commentData: Omit<Comment, 'id' | 'createdAt'> & { createdAt: FieldValue } = {
                 authorId: user.uid,
                 authorName: user.displayName || "Usuario Anónimo",
                 authorAvatarUrl: user.photoURL || "",
@@ -107,7 +107,7 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
                             <div className="flex items-center gap-2">
                                 <p className="font-semibold">{comment.authorName}</p>
                                 <p className="text-xs text-muted-foreground">
-                                    {comment.createdAt ? formatDistanceToNow(comment.createdAt.toDate(), { addSuffix: true, locale: es }) : ''}
+                                    {comment.createdAt && 'toDate' in comment.createdAt ? formatDistanceToNow(comment.createdAt.toDate(), { addSuffix: true, locale: es }) : 'hace un momento'}
                                 </p>
                             </div>
                             <p className="text-foreground/90 mt-1">{comment.content}</p>
@@ -118,4 +118,3 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
         </div>
     );
 }
-
