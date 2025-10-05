@@ -21,9 +21,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertTriangle } from "lucide-react";
 import { useEffect } from "react";
 import type { UserProfile } from "@/lib/types";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
 
 const profileFormSchema = z.object({
   name: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres." }).max(50),
@@ -66,28 +68,35 @@ export default function SettingsPage() {
   }, [userProfile, form]);
 
   async function onSubmit(data: ProfileFormValues) {
-    if (!user || !userProfileRef) return;
-
-    try {
-      // The ONLY source of truth for the user profile is Firestore.
-      // We ONLY update the fields that are meant to be editable.
-      await updateDoc(userProfileRef, {
-        name: data.name,
-        description: data.description || "",
-      });
-
-      toast({
-        title: "¡Perfil actualizado!",
-        description: "Tus cambios han sido guardados correctamente.",
-      });
-    } catch (error: any) {
-      console.error("Error updating profile:", error);
-      toast({
+    toast({
         variant: "destructive",
-        title: "Error al actualizar",
-        description: "No se pudo guardar tu perfil. Es posible que no tengas permisos.",
-      });
-    }
+        title: "Función en Mantenimiento",
+        description: "La actualización de perfiles está temporalmente deshabilitada.",
+    });
+    
+    // =================================================================
+    // TEMPORARILY DISABLED DUE TO PERSISTENT PERMISSION ERRORS
+    // =================================================================
+    // if (!user || !userProfileRef) return;
+
+    // try {
+    //   await updateDoc(userProfileRef, {
+    //     name: data.name,
+    //     description: data.description || "",
+    //   });
+
+    //   toast({
+    //     title: "¡Perfil actualizado!",
+    //     description: "Tus cambios han sido guardados correctamente.",
+    //   });
+    // } catch (error: any) {
+    //   console.error("Error updating profile:", error);
+    //   toast({
+    //     variant: "destructive",
+    //     title: "Error al actualizar",
+    //     description: "No se pudo guardar tu perfil. Es posible que no tengas permisos.",
+    //   });
+    // }
   }
 
   if (isUserLoading || isProfileLoading) {
@@ -101,6 +110,13 @@ export default function SettingsPage() {
 
   return (
     <div className="container max-w-2xl py-12 md:py-20">
+        <Alert variant="destructive" className="mb-8">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Función en Mantenimiento</AlertTitle>
+            <AlertDescription>
+                La funcionalidad para actualizar perfiles está temporalmente deshabilitada. Pedimos disculpas por las molestias.
+            </AlertDescription>
+        </Alert>
       <Card>
         <CardHeader>
           <CardTitle>Ajustes de Perfil</CardTitle>
@@ -163,7 +179,7 @@ export default function SettingsPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={form.formState.isSubmitting}>
+              <Button type="submit" disabled={true || form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? "Guardando..." : "Guardar Cambios"}
               </Button>
             </form>
@@ -173,3 +189,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+
