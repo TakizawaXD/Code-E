@@ -1,67 +1,63 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Allow authenticated users to list and get any user profile for leaderboards, etc.
+    // Reglas para los perfiles de usuario
     match /users/{userId} {
-      allow get: if request.auth != null;
+      // PERMISOS DE LECTURA:
+      // - Cualquier usuario autenticado puede leer perfiles (para la tabla de clasificación).
+      // - "read" incluye "get" (leer un doc) y "list" (listar la colección).
+      allow read: if request.auth != null;
+
+      // PERMISOS DE ESCRITURA:
+      // - Un usuario solo puede crear o actualizar su propio perfil.
+      allow write: if request.auth != null && request.auth.uid == userId;
     }
 
-    match /users {
-        allow list: if request.auth != null;
-    }
-
-    // Allow users to create and update their own profile
-    match /users/{userId} {
-      allow create, update: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // Courses, modules, and lessons are public
+    // Reglas para los cursos
     match /courses/{courseId} {
-      allow read: if true;
+      allow read: if true; // Cualquiera puede ver los cursos
+      
       match /modules/{moduleId} {
-        allow read: if true;
+        allow read: if true; // Cualquiera puede ver los módulos
+
         match /lessons/{lessonId} {
-          allow read: if true;
-          
-           // Comments can be read by anyone, but only created/updated/deleted by the author
+          allow read: if true; // Cualquiera puede ver las lecciones
+
           match /comments/{commentId} {
-            allow read: if true;
-            allow write: if request.auth != null && request.auth.uid == request.resource.data.userId;
+            allow read: if true; // Cualquiera puede leer comentarios
+            allow create: if request.auth != null; // Solo usuarios autenticados pueden crear comentarios
           }
         }
       }
     }
 
-    // Learning paths are public
+    // Reglas para las rutas de aprendizaje
     match /learningPaths/{pathId} {
-        allow read: if true;
+        allow read: if true; // Cualquiera puede ver las rutas
     }
 
-    // User-specific progress data
-    match /users/{userId}/progress/{progressId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+    // Reglas para el progreso del usuario
+    match /users/{userId}/progress/{courseId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
     }
-
-    // User-specific notifications
+    
+    // Reglas para las notificaciones del usuario
     match /users/{userId}/notifications/{notificationId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Forum threads
+    // Reglas para el foro
     match /forumThreads/{threadId} {
-      allow read: if true;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null; // Allows updating postCount, lastPostAt
+        allow read: if true; // Cualquiera puede leer las discusiones
+        allow create: if request.auth != null; // Usuarios autenticados pueden crear discusiones
+        allow update: if request.auth != null; // Usuarios autenticados pueden actualizar (para contador de posts, etc)
 
-      // Forum posts within a thread
-      match /posts/{postId} {
-        allow read: if true;
-        allow create: if request.auth != null;
-        allow update, delete: if request.auth != null && request.auth.uid == resource.data.authorId;
-      }
+        match /posts/{postId} {
+            allow read: if true; // Cualquiera puede leer respuestas
+            allow create: if request.auth != null; // Usuarios autenticados pueden responder
+        }
     }
   }
 }
