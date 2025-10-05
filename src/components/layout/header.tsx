@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Menu, Search } from "lucide-react";
+import { Bell, Menu, Search, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -140,7 +140,7 @@ export function Header() {
               </SheetTrigger>
               <SheetContent side="left">
                 <SheetHeader>
-                    <SheetTitle className="sr-only">Menú de Navegación</SheetTitle>
+                  <SheetTitle className="sr-only">Menú de Navegación</SheetTitle>
                 </SheetHeader>
                 <div className="p-4">
                    <Link
@@ -167,6 +167,12 @@ export function Header() {
                     </Link>
                      <Link href="/challenges" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
                       Retos Semanales
+                    </Link>
+                    <Link href="/termux" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                      <span className="flex items-center gap-2">
+                        <Smartphone className="h-4 w-4" />
+                        Programación sin PC
+                      </span>
                     </Link>
                   </nav>
                 </div>

@@ -23,6 +23,7 @@ const mainNavItems: NavItem[] = [
   { title: "Comunidad", href: "/community" },
   { title: "Guía de Entrevistas", href: "/guides" },
   { title: "Retos Semanales", href: "/challenges" },
+  { title: "Programación sin PC", href: "/termux" },
 ];
 
 const categories: { title: string; href: string; description: string, icon: React.ReactNode }[] = [
