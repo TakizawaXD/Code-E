@@ -25,7 +25,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Loader2, Palette } from "lucide-react";
@@ -33,7 +32,6 @@ import { useEffect, useTransition } from "react";
 import type { UserProfile } from "@/lib/types";
 import { updateUser } from "./actions";
 import { getDictionary } from "@/lib/i18n";
-import { ThemeCustomizer } from "@/components/theme-customizer";
 
 
 const profileFormSchema = z.object({
@@ -95,7 +93,7 @@ export default function SettingsPage() {
     startTransition(async () => {
       const result = await updateUser(user.uid, data);
 
-      if (result.success) {
+      if (result?.success) {
         toast({
           title: dict.settings.updateSuccessTitle,
           description: dict.settings.updateSuccessDescription,
@@ -105,7 +103,7 @@ export default function SettingsPage() {
         toast({
           variant: "destructive",
           title: dict.settings.updateErrorTitle,
-          description: result.error,
+          description: result?.error || "An unknown error occurred.",
         });
       }
     });
@@ -194,20 +192,7 @@ export default function SettingsPage() {
             <CardDescription>{dict.settings.appearanceDescription}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline">
-                  <Palette className="mr-2 h-4 w-4" />
-                  {dict.settings.customizeButton}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-3xl">
-                <DialogHeader>
-                  <DialogTitle>{dict.settings.customizeThemeTitle}</DialogTitle>
-                </DialogHeader>
-                <ThemeCustomizer />
-              </DialogContent>
-            </Dialog>
+             <p className="text-sm text-muted-foreground">{dict.settings.appearanceHint || 'Puedes cambiar el tema de color y el modo claro/oscuro desde el menú de la esquina superior derecha.'}</p>
           </CardContent>
         </Card>
       </div>
