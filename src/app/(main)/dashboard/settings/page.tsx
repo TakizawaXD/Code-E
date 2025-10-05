@@ -70,16 +70,16 @@ export default function SettingsPage() {
     if (!user || !userProfileRef) return;
 
     try {
-      // Update Firestore document
+      // Update Firestore document, ensuring description is never undefined
       await updateDoc(userProfileRef, {
         name: data.name,
         username: data.username,
-        description: data.description || "", // Ensure empty string instead of undefined
+        description: data.description || "",
       });
 
-      // Update Firebase Auth profile if username changed
-      if (user.displayName !== data.username) {
-        await updateProfile(user, { displayName: data.username });
+      // Update Firebase Auth profile if displayName (which we use for the name) changed
+      if (user.displayName !== data.name) {
+        await updateProfile(user, { displayName: data.name });
       }
 
       toast({
@@ -87,10 +87,11 @@ export default function SettingsPage() {
         description: "Tus cambios han sido guardados correctamente.",
       });
     } catch (error: any) {
+      console.error("Error updating profile:", error);
       toast({
         variant: "destructive",
         title: "Error al actualizar",
-        description: error.message,
+        description: error.message || "Ocurrió un error inesperado.",
       });
     }
   }

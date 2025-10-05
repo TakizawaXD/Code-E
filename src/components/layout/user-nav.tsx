@@ -45,7 +45,7 @@ export function UserNav({ userProfile }: UserNavProps) {
     );
   }
 
-  const userInitial = user.displayName ? user.displayName.charAt(0) : user.email?.charAt(0).toUpperCase();
+  const userInitial = user.displayName ? user.displayName.charAt(0).toUpperCase() : (user.email ? user.email.charAt(0).toUpperCase() : '?');
   const displayName = user.displayName || user.email?.split('@')[0];
 
   return (
@@ -85,9 +85,11 @@ export function UserNav({ userProfile }: UserNavProps) {
               <span>Suscripción</span>
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Ajustes</span>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/settings">
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Ajustes</span>
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
