@@ -39,13 +39,7 @@ export function CourseCard({ course, className, progress }: CourseCardProps) {
   const level = course.level?.toLowerCase() || 'básico';
 
   const getInstructorName = () => {
-    if (Array.isArray(course.instructor)) {
-      if (course.instructor.length > 2) {
-        return 'Varios Profesores';
-      }
-      return course.instructor.join(' y ');
-    }
-    return course.instructor;
+    return "Code-E BOT";
   };
 
   return (
@@ -72,7 +66,7 @@ export function CourseCard({ course, className, progress }: CourseCardProps) {
         </Link>
         <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
             <User className="h-3 w-3" />
-            <span>{`Profe ${getInstructorName()}`}</span>
+            <span>{getInstructorName()}</span>
         </div>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 p-4 pt-0">

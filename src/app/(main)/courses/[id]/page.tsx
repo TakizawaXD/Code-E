@@ -153,7 +153,7 @@ function CourseDetailContent() {
         return <div className="container flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin" /></div>;
     }
 
-    const instructorAvatar = { imageUrl: course.instructorAvatarUrl, name: Array.isArray(course.instructor) ? course.instructor[0] : course.instructor };
+    const instructorName = "Code-E BOT";
 
     return (
     <div className="container mx-auto py-8">
@@ -163,11 +163,10 @@ function CourseDetailContent() {
             <h2 className="text-xl font-bold mb-2">{course.title}</h2>
              <div className="flex items-center gap-4 mb-4">
                 <Avatar>
-                    <AvatarImage src={instructorAvatar?.imageUrl} alt={instructorAvatar.name} />
-                    <AvatarFallback>{instructorAvatar.name?.charAt(0)}</AvatarFallback>
+                    <AvatarFallback>B</AvatarFallback>
                 </Avatar>
                 <div>
-                    <p className="font-semibold text-sm">{Array.isArray(course.instructor) ? 'Varios Profesores' : course.instructor}</p>
+                    <p className="font-semibold text-sm">{instructorName}</p>
                     <p className="text-xs text-muted-foreground">Instructor Experto</p>
                 </div>
             </div>
@@ -241,7 +240,7 @@ function CourseDetailContent() {
         </aside>
 
         <main className="space-y-6 min-w-0">
-            {!lesson && currentLesson ? (
+            {(!lesson && currentLesson) ? (
                 <div className="flex justify-center items-center h-96"><Loader2 className="w-8 h-8 animate-spin" /></div>
             ) : lesson ? (
                 <>
@@ -349,4 +348,3 @@ export default function CourseDetailPage() {
     </Suspense>
   );
 }
-
