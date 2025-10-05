@@ -4,43 +4,63 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Allow logged-in users to read/list user profiles for leaderboards, etc.
+    // Allow authenticated users to list and get any user profile for leaderboards, etc.
     match /users/{userId} {
       allow get: if request.auth != null;
-      allow list: if request.auth != null;
-      // Only the user themselves can create or update their own profile
-      allow create, update: if request.auth.uid == userId;
     }
 
-    match /learningPaths/{pathId} {
-      allow read: if true;
+    match /users {
+        allow list: if request.auth != null;
     }
 
+    // Allow users to create and update their own profile
+    match /users/{userId} {
+      allow create, update: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Courses, modules, and lessons are public
     match /courses/{courseId} {
       allow read: if true;
-
       match /modules/{moduleId} {
         allow read: if true;
-
         match /lessons/{lessonId} {
           allow read: if true;
-
+          
+           // Comments can be read by anyone, but only created/updated/deleted by the author
           match /comments/{commentId} {
             allow read: if true;
-            allow create: if request.auth != null;
+            allow write: if request.auth != null && request.auth.uid == request.resource.data.userId;
           }
         }
       }
     }
 
+    // Learning paths are public
+    match /learningPaths/{pathId} {
+        allow read: if true;
+    }
+
+    // User-specific progress data
+    match /users/{userId}/progress/{progressId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // User-specific notifications
+    match /users/{userId}/notifications/{notificationId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Forum threads
     match /forumThreads/{threadId} {
       allow read: if true;
       allow create: if request.auth != null;
-      allow update: if request.auth.uid == resource.data.authorId;
+      allow update: if request.auth != null; // Allows updating postCount, lastPostAt
 
+      // Forum posts within a thread
       match /posts/{postId} {
         allow read: if true;
         allow create: if request.auth != null;
+        allow update, delete: if request.auth != null && request.auth.uid == resource.data.authorId;
       }
     }
   }
