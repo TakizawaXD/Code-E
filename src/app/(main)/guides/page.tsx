@@ -40,24 +40,258 @@ const contentData = {
             <p class="text-muted-foreground mt-2">"Pienso que lo ideal es que el producto salga a producción después de que tú mismo hayas puesto en práctica los conceptos en entrevistas reales, hayas refinado el sitio y hayas conseguido trabajo. Al desarrollar esto, espero que entiendas los conceptos y las prácticas, y así te vuelvas un experto en el tema."</p>
         </div>
 
-        <p>Esta guía es un testimonio del propio proceso de aprendizaje. Cada algoritmo, cada explicación y cada prueba ha sido implementada y refinada con la ayuda de IA, y luego revisada manually, siguiendo el mismo ciclo de feedback que tú experimentarás en tu carrera.</p>
+        <p>Esta guía es un testimonio del propio proceso de aprendizaje. Cada algoritmo, cada explicación y cada prueba ha sido implementada y refinada con la ayuda de IA, y luego revisada manualmente, siguiendo el mismo ciclo de feedback que tú experimentarás en tu carrera.</p>
         <p>Usa el menú de la izquierda para navegar. ¡La experimentación es la clave!</p>`,
-    'part1-sec1': `<h2>Sección 1: Dominando el Proceso de Aprendizaje</h2><p>El enfoque moderno para la preparación de entrevistas técnicas ha experimentado una transformación fundamental, alejándose de la memorización de soluciones específicas hacia el desarrollo de una comprensión profunda de los patrones de resolución de problemas subyacentes...</p>`,
-    'part1-sec2': `<h2>Sección 2: Los Pilares - Estructuras de Datos Fundamentales</h2><p>El dominio de las estructuras de datos es el requisito previo indispensable para la resolución de problemas algorítmicos. Son las herramientas fundamentales con las que un ingeniero organiza y manipula la información.</p>`,
-    'part1-sec3': `<h2>Sección 3: El Conjunto de Herramientas - Algoritmos Fundamentales</h2><p>Los algoritmos son los procedimientos paso a paso que operan sobre las estructuras de datos para resolver problemas. Una sólida comprensión de estos algoritmos fundamentales es esencial para construir soluciones eficientes.</p>`,
+    'part1-sec1': `<h2>Sección 1: Dominando el Proceso de Aprendizaje</h2>
+        <p>El enfoque moderno para la preparación de entrevistas técnicas ha experimentado una transformación fundamental, alejándose de la memorización de soluciones específicas hacia el desarrollo de una comprensión profunda de los patrones de resolución de problemas subyacentes. Este método, conocido como "Grokking", se centra en identificar categorías de problemas recurrentes y dominar las técnicas algorítmicas para abordarlos. La clave no es saber la solución a 100 problemas, sino reconocer que muchos de esos 100 problemas son variaciones de 10 patrones fundamentales.</p>
+        
+        <h3>Estrategias de Aprendizaje Activo</h3>
+        <ul>
+            <li><strong>Práctica Deliberada:</strong> No se trata solo de resolver muchos problemas, sino de enfocarse en áreas de debilidad. Si tienes dificultades con los grafos, dedica una semana entera a problemas de grafos, desde los más fáciles hasta los más difíciles.</li>
+            <li><strong>Técnica Feynman:</strong> Después de aprender un nuevo patrón o algoritmo, intenta explicarlo en términos simples, como si se lo estuvieras enseñando a un niño. Si no puedes hacerlo, no lo has entendido lo suficiente. Escribir un post en un blog o explicárselo a un amigo son excelentes maneras de aplicar esta técnica.</li>
+            <li><strong>Repetición Espaciada:</strong> Utiliza herramientas como Anki o un simple calendario para volver a visitar problemas que ya has resuelto. La repetición espaciada en intervalos crecientes (1 día, 3 días, 1 semana, 1 mes) es extremadamente efectiva para la retención a largo plazo.</li>
+            <li><strong>Resolución cronometrada:</strong> Simula las condiciones de una entrevista real. Date 45 minutos para resolver un problema de principio a fin, incluyendo la explicación de tu enfoque y la codificación de la solución.</li>
+        </ul>
+        
+        <div class="mt-6 mb-6 p-4 bg-secondary border border-border rounded-lg">
+            <h4 class="font-semibold text-foreground">El Ciclo de Aprendizaje Efectivo</h4>
+            <p class="text-muted-foreground mt-2">
+                <strong>1. Intentar:</strong> Intenta resolver el problema por tu cuenta durante al menos 20-30 minutos.<br>
+                <strong>2. Desbloquear:</strong> Si estás atascado, busca una pista, no la solución completa. ¿Qué patrón podría aplicarse aquí?<br>
+                <strong>3. Entender:</strong> Si necesitas ver la solución, no te limites a copiarla. Entiéndela línea por línea. ¿Por qué funciona? ¿Cuáles son los casos límite?<br>
+                <strong>4. Implementar:</strong> Cierra la solución y trata de implementarla tú mismo desde cero.<br>
+                <strong>5. Revisar:</strong> Compara tu código con la solución óptima. ¿Hay algo que podrías haber hecho mejor? ¿Y la complejidad espacial y temporal?<br>
+                <strong>6. Repetir:</strong> Añade este problema a tu lista de repetición espaciada para volver a visitarlo en el futuro.
+            </p>
+        </div>`,
+    'part1-sec2': `<h2>Sección 2: Los Pilares - Estructuras de Datos Fundamentales</h2>
+        <p>El dominio de las estructuras de datos es el requisito previo indispensable para la resolución de problemas algorítmicos. Son las herramientas fundamentales con las que un ingeniero organiza y manipula la información. No basta con saber qué son; debes entender sus complejidades de tiempo y espacio para cada operación, y cuándo es apropiado usar cada una.</p>
+
+        <h3>Estructuras Lineales</h3>
+        <ul>
+            <li><strong>Arrays (Arreglos):</strong> Colecciones contiguas en memoria. Acceso O(1) por índice. Inserción/eliminación al final es O(1) (amortizado), pero en medio o al principio es O(n). Ideal para acceso rápido y si el tamaño es fijo.</li>
+            <li><strong>Linked Lists (Listas Enlazadas):</strong> Nodos conectados por punteros. Inserción/eliminación al principio es O(1), en el medio o final es O(n) si no se tiene una referencia. No hay acceso O(1). Útil para estructuras que cambian de tamaño frecuentemente (como una cola).</li>
+        </ul>
+
+        <h3>Estructuras No Lineales</h3>
+        <ul>
+            <li><strong>Hash Tables (Tablas de Hash):</strong> Mapeo de claves a valores. Inserción, búsqueda y eliminación en tiempo promedio O(1). Son la base para resolver incontables problemas de entrevistas. Entender cómo manejar colisiones (chaining, open addressing) es un plus.</li>
+            <li><strong>Trees (Árboles):</strong> Estructuras jerárquicas. Imprescindible conocer los Árboles Binarios de Búsqueda (BST), donde inserción, búsqueda y eliminación son O(log n) en promedio. Entender los recorridos (In-order, Pre-order, Post-order, Level-order/BFS) es fundamental.</li>
+            <li><strong>Heaps (Montículos):</strong> Un árbol especializado (generalmente binario) que satisface la propiedad del montículo (en un Min-Heap, el padre siempre es más pequeño que sus hijos). Permiten encontrar/extraer el mínimo/máximo en O(1) / O(log n) e insertar en O(log n). Son la estructura de datos detrás de las Colas de Prioridad.</li>
+            <li><strong>Graphs (Grafos):</strong> Nodos (vértices) conectados por aristas. Pueden ser dirigidos o no dirigidos, ponderados o no. Son esenciales para modelar redes, mapas, etc. Debes saber cómo representarlos (Lista de Adyacencia vs. Matriz de Adyacencia).</li>
+            <li><strong>Tries (Árboles de Prefijos):</strong> Un tipo de árbol especializado para almacenar y buscar cadenas. Cada nodo representa un carácter. Muy eficiente para problemas de autocompletado y búsqueda de prefijos.</li>
+        </ul>
+        
+        <div class="mt-6 mb-6 p-4 bg-secondary border border-border rounded-lg">
+            <h4 class="font-semibold text-foreground">Tabla Rápida de Complejidades (Promedio)</h4>
+            <table class="w-full mt-2 text-sm">
+                <thead>
+                    <tr class="text-left"><th>Estructura</th><th>Acceso</th><th>Búsqueda</th><th>Inserción</th><th>Eliminación</th></tr>
+                </thead>
+                <tbody class="text-muted-foreground">
+                    <tr><td>Array</td><td>O(1)</td><td>O(n)</td><td>O(n)</td><td>O(n)</td></tr>
+                    <tr><td>Lista Enlazada</td><td>O(n)</td><td>O(n)</td><td>O(1)</td><td>O(1)</td></tr>
+                    <tr><td>Hash Table</td><td>-</td><td>O(1)</td><td>O(1)</td><td>O(1)</td></tr>
+                    <tr><td>BST</td><td>O(log n)</td><td>O(log n)</td><td>O(log n)</td><td>O(log n)</td></tr>
+                    <tr><td>Heap</td><td>-</td><td>-</td><td>O(log n)</td><td>O(log n)</td></tr>
+                </tbody>
+            </table>
+        </div>`,
+    'part1-sec3': `<h2>Sección 3: El Conjunto de Herramientas - Algoritmos Fundamentales</h2>
+        <p>Los algoritmos son los procedimientos paso a paso que operan sobre las estructuras de datos para resolver problemas. Una sólida comprensión de estos algoritmos fundamentales es esencial para construir soluciones eficientes. No se trata de memorizar código, sino de entender la lógica y el proceso.</p>
+
+        <h3>Algoritmos de Búsqueda y Ordenamiento</h3>
+        <ul>
+            <li><strong>Binary Search (Búsqueda Binaria):</strong> Un algoritmo increíblemente eficiente (O(log n)) para encontrar un elemento en un <strong>array ordenado</strong>. La idea central es dividir repetidamente el espacio de búsqueda por la mitad.</li>
+            <li><strong>Sorting Algorithms (Algoritmos de Ordenamiento):</strong> Debes conocer los más comunes, sus complejidades y casos de uso.
+                <ul>
+                    <li><strong>Merge Sort:</strong> Divide y vencerás. Estable, O(n log n) en todos los casos. Requiere espacio extra O(n).</li>
+                    <li><strong>Quick Sort:</strong> Divide y vencerás. O(n log n) en promedio, pero O(n²) en el peor caso. Generalmente más rápido en la práctica que Merge Sort debido a un menor uso de memoria.</li>
+                    <li><strong>Heap Sort:</strong> Usa un Heap para ordenar. O(n log n) en todos los casos. Ordena in-place (no requiere memoria extra significativa).</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Algoritmos de Grafos</h3>
+        <ul>
+            <li><strong>Breadth-First Search (BFS - Búsqueda en Amplitud):</strong> Explora los vecinos de un nodo antes de moverse a los vecinos de los vecinos. Usa una <strong>cola</strong>. Es ideal para encontrar el camino más corto en grafos no ponderados.</li>
+            <li><strong>Depth-First Search (DFS - Búsqueda en Profundidad):</strong> Explora tan profundo como sea posible por una rama antes de retroceder. Usa <strong>recursión</strong> (la pila de llamadas) o una pila explícita. Útil para problemas de conectividad, topología y ciclos.</li>
+            <li><strong>Dijkstra's Algorithm:</strong> Encuentra el camino más corto desde un nodo de origen a todos los demás nodos en un grafo <strong>ponderado (con pesos no negativos)</strong>. Utiliza una cola de prioridad (Min-Heap).</li>
+        </ul>
+
+        <h3>Otros Paradigmas Importantes</h3>
+        <ul>
+            <li><strong>Recursión:</strong> La capacidad de una función para llamarse a sí misma. Es una herramienta poderosa para problemas que pueden ser descompuestos en subproblemas idénticos, como recorridos de árboles o backtracking.</li>
+            <li><strong>Programación Dinámica (DP):</strong> Romper un problema en subproblemas superpuestos y resolver cada subproblema solo una vez, almacenando sus soluciones. Esencial para problemas de optimización. Identifica el estado y la transición.</li>
+            <li><strong>Backtracking:</strong> Construye una solución candidata de forma incremental y la abandona ("backtrack") tan pronto como determina que no puede conducir a una solución válida. Se usa en problemas como N-Queens, Sudoku, y generación de combinaciones/permutaciones.</li>
+        </ul>`,
     'part2-sec4': `<h2>Sección 4: Deconstruyendo Problemas: Los Patrones "Grokking"</h2>
-        <h3>4.1 Ventana Deslizante (Sliding Window)</h3><p>Este patrón se utiliza para realizar una operación en una subsección contigua de un array o cadena. La ventana se desliza sobre los datos.</p><h4>Ejemplo: Máxima Suma de Subarray de Tamaño K</h4><div class="code-container" data-id="sliding-window-1"></div>
-        <h3>4.2 Dos Punteros (Two Pointers)</h3><p>Utiliza dos punteros que se mueven a través de una estructura de datos (generalmente un array ordenado).</p><h4>Ejemplo: Par con Suma Objetivo</h4><div class="code-container" data-id="two-pointers-1"></div>
-        <h3>4.3 Punteros Rápidos y Lentos (Fast & Slow Pointers)</h3><p>También conocido como el algoritmo de la liebre y la tortuga, este patrón utiliza dos punteros que se mueven a diferentes velocidades.</p><h4>Ejemplo: Detección de Ciclo en Lista Enlazada</h4><div class="code-container" data-id="fast-slow-1"></div>
-        <h3>4.4 Fusión de Intervalos (Merge Intervals)</h3><p>Este patrón se ocupa de problemas que involucran intervalos superpuestos.</p><h4>Ejemplo: Fusionar Intervalos</h4><div class="code-container" data-id="merge-intervals-1"></div>
-        <h3>4.5 Búsqueda en Amplitud (BFS)</h3><p>Un patrón fundamental para recorrer árboles o grafos nivel por nivel. Utiliza una cola para mantener un registro de los nodos a visitar.</p><h4>Ejemplo: Recorrido de Árbol por Nivel</h4><div class="code-container" data-id="bfs-1"></div>
-        <h3>4.6 Búsqueda en Profundidad (DFS)</h3><p>Este patrón explora tan profundamente como sea posible a lo largo de cada rama antes de retroceder. Se implementa comúnmente con recursión o una pila.</p><h4>Ejemplo: Recorrido de Árbol Pre-orden</h4><div class="code-container" data-id="dfs-1"></div>
+        <p>Esta es la sección más importante de la guía. En lugar de ver cada problema como algo único, aprenderás a identificar patrones subyacentes que se repiten en una amplia variedad de preguntas de entrevista. Dominar estos patrones te dará un "superpoder" para enfrentarte a problemas que nunca has visto antes.</p>
+        
+        <h3>4.1 Ventana Deslizante (Sliding Window)</h3>
+        <p>Este patrón se utiliza para realizar una operación en una subsección contigua de un array o cadena. La ventana se desliza sobre los datos, un elemento a la vez, y se ajusta según ciertas condiciones. Reduce la complejidad de algoritmos de fuerza bruta O(n*k) a un eficiente O(n).</p>
+        <h4>Ejemplo: Máxima Suma de Subarray de Tamaño K</h4>
+        <div class="code-container" data-id="sliding-window-1"></div>
+
+        <h3>4.2 Dos Punteros (Two Pointers)</h3>
+        <p>Utiliza dos punteros que se mueven a través de una estructura de datos (generalmente un array ordenado) para encontrar un conjunto de elementos que cumplen ciertos criterios. Los punteros pueden moverse en direcciones opuestas (desde los extremos hacia el centro) o en la misma dirección (uno rápido y otro lento).</p>
+        <h4>Ejemplo: Par con Suma Objetivo</h4>
+        <div class="code-container" data-id="two-pointers-1"></div>
+
+        <h3>4.3 Punteros Rápidos y Lentos (Fast & Slow Pointers)</h3>
+        <p>También conocido como el algoritmo de la liebre y la tortuga, este patrón utiliza dos punteros que se mueven a diferentes velocidades a través de una secuencia (típicamente una lista enlazada). Es extremadamente útil para detectar ciclos, encontrar el punto medio de una lista o resolver problemas relacionados con secuencias infinitas.</p>
+        <h4>Ejemplo: Detección de Ciclo en Lista Enlazada</h4>
+        <div class="code-container" data-id="fast-slow-1"></div>
+        
+        <h3>4.4 Fusión de Intervalos (Merge Intervals)</h3>
+        <p>Este patrón se ocupa de problemas que involucran intervalos superpuestos. La estrategia general es ordenar los intervalos por su punto de inicio y luego iterar, fusionando aquellos que se solapan. Es común en problemas de calendario, asignación de recursos y geometría computacional.</p>
+        <h4>Ejemplo: Fusionar Intervalos</h4>
+        <div class="code-container" data-id="merge-intervals-1"></div>
+        
+        <h3>4.5 Búsqueda en Amplitud (BFS)</h3>
+        <p>Un patrón fundamental para recorrer árboles o grafos nivel por nivel. Utiliza una cola para mantener un registro de los nodos a visitar. Es la elección perfecta para encontrar el camino más corto en un grafo no ponderado, o para cualquier problema que requiera explorar un grafo de la manera más "ancha" posible.</p>
+        <h4>Ejemplo: Recorrido de Árbol por Nivel</h4>
+        <div class="code-container" data-id="bfs-1"></div>
+
+        <h3>4.6 Búsqueda en Profundidad (DFS)</h3>
+        <p>Este patrón explora tan profundamente como sea posible a lo largo de cada rama antes de retroceder (backtracking). Se implementa comúnmente con recursión o una pila explícita. Es ideal para problemas de búsqueda de caminos (no necesariamente el más corto), topología, y para verificar la conectividad de un grafo.</p>
+        <h4>Ejemplo: Recorrido de Árbol Pre-orden</h4>
+        <div class="code-container" data-id="dfs-1"></div>
         `,
-    'part2-sec5': `<h2>Sección 5: Dominios de Conocimiento Especializados y Avanzados</h2><p>Para destacar en entrevistas en empresas de primer nivel o para roles de mayor antigüedad, el dominio de los patrones fundamentales debe complementarse con conocimientos en áreas más especializadas.</p>`,
-    'part3-sec6': `<h2>Sección 6: Fundamentos del Diseño de Sistemas</h2><p>Esta habilidad es un requisito fundamental para ingenieros de nivel medio y superior, ya que evalúa la capacidad de pensar en términos de arquitectura, escalabilidad y fiabilidad.</p>`,
-    'part3-sec7': `<h2>Sección 7: El Manual de Juego de la Entrevista de Diseño de Sistemas</h2><p>Una entrevista de diseño de sistemas es una simulación de una reunión de planificación técnica. El proceso es más importante que el resultado final.</p>`,
-    'part4-sec8': `<h2>Sección 8: Dominando la Entrevista de Comportamiento</h2><p>Las entrevistas de comportamiento se basan en la premisa de que el comportamiento pasado es el mejor predictor del rendimiento futuro.</p>`,
-    'part4-sec9': `<h2>Sección 9: El Proceso de Entrevista Desmitificado (El Metajuego)</h2><p>Comprender la logística y la psicología del proceso de entrevista es una ventaja estratégica.</p>`,
+    'part2-sec5': `<h2>Sección 5: Dominios de Conocimiento Especializados y Avanzados</h2>
+        <p>Para destacar en entrevistas en empresas de primer nivel o para roles de mayor antigüedad, el dominio de los patrones fundamentales debe complementarse con conocimientos en áreas más especializadas. Estos temas demuestran una profundidad de conocimiento y una capacidad para abordar problemas más complejos y específicos.</p>
+
+        <h3>Operaciones a Nivel de Bits (Bit Manipulation)</h3>
+        <p>Comprender cómo manipular los bits individuales de un número puede llevar a soluciones increíblemente eficientes para ciertos problemas. Son comunes en sistemas de bajo nivel, pero también aparecen en entrevistas para probar un conocimiento más profundo de la computación.</p>
+        <ul>
+            <li><strong>Operadores Clave:</strong> Debes dominar <code>AND (&)</code>, <code>OR (|)</code>, <code>XOR (^)</code>, <code>NOT (~)</code>, y los desplazamientos de bits <code><<</code> (shift left) y <code>>></code> (shift right).</li>
+            <li><strong>Casos de Uso Comunes:</strong> Comprobar si un número es par o impar (<code>x & 1</code>), encontrar el único número no repetido en un array (usando XOR), manejar conjuntos de permisos (usando máscaras de bits).</li>
+        </ul>
+
+        <h3>Topological Sort (Ordenamiento Topológico)</h3>
+        <p>Este algoritmo se aplica a <strong>Grafos Acíclicos Dirigidos (DAGs)</strong>. Produce una ordenación lineal de sus vértices tal que para cada arista dirigida de u a v, el vértice u aparece antes que v en la ordenación. Es fundamental para resolver problemas de dependencias.</p>
+        <ul>
+            <li><strong>Ejemplos:</strong> Secuenciación de tareas (la tarea A debe completarse antes que la B), resolución de dependencias en un gestor de paquetes, orden de compilación de archivos de código.</li>
+            <li><strong>Implementación:</strong> Generalmente se implementa usando el algoritmo de Kahn (basado en BFS y grados de entrada) o mediante DFS.</li>
+        </ul>
+
+        <h3>Estructuras de Datos Avanzadas</h3>
+        <ul>
+            <li><strong>Union-Find (o Disjoint Set Union - DSU):</strong> Una estructura de datos que realiza un seguimiento de un conjunto de elementos particionados en una serie de subconjuntos disjuntos (no superpuestos). Tiene dos operaciones principales: <code>find</code> (determina a qué subconjunto pertenece un elemento) y <code>union</code> (une dos subconjuntos en uno solo). Extremadamente útil para problemas de conectividad en grafos y detección de ciclos en grafos no dirigidos de forma muy eficiente.</li>
+            <li><strong>Segment Tree / Fenwick Tree (Binary Indexed Tree):</strong> Estructuras de datos para manejar eficientemente consultas de rango en un array (por ejemplo, "dame la suma de los elementos del índice i al j"). Permiten actualizaciones y consultas en tiempo O(log n), lo cual es mucho mejor que el O(n) de un enfoque ingenuo.</li>
+        </ul>`,
+    'part3-sec6': `<h2>Sección 6: Fundamentos del Diseño de Sistemas</h2>
+        <p>Esta habilidad es un requisito fundamental para ingenieros de nivel medio y superior, ya que evalúa la capacidad de pensar en términos de arquitectura, escalabilidad y fiabilidad. A diferencia de las entrevistas de algoritmos, no hay una "respuesta correcta" única. Se trata de un diálogo técnico donde exploras trade-offs y justificas tus decisiones de diseño.</p>
+        
+        <h3>Conceptos Clave</h3>
+        <ul>
+            <li><strong>Escalabilidad Vertical vs. Horizontal:</strong> Escalar verticalmente (Scaling Up) significa aumentar los recursos de una sola máquina (más CPU, RAM). Escalar horizontalmente (Scaling Out) significa añadir más máquinas al sistema. La escalabilidad horizontal es la clave para los sistemas a gran escala.</li>
+            <li><strong>Balanceadores de Carga (Load Balancers):</strong> Distribuyen el tráfico de red entrante entre múltiples servidores backend. Son esenciales para la escalabilidad horizontal y la alta disponibilidad. Debes conocer algoritmos como Round Robin, Least Connections y basados en latencia.</li>
+            <li><strong>Bases de Datos: SQL vs. NoSQL:</strong>
+                <ul>
+                    <li><strong>SQL (Relacionales):</strong> Ofrecen consistencia (ACID). Son ideales para datos estructurados con relaciones complejas. Ej: PostgreSQL, MySQL.</li>
+                    <li><strong>NoSQL:</strong> Ofrecen alta escalabilidad y flexibilidad. Se dividen en varias categorías (clave-valor, documentales, columnares, de grafos). Generalmente priorizan la disponibilidad sobre la consistencia (Teorema CAP). Ej: Cassandra, DynamoDB, MongoDB, Neo4j.</li>
+                </ul>
+            </li>
+            <li><strong>Caching (Almacenamiento en Caché):</strong> Es una de las técnicas más importantes para mejorar el rendimiento. Se utiliza para almacenar temporalmente datos a los que se accede con frecuencia. Conoce las estrategias de caché (Cache-Aside, Read-Through, Write-Through, Write-Back) y dónde aplicarlas (CDN, caché de base de datos como Redis/Memcached, caché de aplicación).</li>
+            <li><strong>Consistencia de Datos:</strong> Entiende los diferentes modelos, desde la consistencia fuerte hasta la consistencia eventual. ¿Cuándo es aceptable que un dato esté desactualizado por unos milisegundos y cuándo no?</li>
+            <li><strong>Patrones de Comunicación:</strong> ¿Cuándo usar una API RESTful síncrona? ¿Cuándo es mejor usar un sistema de mensajería asíncrona (como RabbitMQ o Kafka) para desacoplar servicios?</li>
+        </ul>
+
+        <div class="mt-6 mb-6 p-4 bg-secondary border border-border rounded-lg">
+            <h4 class="font-semibold text-foreground">El Teorema CAP</h4>
+            <p class="text-muted-foreground mt-2">En un sistema distribuido, solo puedes tener dos de las siguientes tres garantías: <strong>Consistencia</strong> (Consistency), <strong>Disponibilidad</strong> (Availability) y <strong>Tolerancia a Particiones</strong> (Partition Tolerance). Como las particiones de red son una realidad inevitable, la elección real suele ser entre consistencia y disponibilidad. Esto es fundamental en el diseño de sistemas distribuidos.</p>
+        </div>`,
+    'part3-sec7': `<h2>Sección 7: El Manual de Juego de la Entrevista de Diseño de Sistemas</h2>
+        <p>Una entrevista de diseño de sistemas es una simulación de una reunión de planificación técnica. El proceso y la comunicación son tan importantes, si no más, que el resultado final. Sigue un enfoque estructurado para guiar la conversación.</p>
+
+        <h3>Un Framework de 4 Pasos</h3>
+        <ol class="list-decimal list-inside space-y-4">
+            <li>
+                <strong>Paso 1: Entender el Problema y Establecer el Alcance (5-10 min)</strong>
+                <ul class="list-disc list-inside ml-4 mt-2 text-muted-foreground">
+                    <li><strong>Clarificar requisitos:</strong> No asumas nada. Pregunta. ¿Cuáles son las características clave (MVP)? ¿Quiénes son los usuarios?</li>
+                    <li><strong>Estimar la escala:</strong> ¿Cuántos usuarios activos diarios (DAU)? ¿Cuántas peticiones por segundo (QPS) esperamos? ¿Cuántos datos vamos a almacenar? Esto guiará todas tus decisiones posteriores (ej. "1 millón de DAU, cada uno lee 100 tweets al día -> 100M lecturas/día ~ 1200 QPS de lectura").</li>
+                    <li><strong>Definir la API (opcional pero recomendado):</strong> Esboza las principales llamadas a la API que el sistema necesitará (ej. <code>POST /tweets</code>, <code>GET /timeline</code>).</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Paso 2: Diseño de Alto Nivel (10-15 min)</strong>
+                <ul class="list-disc list-inside ml-4 mt-2 text-muted-foreground">
+                    <li>Dibuja un diagrama simple con los componentes principales: Clientes (móvil, web), un Balanceador de Carga, tus Servicios de Aplicación y tu Base de Datos.</li>
+                    <li>Explica el flujo de una petición a través de este sistema. Por ejemplo, para diseñar un acortador de URL, explica cómo funciona una escritura (<code>POST /shorten</code>) y una lectura (<code>GET /{shortUrl}</code>).</li>
+                    <li>Elige tu tipo de base de datos (SQL vs. NoSQL) y justifica tu elección basándote en los requisitos de escala y consistencia.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Paso 3: Profundizar en Componentes Específicos (15-20 min)</strong>
+                <ul class="list-disc list-inside ml-4 mt-2 text-muted-foreground">
+                    <li>Aquí es donde el entrevistador probablemente te guiará hacia un área de interés. Si no lo hace, elige un área y profundiza.</li>
+                    <li><strong>Esquema de la Base de Datos:</strong> Define las tablas o colecciones principales. Habla sobre las claves de partición y los índices para optimizar las consultas.</li>
+                    <li><strong>Escalabilidad y Bottlenecks:</strong> ¿Qué pasa si tu base de datos se sobrecarga? Habla sobre réplicas de lectura (read replicas), particionamiento (sharding), y caching.</li>
+                    <li><strong>Disponibilidad y Resiliencia:</strong> ¿Cómo manejas las fallas de un servidor? Habla sobre la replicación, la redundancia y el monitoreo.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Paso 4: Conclusión y Trade-offs (5 min)</strong>
+                <ul class="list-disc list-inside ml-4 mt-2 text-muted-foreground">
+                    <li>Resume tu diseño y discute posibles mejoras futuras o cuellos de botella no resueltos.</li>
+                    <li>Menciona explícitamente los trade-offs que hiciste (ej. "Elegí consistencia eventual para el feed de noticias para lograr mayor disponibilidad y menor latencia").</li>
+                    <li>Habla sobre el monitoreo, las alertas y cómo asegurarías la operatividad del sistema.</li>
+                </ul>
+            </li>
+        </ol>`,
+    'part4-sec8': `<h2>Sección 8: Dominando la Entrevista de Comportamiento</h2>
+        <p>Las entrevistas de comportamiento se basan en la premisa de que el comportamiento pasado es el mejor predictor del rendimiento futuro. El objetivo del entrevistador es evaluar tus habilidades blandas (soft skills), tu encaje cultural y cómo te enfrentas a desafíos profesionales. No las subestimes; pueden ser tan importantes como las entrevistas técnicas.</p>
+
+        <h3>El Método STAR</h3>
+        <p>La forma más efectiva de responder a preguntas de comportamiento es utilizando el método STAR. Proporciona una estructura clara y concisa a tus respuestas.</p>
+        <ul>
+            <li><strong>S (Situación):</strong> Describe el contexto. ¿Dónde estabas trabajando? ¿Cuál era el proyecto? Sé breve y ve al grano.</li>
+            <li><strong>T (Tarea):</strong> ¿Cuál era tu responsabilidad específica en esa situación? ¿Cuál era el objetivo o el problema a resolver?</li>
+            <li><strong>A (Acción):</strong> Describe las acciones <strong>que tú tomaste</strong>, paso a paso. Enfócate en el "yo", no en el "nosotros". Sé detallado sobre tu proceso de pensamiento y las decisiones que tomaste.</li>
+            <li><strong>R (Resultado):</strong> ¿Cuál fue el resultado de tus acciones? Cuantifícalo siempre que sea posible (ej. "Redujimos la latencia en un 30%", "Aumentamos la cobertura de pruebas del 50% al 85%"). Incluso si el resultado no fue el ideal, explica qué aprendiste de la experiencia.</li>
+        </ul>
+
+        <h3>Preguntas Comunes y Cómo Prepararte</h3>
+        <p>Prepara 5-7 historias de tu experiencia que sean versátiles y puedan adaptarse a diferentes preguntas. Cada historia debe destacar una habilidad o valor diferente (liderazgo, trabajo en equipo, resolución de conflictos, manejo de errores, etc.).</p>
+        <ul class="space-y-2">
+            <li><strong>"Háblame de un momento en el que no estuviste de acuerdo con tu jefe o un compañero."</strong> -> Evalúa tu capacidad para manejar conflictos de manera profesional y constructiva.</li>
+            <li><strong>"Describe un proyecto del que te sientas especialmente orgulloso."</strong> -> Te da la oportunidad de mostrar pasión, impacto y excelencia técnica.</li>
+            <li><strong>"Cuéntame sobre un error técnico que cometiste."</strong> -> Evalúa tu humildad, tu capacidad para asumir la responsabilidad y, lo más importante, lo que aprendiste.</li>
+            <li><strong>"¿Cómo manejas las prioridades cuando tienes múltiples tareas urgentes?"</strong> -> Evalúa tu organización, tu capacidad para comunicarte y tu juicio para tomar decisiones.</li>
+            <li><strong>"Describe una situación ambigua en la que tuviste que tomar una decisión con información incompleta."</strong> -> Evalúa tu iniciativa, tu tolerancia a la incertidumbre y tu capacidad para tomar posesión (ownership).</li>
+        </ul>
+        
+        <div class="mt-6 mb-6 p-4 bg-secondary border border-border rounded-lg">
+            <h4 class="font-semibold text-foreground">Consejo Profesional</h4>
+            <p class="text-muted-foreground mt-2">Termina siempre tus respuestas de manera positiva, enfocándote en el aprendizaje y el crecimiento. Y al final de la entrevista, ¡haz preguntas inteligentes! Preguntar sobre los desafíos del equipo, la cultura de ingeniería o cómo se mide el éxito demuestra tu interés y compromiso.</p>
+        </div>`,
+    'part4-sec9': `<h2>Sección 9: El Proceso de Entrevista Desmitificado (El Metajuego)</h2>
+        <p>Comprender la logística y la psicología del proceso de entrevista es una ventaja estratégica. No se trata solo de ser técnicamente competente, sino de navegar el proceso de manera efectiva.</p>
+
+        <h3>Las Etapas Típicas</h3>
+        <ol class="list-decimal list-inside space-y-2">
+            <li><strong>Filtro de RRHH / Reclutador:</strong> Una breve llamada para evaluar tu interés, experiencia general y encaje salarial. Sé entusiasta y alínea tu experiencia con la descripción del puesto.</li>
+            <li><strong>Entrevista Técnica Telefónica / Online (Screening):</strong> Generalmente dura 45-60 minutos. Suele ser un problema de algoritmos de nivel fácil-medio. El objetivo es filtrar candidatos que no tienen las habilidades de programación básicas. Comunica tu pensamiento en voz alta.</li>
+            <li><strong>El "On-site" (Virtual o Presencial):</strong> El evento principal. Suele consistir en 4-6 entrevistas de 45-60 minutos cada una, que cubren diferentes áreas.
+                <ul>
+                    <li><strong>Algoritmos y Estructuras de Datos (2-3 rondas):</strong> El núcleo de la evaluación técnica. Espera problemas de nivel medio-difícil.</li>
+                    <li><strong>Diseño de Sistemas (1-2 rondas):</strong> Para roles de nivel medio en adelante. Evalúa tu capacidad para diseñar sistemas escalables.</li>
+                    <li><strong>Entrevista de Comportamiento / Cultural Fit (1 ronda):</strong> A menudo con un Engineering Manager. Evalúa tus soft skills y si encajarías en el equipo.</li>
+                    <li><strong>Especializada (opcional):</strong> Podría ser sobre un dominio específico como Frontend, Machine Learning, Mobile, etc.</li>
+                </ul>
+            </li>
+            <li><strong>Debrief / Decisión:</strong> Los entrevistadores se reúnen para discutir su feedback. Cada uno da una calificación (ej. "Contratar", "Contratar sin dudarlo", "No contratar"). La decisión final se basa en la suma de este feedback.</li>
+        </ol>
+        
+        <h3>Consejos para el Éxito</h3>
+        <ul class="space-y-2">
+            <li><strong>Comunica, comunica, comunica:</strong> Es la regla de oro. Explica tu razonamiento antes de escribir una sola línea de código. Trata al entrevistador como un compañero de equipo con el que estás resolviendo un problema.</li>
+            <li><strong>Haz preguntas clarificadoras:</strong> Nunca saltes directamente a la codificación. Asegúrate de entender completamente el problema. ¿Cuáles son los tipos de entrada? ¿Cuáles son los casos límite? ¿Cómo debe manejarse una entrada inválida?</li>
+            <li><strong>Empieza con la fuerza bruta:</strong> Si no ves la solución óptima de inmediato, está bien decir: "Una forma de resolver esto sería con un enfoque de fuerza bruta que tendría una complejidad de O(n²). Funciona, pero podemos optimizarlo. Déjame pensar en cómo mejorar esto...". Demuestra que puedes encontrar una solución funcional antes de optimizar.</li>
+            <li><strong>Gestiona el tiempo:</strong> No te quedes atascado en una parte del problema por demasiado tiempo. Si estás en un callejón sin salida, verbalízalo y pide una pista. Es mejor resolver el problema con una pequeña ayuda que no resolverlo en absoluto.</li>
+        </ul>`,
 };
 
 const quizData = {
