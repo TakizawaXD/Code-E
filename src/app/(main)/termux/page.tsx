@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Smartphone, AlertTriangle, Download, Terminal, GitBranch, Database, Code, Rocket, BookOpen } from 'lucide-react';
@@ -61,6 +62,45 @@ export default function TermuxGuidePage() {
                             <h3 className="font-semibold text-lg flex items-center gap-2"><Terminal className="w-5 h-5"/>1. Actualizar Termux</h3>
                             <p className="text-muted-foreground mt-1 mb-2">Este es el primer comando que debes ejecutar. Mantendrá todos los paquetes base actualizados y seguros.</p>
                             <CodeBlock code="pkg update && pkg upgrade -y" />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Lenguajes Soportados</CardTitle>
+                        <CardDescription>Termux es un entorno Linux, por lo que puedes instalar casi cualquier lenguaje popular.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div>
+                            <h3 className="font-semibold text-lg">Python</h3>
+                            <p className="text-muted-foreground mt-1 mb-2">Ideal para scripting, ciencia de datos y desarrollo web.</p>
+                            <CodeBlock code="pkg install python" />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-lg">Node.js (JavaScript/TypeScript)</h3>
+                            <p className="text-muted-foreground mt-1 mb-2">Perfecto para desarrollo web frontend y backend.</p>
+                            <CodeBlock code="pkg install nodejs" />
+                        </div>
+                         <div>
+                            <h3 className="font-semibold text-lg">Git</h3>
+                            <p className="text-muted-foreground mt-1 mb-2">Fundamental para el control de versiones de tus proyectos.</p>
+                            <CodeBlock code="pkg install git" />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-lg">Go</h3>
+                            <p className="text-muted-foreground mt-1 mb-2">Un lenguaje compilado de Google, excelente para herramientas de alto rendimiento.</p>
+                            <CodeBlock code="pkg install golang" />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-lg">Rust</h3>
+                            <p className="text-muted-foreground mt-1 mb-2">Enfocado en seguridad y rendimiento para programación de sistemas.</p>
+                            <CodeBlock code="pkg install rust" />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-lg">C/C++</h3>
+                            <p className="text-muted-foreground mt-1 mb-2">Instala el compilador Clang para trabajar con C y C++.</p>
+                            <CodeBlock code="pkg install clang" />
                         </div>
                     </CardContent>
                 </Card>
