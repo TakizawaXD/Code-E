@@ -67,14 +67,14 @@ export default function SettingsPage() {
   }, [userProfile, form]);
 
   async function onSubmit(data: ProfileFormValues) {
-    if (!user || !userProfileRef || !user.auth) return;
+    if (!user || !userProfileRef) return;
 
     try {
       // Update Firestore document
       await updateDoc(userProfileRef, {
         name: data.name,
         username: data.username,
-        description: data.description,
+        description: data.description || "", // Ensure empty string instead of undefined
       });
 
       // Update Firebase Auth profile if username changed
@@ -178,5 +178,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
-    
