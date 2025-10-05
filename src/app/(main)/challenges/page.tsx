@@ -1,24 +1,22 @@
+
 "use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { allSchools } from '@/lib/data';
-import type { Project } from '@/lib/types';
-import { Github, Swords, CalendarClock } from 'lucide-react';
+import { weeklyChallenges, type WeeklyChallenge } from '@/lib/data';
+import { Github, Swords, CalendarClock, Send, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { getWeek, getDay, addWeeks, startOfWeek, endOfWeek, format } from 'date-fns';
-import { es } from 'date-fns/locale';
-
-function getWeekNumber(date: Date) {
-  // getWeek uses ISO 8601 week numbering.
-  return getWeek(date);
-}
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
+import { submitChallengeAction } from './actions';
+import { endOfWeek } from 'date-fns';
 
 function Countdown({ to }: { to: Date }) {
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
-    useEffect(() => {
+    React.useEffect(() => {
         const interval = setInterval(() => {
             const now = new Date();
             const distance = to.getTime() - now.getTime();
@@ -62,42 +60,83 @@ function Countdown({ to }: { to: Date }) {
     );
 }
 
+function ChallengeSubmissionForm({ challenge }: { challenge: WeeklyChallenge }) {
+    const [githubUrl, setGithubUrl] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { toast } = useToast();
 
-export default function WeeklyChallengePage() {
-    const allProjects = useMemo(() => {
-        return allSchools.flatMap(school => school.learningPaths.flatMap(path => path.projects || []));
-    }, []);
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!githubUrl.trim()) {
+            toast({ variant: 'destructive', title: 'Error', description: 'Por favor, introduce la URL de tu repositorio de GitHub.' });
+            return;
+        }
 
-    const [weeklyProject, setWeeklyProject] = useState<Project | null>(null);
-    const [endDate, setEndDate] = useState<Date>(new Date());
-    
-    useEffect(() => {
-        const now = new Date();
-        const currentWeek = getWeekNumber(now);
-        const year = now.getFullYear();
-        
-        // Consistent "randomness" based on the week number and year
-        const seed = currentWeek + year;
-        const randomIndex = seed % allProjects.length;
-        setWeeklyProject(allProjects[randomIndex]);
+        setIsSubmitting(true);
+        const result = await submitChallengeAction({
+            challengeTitle: challenge.title,
+            language: challenge.language,
+            githubUrl: githubUrl
+        });
+        setIsSubmitting(false);
 
-        const endOfWeekDate = endOfWeek(now, { weekStartsOn: 1 }); // Monday is the start
-        setEndDate(endOfWeekDate);
-
-    }, [allProjects]);
-
-    const getLevelBadge = (level: 'Fácil' | 'Intermedio' | 'Avanzado') => {
-        switch (level) {
-            case 'Fácil': return <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">Fácil</Badge>;
-            case 'Intermedio': return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300">Intermedio</Badge>;
-            case 'Avanzado': return <Badge variant="secondary" className="bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">Avanzado</Badge>;
-            default: return null;
+        if (result.success) {
+            toast({
+                title: '¡Reto Enviado!',
+                description: 'Hemos recibido tu entrega. ¡Excelente trabajo!',
+            });
+            setGithubUrl('');
+        } else {
+            toast({
+                variant: 'destructive',
+                title: 'Error al enviar',
+                description: result.error || 'Ocurrió un problema al enviar tu reto. Por favor, inténtalo de nuevo.',
+            });
         }
     };
 
-    if (!weeklyProject) {
-        return <div>Cargando reto...</div>;
-    }
+    return (
+        <Card className="bg-muted/50 mt-8">
+            <CardHeader>
+                <CardTitle>Entregar Reto</CardTitle>
+                <CardDescription>
+                    Una vez que hayas completado el proyecto y lo hayas subido a un repositorio público en GitHub, pega la URL aquí para enviarlo.
+                </CardDescription>
+            </CardHeader>
+            <form onSubmit={handleSubmit}>
+                <CardContent>
+                    <div className="grid w-full max-w-lg items-center gap-1.5">
+                        <Label htmlFor="github-url">URL del Repositorio de GitHub</Label>
+                        <Input
+                            id="github-url"
+                            type="url"
+                            placeholder="https://github.com/tu-usuario/nombre-del-proyecto"
+                            value={githubUrl}
+                            onChange={(e) => setGithubUrl(e.target.value)}
+                            required
+                        />
+                    </div>
+                </CardContent>
+                <CardFooter>
+                    <Button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
+                        {isSubmitting ? 'Enviando...' : 'Enviar Entrega'}
+                    </Button>
+                </CardFooter>
+            </form>
+        </Card>
+    );
+}
+
+export default function WeeklyChallengePage() {
+    const [selectedChallenge, setSelectedChallenge] = useState<WeeklyChallenge | null>(null);
+    const [endDate, setEndDate] = useState<Date>(new Date());
+    
+    React.useEffect(() => {
+        const now = new Date();
+        const endOfWeekDate = endOfWeek(now, { weekStartsOn: 1 }); // Monday is the start
+        setEndDate(endOfWeekDate);
+    }, []);
 
     return (
         <div className="container py-8 md:py-12">
@@ -106,51 +145,101 @@ export default function WeeklyChallengePage() {
                     <Swords className="w-10 h-10 text-primary" />
                     Reto de la Semana
                 </h1>
-                <p className="mt-3 text-lg text-muted-foreground max-w-2xl mx-auto">
-                    Cada semana, un nuevo proyecto para poner a prueba tus habilidades. ¡Acepta el desafío!
+                <p className="mt-3 text-lg text-muted-foreground max-w-3xl mx-auto">
+                    Elige un lenguaje y acepta un desafío complejo diseñado para llevar tus habilidades al siguiente nivel. Tienes hasta el final de la semana para completarlo.
                 </p>
             </header>
 
-            <div className="max-w-3xl mx-auto space-y-8">
-                 <Card className="border-2 border-primary shadow-lg">
-                    <CardHeader className="text-center">
-                        <div className="flex justify-center items-center gap-4 mb-2">
-                           <CardTitle className="text-2xl md:text-3xl">{weeklyProject.title}</CardTitle>
-                           {getLevelBadge(weeklyProject.level)}
-                        </div>
-                        <CardDescription className="text-base">
-                            {weeklyProject.description}
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground text-center mb-6">
-                           Este proyecto está diseñado para ayudarte a practicar los conceptos del desarrollo de software en un escenario realista. ¡No te preocupes por hacerlo perfecto, enfócate en aprender y completar el reto!
-                        </p>
-                         <div className="text-center">
-                             <Button asChild>
-                                <a href={weeklyProject.githubUrl} target="_blank" rel="noopener noreferrer">
-                                    <Github className="mr-2 h-4 w-4" />
-                                    Ver en GitHub y Empezar
-                                </a>
-                            </Button>
-                        </div>
-                    </CardContent>
-                </Card>
-                
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-center flex items-center justify-center gap-2">
-                           <CalendarClock className="w-5 h-5"/>
-                           Tiempo Restante
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Countdown to={endDate} />
-                    </CardContent>
-                    <CardFooter className="text-center text-xs text-muted-foreground justify-center">
-                       <p>El reto cambia cada Lunes a las 00:00.</p>
-                    </CardFooter>
-                </Card>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-8 items-start">
+                <div className="md:col-span-2">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Elige tu Tecnología</CardTitle>
+                            <CardDescription>Selecciona el lenguaje con el que quieres afrontar el reto.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex flex-col gap-2">
+                            {weeklyChallenges.map((challenge) => (
+                                <Button
+                                    key={challenge.language}
+                                    variant={selectedChallenge?.language === challenge.language ? 'default' : 'outline'}
+                                    onClick={() => setSelectedChallenge(challenge)}
+                                    className="w-full justify-start"
+                                >
+                                    {challenge.icon}
+                                    {challenge.language}
+                                </Button>
+                            ))}
+                        </CardContent>
+                    </Card>
+                     <Card className="mt-8">
+                        <CardHeader>
+                            <CardTitle className="text-center flex items-center justify-center gap-2">
+                            <CalendarClock className="w-5 h-5"/>
+                            Tiempo Restante
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <Countdown to={endDate} />
+                        </CardContent>
+                        <CardFooter className="text-center text-xs text-muted-foreground justify-center">
+                            <p>Los retos se actualizan para la comunidad cada Lunes a las 00:00.</p>
+                        </CardFooter>
+                    </Card>
+                </div>
+
+                <div className="md:col-span-3">
+                    {selectedChallenge ? (
+                        <Card className="border-2 border-primary shadow-lg sticky top-24">
+                            <CardHeader>
+                                <CardTitle className="text-2xl md:text-3xl flex items-center gap-3">
+                                    {selectedChallenge.icon}
+                                    {selectedChallenge.title}
+                                </CardTitle>
+                                <CardDescription className="text-base pt-2">
+                                    {selectedChallenge.description}
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    <div>
+                                        <h4 className="font-semibold mb-2">Tecnologías Sugeridas:</h4>
+                                        <div className="flex flex-wrap gap-2">
+                                            {selectedChallenge.technologies.map(tech => <Badge key={tech} variant="secondary">{tech}</Badge>)}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold mb-2">Requisitos del README:</h4>
+                                        <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+                                            <li>Explicación detallada de la arquitectura del proyecto.</li>
+                                            <li>Instrucciones claras de instalación y ejecución local.</li>
+                                            <li>Documentación de los endpoints de la API (si aplica).</li>
+                                            <li>Análisis de decisiones técnicas y compromisos (trade-offs).</li>
+                                        </ul>
+                                    </div>
+                                     <div className="text-center pt-4">
+                                        <Button asChild>
+                                            <a href={selectedChallenge.inspirationUrl} target="_blank" rel="noopener noreferrer">
+                                                <Github className="mr-2 h-4 w-4" />
+                                                Ver Repositorio de Inspiración
+                                            </a>
+                                        </Button>
+                                    </div>
+                                </div>
+                                <ChallengeSubmissionForm challenge={selectedChallenge} />
+                            </CardContent>
+                        </Card>
+                    ) : (
+                         <Card className="h-full flex flex-col items-center justify-center text-center p-8 min-h-[400px]">
+                            <CardContent>
+                                <Swords className="mx-auto h-16 w-16 text-muted-foreground" />
+                                <h3 className="mt-4 text-xl font-semibold">Selecciona un Reto</h3>
+                                <p className="mt-2 text-muted-foreground">
+                                    Elige un lenguaje de la lista de la izquierda para ver los detalles del desafío de esta semana.
+                                </p>
+                            </CardContent>
+                        </Card>
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -157,3 +157,13 @@ export type ForumPost = {
     authorAvatarUrl?: string;
     createdAt: Timestamp;
 };
+
+// Weekly Challenge Type
+export type WeeklyChallenge = {
+    language: string;
+    icon: React.ReactNode;
+    title: string;
+    description: string;
+    technologies: string[];
+    inspirationUrl: string;
+};
