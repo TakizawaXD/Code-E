@@ -4,6 +4,8 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, writeBatch, doc } from 'firebase/firestore';
 import { firebaseConfig } from '../firebase/config'; // Make sure this path is correct
+import type { CourseModule, Lesson } from './types';
+import images from './placeholder-images.json';
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
@@ -31,64 +33,306 @@ const learningPaths = [
     { id: 'startups', title: 'Startups', description: 'Lanza y haz crecer tu propio negocio tecnológico, desde la idea hasta la financiación.' },
 ];
 
-const courses = [
-  // Desarrollo Web
-  { id: 'web-react', pathId: 'desarrollo-web', title: 'React: De Cero a Experto', description: 'Aprende a construir aplicaciones web modernas con React.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=juanperez', imageUrl: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-  { id: 'web-vue', pathId: 'desarrollo-web', title: 'Vue.js para Principiantes', description: 'Iníciate en el desarrollo de interfaces con Vue.js.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=anagarcia', imageUrl: 'https://images.unsplash.com/photo-1633356122102-3fe601e05a7c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-  // IA y Data Science
-  { id: 'ia-python', pathId: 'ia-datascience', title: 'Python para Data Science', description: 'Domina Pandas, NumPy y Matplotlib para el análisis de datos.', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=carlossanchez', imageUrl: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-  { id: 'ia-ml', pathId: 'ia-datascience', title: 'Fundamentos de Machine Learning', description: 'Entiende los algoritmos clave del Machine Learning.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=lauramartinez', imageUrl: 'https://images.unsplash.com/photo-1620712943543-95f135346a50?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-  // Diseño de Producto y UX
-  { id: 'ux-investigacion', pathId: 'diseno-ux', title: 'Investigación de Usuarios', description: 'Aprende a entender a tus usuarios para diseñar mejores productos.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=davidgomez', imageUrl: 'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80' },
-  // Cloud y DevOps
-  { id: 'cloud-aws', pathId: 'cloud-devops', title: 'Introducción a AWS', description: 'Conoce los servicios fundamentales de Amazon Web Services.', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=elenafernandez', imageUrl: 'https://images.unsplash.com/photo-1582102759419-7b97c88d0a84?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-  // Recursos Humanos
-  { id: 'rh-tech', pathId: 'recursos-humanos', title: 'Tech Recruiting', description: 'Aprende a reclutar el mejor talento para el sector tecnológico.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=sofiadiaz', imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-  // Negocios
-  { id: 'negocios-finanzas', pathId: 'negocios', title: 'Finanzas para Emprendedores', description: 'Entiende los números de tu negocio para tomar mejores decisiones.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=javiertorres', imageUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-  // English Academy
-  { id: 'english-business', pathId: 'english-academy', title: 'Business English', description: 'Mejora tu vocabulario y fluidez para el entorno profesional.', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=sarahjohnson', imageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80' },
-  // Ciberseguridad
-  { id: 'cyber-intro', pathId: 'ciberseguridad', title: 'Fundamentos de Ciberseguridad', description: 'Aprende los conceptos básicos para proteger la información.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=miguelromero', imageUrl: 'https://images.unsplash.com/photo-1544890225-2f3faec4cd60?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1025&q=80' },
-  // Desarrollo Móvil
-  { id: 'movil-flutter', pathId: 'desarrollo-movil', title: 'Flutter: Apps para iOS y Android', description: 'Crea apps nativas para ambas plataformas con un solo código base.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=luciajimenez', imageUrl: 'https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-  // Blockchain y Web3
-  { id: 'web3-solidity', pathId: 'blockchain-web3', title: 'Smart Contracts con Solidity', description: 'Programa contratos inteligentes para la blockchain de Ethereum.', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=adriannavarro', imageUrl: 'https://images.unsplash.com/photo-1640118591547-906514188b6f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1167&q=80' },
-  // Finanzas e Inversiones
-  { id: 'fin-personal', pathId: 'finanzas-inversiones', title: 'Finanzas Personales 101', description: 'Organiza tu dinero, sal de deudas y empieza a invertir.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=veronicacruz', imageUrl: 'https://images.unsplash.com/photo-1642073317833-e25f16c659d0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-  // Diseño Gráfico
-  { id: 'dg-branding', pathId: 'diseno-grafico', title: 'Diseño de Marcas y Branding', description: 'Crea identidades visuales memorables y efectivas.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=oscarvega', imageUrl: 'https://images.unsplash.com/photo-1600693539789-2166699a7442?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%G%3D&auto=format&fit=crop&w=1170&q=80' },
-  // Marketing Digital
-  { id: 'mkt-seo', pathId: 'marketing-digital', title: 'SEO para Principiantes', description: 'Posiciona sitios web en los primeros lugares de Google.', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=paulareyes', imageUrl: 'https://images.unsplash.com/photo-1559868779-139b418296c7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-  // Habilidades Blandas
-  { id: 'soft-comunicacion', pathId: 'habilidades-blandas', title: 'Comunicación Efectiva', description: 'Mejora tus habilidades para presentar, negociar e influir.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=fernandomorales', imageUrl: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-  // Contenido Audiovisual
-  { id: 'av-edicion', pathId: 'contenido-audiovisual', title: 'Edición de Video con DaVinci Resolve', description: 'Aprende a editar video como un profesional con software gratuito.', instructor: 'Lizeth', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=isabelcastillo', imageUrl: 'https://images.unsplash.com/photo-1574717024633-6005c4831564?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
-  // Programación
-  { id: 'prog-python', pathId: 'programacion', title: 'Lógica de Programación con Python', description: 'Aprende a pensar como un programador resolviendo problemas reales.', instructor: 'Andres', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=ricardoortiz', imageUrl: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1032&q=80' },
-  // Startups
-  { id: 'startup-mvp', pathId: 'startups', title: 'Creación de un MVP', description: 'Construye y lanza el Producto Mínimo Viable de tu startup.', instructor: 'Hernando', instructorAvatarUrl: 'https://i.pravatar.cc/150?u=monicaherrera', imageUrl: 'https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80' },
+const courses: Omit<import('./types').Course, 'modules'>[] = [
+    // Programación
+    { id: 'prog-python', pathId: 'programacion', title: 'Ejercicios Prácticos de Python', description: 'Resuelve problemas prácticos y refuerza tu lógica de programación con Python.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/1/150/150', imageUrl: images['course-prog-python'] },
+    { id: 'prog-javascript', pathId: 'programacion', title: 'Ejercicios Prácticos de JavaScript', description: 'Aplica tus conocimientos de JavaScript en ejercicios del mundo real, desde el DOM hasta las APIs.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/2/150/150', imageUrl: images['course-prog-javascript'] },
+    { id: 'prog-java', pathId: 'programacion', title: 'Ejercicios Prácticos de Java', description: 'Fortalece tus habilidades en Java con ejercicios de Programación Orientada a Objetos y multihilo.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/3/150/150', imageUrl: images['course-prog-java'] },
+    { id: 'prog-cpp', pathId: 'programacion', title: 'Ejercicios Prácticos de C++', description: 'Domina la gestión de memoria y la Programación Orientada a Objetos en C++ con retos prácticos.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/4/150/150', imageUrl: images['course-prog-cpp'] },
+  
+    // Desarrollo Web
+    { id: 'web-react', pathId: 'desarrollo-web', title: 'React: De Cero a Experto', description: 'Construye aplicaciones web interactivas y modernas con la librería más popular del mercado.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/5/150/150', imageUrl: images['course-web-react'] },
+    { id: 'web-node', pathId: 'desarrollo-web', title: 'Backend con Node.js y Express', description: 'Crea APIs RESTful robustas y escalables utilizando el ecosistema de Node.js.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/6/150/150', imageUrl: images['course-web-node'] },
+    { id: 'web-typescript', pathId: 'desarrollo-web', title: 'TypeScript para Desarrollo Frontend', description: 'Lleva tu código JavaScript al siguiente nivel con tipado estático y funcionalidades avanzadas.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/7/150/150', imageUrl: images['course-web-typescript'] },
+    { id: 'web-php', pathId: 'desarrollo-web', title: 'PHP y Laravel para Backend', description: 'Desarrolla aplicaciones web robustas y elegantes con el framework PHP más popular.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/8/150/150', imageUrl: images['course-web-php'] },
+  
+    // IA y Data Science
+    { id: 'ia-datascience-python', pathId: 'ia-datascience', title: 'Python para Data Science', description: 'Aprende a manipular, analizar y visualizar datos con las librerías esenciales de Python.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/9/150/150', imageUrl: images['course-ia-datascience-python'] },
+    { id: 'ia-ml', pathId: 'ia-datascience', title: 'Fundamentos de Machine Learning', description: 'Entrena y evalúa modelos de clasificación, regresión y clustering con Scikit-learn.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/10/150/150', imageUrl: images['course-ia-ml'] },
+    { id: 'ia-r', pathId: 'ia-datascience', title: 'Análisis de Datos con R', description: 'Utiliza el poder de R y Tidyverse para el análisis estadístico y la visualización de datos.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/11/150/150', imageUrl: images['course-ia-r'] },
+    { id: 'ia-sql', pathId: 'ia-datascience', title: 'SQL para Data Science', description: 'Escribe consultas complejas para extraer y transformar datos de bases de datos relacionales.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/12/150/150', imageUrl: images['course-ia-sql'] },
+    
+    // Diseño de Producto y UX
+    { id: 'ux-investigacion', pathId: 'diseno-ux', title: 'Investigación de Usuarios', description: 'Aprende a crear user personas, journey maps y a realizar pruebas de usabilidad efectivas.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/13/150/150', imageUrl: images['course-ux-investigacion'] },
+    { id: 'ux-figma', pathId: 'diseno-ux', title: 'Diseño de Interfaces con Figma', description: 'Domina Figma desde cero y aprende a crear prototipos interactivos y sistemas de diseño.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/14/150/150', imageUrl: images['course-ux-figma'] },
+  
+    // Cloud y DevOps
+    { id: 'cloud-aws', pathId: 'cloud-devops', title: 'Introducción a AWS', description: 'Despliega aplicaciones y gestiona infraestructura en la nube de Amazon Web Services.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/15/150/150', imageUrl: images['course-cloud-aws'] },
+    { id: 'cloud-docker', pathId: 'cloud-devops', title: 'Docker para Desarrolladores', description: 'Conteneriza tus aplicaciones y optimiza tu flujo de desarrollo con Docker.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/16/150/150', imageUrl: images['course-cloud-docker'] },
+    
+    // Desarrollo Móvil
+    { id: 'movil-swift', pathId: 'desarrollo-movil', title: 'Swift y SwiftUI: De Cero a App Store', description: 'Desarrolla aplicaciones nativas para iOS con el moderno framework SwiftUI.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/17/150/150', imageUrl: images['course-movil-swift'] },
+    { id: 'movil-kotlin', pathId: 'desarrollo-movil', title: 'Android con Kotlin: Curso Completo', description: 'Crea aplicaciones robustas para Android utilizando Kotlin y las mejores prácticas.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/18/150/150', imageUrl: images['course-movil-kotlin'] },
+    { id: 'movil-flutter', pathId: 'desarrollo-movil', title: 'Flutter: Apps para iOS y Android', description: 'Crea apps nativas para ambas plataformas con un solo código base.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/19/150/150', imageUrl: images['course-movil-flutter']},
+    { id: 'movil-dart', pathId: 'desarrollo-movil', title: 'Fundamentos de Dart para Flutter', description: 'Domina la sintaxis y los conceptos clave de Dart, el lenguaje detrás de Flutter.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/20/150/150', imageUrl: images['course-movil-dart'] },
+  
+    // Blockchain y Web3
+    { id: 'web3-solidity', pathId: 'blockchain-web3', title: 'Smart Contracts con Solidity', description: 'Programa contratos inteligentes para la blockchain de Ethereum y crea aplicaciones descentralizadas.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/21/150/150', imageUrl: images['course-web3-solidity'] },
+    { id: 'web3-rust', pathId: 'blockchain-web3', title: 'Desarrollo en Solana con Rust', description: 'Aprende a crear programas de alta velocidad y bajo costo en la blockchain de Solana.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/22/150/150', imageUrl: images['course-web3-rust'] },
+  
+    // Ciberseguridad
+    { id: 'cyber-intro', pathId: 'ciberseguridad', title: 'Fundamentos de Ciberseguridad', description: 'Entiende los principios de la seguridad digital, desde la encriptación hasta la defensa contra ataques.', instructor: 'Instructor de Code-E', instructorAvatarUrl: 'https://picsum.photos/seed/23/150/150', imageUrl: images['course-cyber-intro'] },
 ];
 
-const modulesAndLessons = courses.reduce((acc, course) => {
-    acc[course.id] = [
+const modulesAndLessons: Record<string, CourseModule[]> = {
+    'prog-python': [
         {
-            id: `${course.id}-m1`,
-            title: 'Módulo de Introducción',
-            order: 1,
+            id: 'python-m1', title: 'Principiante', order: 1,
+            lessons: [
+                { id: 'py-b1', title: '¡Hola, mundo!', duration: '5 min', difficulty: 'Fácil', content: 'Tu primer programa...', order: 1, youtubeVideoId: 'Kp4Mvapo5kc' },
+                { id: 'py-b2', title: 'Función de Suma', duration: '5 min', difficulty: 'Fácil', content: 'Aprende a definir funciones...', order: 2, youtubeVideoId: 'Z1Yd7upQsXY' },
+            ]
+        },
+        {
+            id: 'python-m4', title: 'Proyectos Prácticos (Avanzado)', order: 4,
             lessons: Array.from({ length: 10 }, (_, i) => ({
-                id: `${course.id}-l${i + 1}`,
-                title: `Ejercicio Práctico ${i + 1}`,
-                duration: `${Math.floor(Math.random() * 15) + 5} min`,
-                difficulty: i < 3 ? 'Fácil' : i < 7 ? 'Medio' : 'Difícil',
-                content: `<h1>Contenido del Ejercicio ${i + 1}</h1><p>Esta es la descripción del ejercicio práctico número ${i + 1} para el curso "${course.title}". Aquí desarrollarás una habilidad clave.</p><p>¡Manos a la obra!</p>`,
+                id: `py-p${i + 1}`, title: `Proyecto ${i + 1} en Python`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en Python</h1><p>Crea una aplicación en Python que resuelva un problema complejo...</p>',
                 order: i + 1,
             })),
         },
-    ];
-    return acc;
-}, {} as Record<string, any>);
-
+    ],
+    'prog-javascript': [
+        {
+            id: 'js-m1', title: 'Principiante', order: 1,
+            lessons: [
+                { id: 'js-b1', title: 'Cambiar Color de Fondo', duration: '5 min', difficulty: 'Fácil', content: 'Manipulación del DOM...', order: 1, youtubeVideoId: "BisJdN2LWEY" }
+            ]
+        },
+        {
+            id: 'javascript-m4', title: 'Proyectos Prácticos (Avanzado)', order: 4,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `js-p${i + 1}`, title: `Proyecto ${i + 1} en JavaScript`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en JavaScript</h1><p>Crea una aplicación en JavaScript que resuelva un problema complejo...</p>',
+                order: i + 1,
+            })),
+        }
+    ],
+    'prog-java': [
+        {
+            id: 'java-m1', title: 'Principiante', order: 1,
+            lessons: [
+                { id: 'java-b1', title: '¡Hola, mundo!', duration: '5 min', difficulty: 'Fácil', content: 'Tu primer paso en Java...', order: 1, youtubeVideoId: 'grEKMHGYyns' }
+            ]
+        },
+        {
+            id: 'java-m2', title: 'Proyectos Prácticos (Avanzado)', order: 2,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `java-p${i + 1}`, title: `Proyecto ${i + 1} en Java`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en Java</h1><p>Crea una aplicación en Java que resuelva un problema complejo...</p>',
+                order: i + 1,
+            })),
+        }
+    ],
+    'prog-cpp': [
+        {
+            id: 'cpp-m1', title: 'Principiante', order: 1,
+            lessons: [
+                { id: 'cpp-b1', title: '¡Hola, mundo!', duration: '5 min', difficulty: 'Fácil', content: 'El primer paso en C++...', order: 1, youtubeVideoId: 'vLnPwxZdW4Y' }
+            ]
+        },
+        {
+            id: 'cpp-m2', title: 'Proyectos Prácticos (Avanzado)', order: 2,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `cpp-p${i + 1}`, title: `Proyecto ${i + 1} en C++`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en C++</h1><p>Crea una aplicación en C++ que resuelva un problema complejo...</p>',
+                order: i + 1,
+            })),
+        }
+    ],
+    'web-typescript': [
+        {
+            id: 'ts-m1', title: 'Principiante', order: 1,
+            lessons: [
+                { id: 'ts-b1', title: 'Introducción a Tipos', duration: '10 min', difficulty: 'Fácil', content: 'Aprende a usar tipos básicos...', order: 1, youtubeVideoId: 'BwuLxPH8IDs' }
+            ]
+        },
+        {
+            id: 'ts-m2', title: 'Proyectos Prácticos (Avanzado)', order: 2,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `ts-p${i + 1}`, title: `Proyecto ${i + 1} en TypeScript`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en TypeScript</h1><p>Crea una aplicación en TypeScript que resuelva un problema complejo...</p>',
+                order: i + 1,
+            })),
+        }
+    ],
+    'web-php': [
+        {
+            id: 'php-m1', title: 'Principiante', order: 1,
+            lessons: [
+                { id: 'php-b1', title: '¡Hola, mundo!', duration: '5 min', difficulty: 'Fácil', content: 'Tu primer script en PHP...', order: 1, youtubeVideoId: 'OK_JCtrrv-c' }
+            ]
+        },
+        {
+            id: 'php-m2', title: 'Proyectos Prácticos (Avanzado)', order: 2,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `php-p${i + 1}`, title: `Proyecto ${i + 1} en PHP`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en PHP</h1><p>Crea una aplicación en PHP que resuelva un problema complejo...</p>',
+                order: i + 1,
+            })),
+        }
+    ],
+    'ia-r': [
+        {
+            id: 'r-m1', title: 'Principiante', order: 1,
+            lessons: [
+                { id: 'r-b1', title: 'Introducción a R y RStudio', duration: '10 min', difficulty: 'Fácil', content: 'Aprende qué es R y cómo usar RStudio...', order: 1, youtubeVideoId: '_V8eKsto3Ug' }
+            ]
+        },
+        {
+            id: 'r-m2', title: 'Proyectos Prácticos (Avanzado)', order: 2,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `r-p${i + 1}`, title: `Proyecto ${i + 1} en R`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en R</h1><p>Crea una aplicación en R que resuelva un problema complejo...</p>',
+                order: i + 1,
+            })),
+        }
+    ],
+    'ia-sql': [
+        {
+            id: 'sql-m1', title: 'Principiante', order: 1,
+            lessons: [
+                { id: 'sql-b1', title: 'La Sentencia SELECT', duration: '10 min', difficulty: 'Fácil', content: 'La base de todas las consultas...', order: 1, youtubeVideoId: 'HXV3zeQKqGY' }
+            ]
+        },
+        {
+            id: 'sql-m2', title: 'Proyectos Prácticos (Avanzado)', order: 2,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `sql-p${i + 1}`, title: `Proyecto ${i + 1} en SQL`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en SQL</h1><p>Crea una aplicación en SQL que resuelva un problema complejo...</p>',
+                order: i + 1,
+            })),
+        }
+    ],
+    'movil-swift': [
+        {
+            id: 'swift-m1', title: 'Principiante', order: 1,
+            lessons: [
+                { id: 'swift-b1', title: 'Introducción a Swift', duration: '10 min', difficulty: 'Fácil', content: 'Tu primer contacto con el lenguaje de Apple...', order: 1, youtubeVideoId: 'comQ1-x2a1Q' }
+            ]
+        },
+        {
+            id: 'swift-m2', title: 'Proyectos Prácticos (Avanzado)', order: 2,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `swift-p${i + 1}`, title: `Proyecto ${i + 1} en Swift`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en Swift</h1><p>Crea una aplicación en Swift que resuelva un problema complejo...</p>',
+                order: i + 1,
+            })),
+        }
+    ],
+    'movil-kotlin': [
+        {
+            id: 'kotlin-m1', title: 'Principiante', order: 1,
+            lessons: [
+                { id: 'kotlin-b1', title: 'Introducción a Kotlin', duration: '10 min', difficulty: 'Fácil', content: 'El lenguaje moderno para Android...', order: 1, youtubeVideoId: 'F9UC9DY-vIU' }
+            ]
+        },
+        {
+            id: 'kotlin-m2', title: 'Proyectos Prácticos (Avanzado)', order: 2,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `kotlin-p${i + 1}`, title: `Proyecto ${i + 1} en Kotlin`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en Kotlin</h1><p>Crea una aplicación en Kotlin que resuelva un problema complejo...</p>',
+                order: i + 1,
+            })),
+        }
+    ],
+    'movil-dart': [
+        {
+            id: 'dart-m1', title: 'Principiante', order: 1,
+            lessons: [
+                { id: 'dart-b1', title: 'Introducción a Dart', duration: '10 min', difficulty: 'Fácil', content: 'El lenguaje detrás de Flutter...', order: 1, youtubeVideoId: 'Ej_Pcr4uC2Q' }
+            ]
+        },
+        {
+            id: 'dart-m2', title: 'Proyectos Prácticos (Avanzado)', order: 2,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `dart-p${i + 1}`, title: `Proyecto ${i + 1} en Dart`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en Dart</h1><p>Crea una aplicación en Dart que resuelva un problema complejo...</p>',
+                order: i + 1,
+            })),
+        }
+    ],
+    'web3-solidity': [
+        {
+            id: 'solidity-m1', title: 'Principiante', order: 1,
+            lessons: [
+                { id: 'solidity-b1', title: 'Estructura de un Smart Contract', duration: '10 min', difficulty: 'Fácil', content: 'Aprende la estructura básica...', order: 1, youtubeVideoId: 'aGonv5DP910' }
+            ]
+        },
+        {
+            id: 'solidity-m2', title: 'Proyectos Prácticos (Avanzado)', order: 2,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `solidity-p${i + 1}`, title: `Proyecto ${i + 1} en Solidity`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en Solidity</h1><p>Crea una aplicación en Solidity que resuelva un problema complejo...</p>',
+                order: i + 1,
+            })),
+        }
+    ],
+    'web3-rust': [
+        {
+            id: 'rust-m1', title: 'Principiante', order: 1,
+            lessons: [
+                { id: 'rust-b1', title: '¡Hola, mundo!', duration: '5 min', difficulty: 'Fácil', content: 'Tu primer programa en Rust...', order: 1, youtubeVideoId: 'zF34dRivLOw' }
+            ]
+        },
+        {
+            id: 'rust-m2', title: 'Proyectos Prácticos (Avanzado)', order: 2,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `rust-p${i + 1}`, title: `Proyecto ${i + 1} en Rust`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en Rust</h1><p>Crea una aplicación en Rust que resuelva un problema complejo...</p>',
+                order: i + 1,
+            })),
+        }
+    ],
+    'web-node': [
+        {
+            id: 'node-m1', title: 'Fundamentos de Node', order: 1,
+            lessons: [{ id: 'node-l1', title: 'Intro a Node.js', duration: '12 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: 'TlB_eWDSMt4' }]
+        },
+        {
+            id: 'node-m2', title: 'Proyectos Prácticos (Avanzado)', order: 2,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `node-p${i + 1}`, title: `Proyecto ${i + 1} en Node.js`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en Node.js</h1><p>Crea una aplicación en Node.js que resuelva un problema complejo...</p>',
+                order: i + 1,
+            })),
+        }
+    ],
+    'web-react': [
+        {
+            id: 'react-m1', title: 'Fundamentos de React', order: 1,
+            lessons: [
+                 {
+                    id: 'web-react-l1', title: '¿Qué es React?', duration: '10 min', difficulty: 'Fácil', order: 1,
+                    content: '<h1>Introducción a React</h1><p>React es una librería de JavaScript...</p>',
+                    youtubeVideoId: "GMnWXlJnbNo",
+                 }
+            ]
+        },
+        {
+            id: 'react-m2', title: 'Proyectos Prácticos (Avanzado)', order: 2,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `react-p${i + 1}`, title: `Proyecto ${i + 1} en React`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en React</h1><p>Crea una aplicación en React que resuelva un problema complejo...</p>',
+                order: i + 1,
+            })),
+        }
+    ],
+    'movil-flutter': [
+        {
+            id: 'flutter-m1', title: 'Fundamentos de Flutter', order: 1,
+            lessons: [{ id: 'flutter-l1', title: 'Intro a Flutter', duration: '10 min', difficulty: 'Fácil', content: 'Contenido...', order: 1, youtubeVideoId: '5izffRVgc0k' }]
+        },
+        {
+            id: 'flutter-m2', title: 'Proyectos Prácticos (Avanzado)', order: 2,
+            lessons: Array.from({ length: 10 }, (_, i) => ({
+                id: `flutter-p${i + 1}`, title: `Proyecto ${i + 1} en Flutter`, duration: '120 min', difficulty: 'Difícil',
+                content: '<h1>Proyecto Avanzado en Flutter</h1><p>Crea una aplicación en Flutter que resuelva un problema complejo...</p>',
+                order: i + 1,
+            })),
+        }
+    ],
+};
 
 // Main function to seed the data
 async function seedDatabase() {
@@ -152,5 +396,3 @@ seedDatabase().then(() => {
 }).catch(() => {
     process.exit(1);
 });
-
-    
