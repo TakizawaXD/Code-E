@@ -161,7 +161,7 @@ export type ForumPost = {
 // Weekly Challenge Type
 export type WeeklyChallenge = {
     language: string;
-    icon: React.ReactNode;
+    iconKey: string;
     title: string;
     description: string;
     technologies: string[];

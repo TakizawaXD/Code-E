@@ -12,6 +12,21 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { submitChallengeAction } from './actions';
 import { endOfWeek } from 'date-fns';
+import { SiJavascript, SiPython, SiJava, SiTypescript, SiRust, SiGo, SiPhp, SiKotlin, SiSwift, SiCsharp } from 'react-icons/si';
+
+const ICONS: Record<string, React.ReactNode> = {
+    javascript: <SiJavascript className="w-5 h-5" />,
+    python: <SiPython className="w-5 h-5" />,
+    java: <SiJava className="w-5 h-5" />,
+    go: <SiGo className="w-5 h-5" />,
+    rust: <SiRust className="w-5 h-5" />,
+    php: <SiPhp className="w-5 h-5" />,
+    csharp: <SiCsharp className="w-5 h-5" />,
+    swift: <SiSwift className="w-5 h-5" />,
+    kotlin: <SiKotlin className="w-5 h-5" />,
+    typescript: <SiTypescript className="w-5 h-5" />,
+};
+
 
 function Countdown({ to }: { to: Date }) {
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -165,7 +180,7 @@ export default function WeeklyChallengePage() {
                                     onClick={() => setSelectedChallenge(challenge)}
                                     className="w-full justify-start"
                                 >
-                                    {challenge.icon}
+                                    {ICONS[challenge.iconKey]}
                                     {challenge.language}
                                 </Button>
                             ))}
@@ -192,7 +207,7 @@ export default function WeeklyChallengePage() {
                         <Card className="border-2 border-primary shadow-lg sticky top-24">
                             <CardHeader>
                                 <CardTitle className="text-2xl md:text-3xl flex items-center gap-3">
-                                    {selectedChallenge.icon}
+                                    {ICONS[selectedChallenge.iconKey]}
                                     {selectedChallenge.title}
                                 </CardTitle>
                                 <CardDescription className="text-base pt-2">

@@ -2,8 +2,6 @@
 import type { Notification, LearningPath, Course, CourseModule, Lesson, School, WeeklyChallenge } from "@/lib/types";
 import images from '@/app/lib/placeholder-images.json';
 import videos from '@/app/lib/placeholder-videos.json';
-import { Code, Bot, BrainCircuit, PenTool, Cloud, Users, Briefcase, Shield, Smartphone, Blocks, Landmark, Paintbrush, TrendingUp, Laptop, Rocket, Languages, LineChart, Scale, HeartPulse, Mic, Swords } from "lucide-react";
-import { SiJavascript, SiPython, SiJava, SiTypescript, SiRust, SiGo, SiPhp, SiKotlin, SiSwift, SiCsharp } from 'react-icons/si';
 
 // This file now only contains types and potentially non-user-specific, non-db data.
 // All user, course, and learning path data will be fetched from Firestore.
@@ -537,7 +535,7 @@ export const learningPaths: Omit<LearningPath, 'courses'>[] = allLearningPathsLi
 export const weeklyChallenges: WeeklyChallenge[] = [
     {
         language: "JavaScript/TypeScript",
-        icon: <SiJavascript className="w-5 h-5" />,
+        iconKey: "javascript",
         title: "Clon de Trello en Tiempo Real",
         description: "Construye un tablero Kanban funcional similar a Trello. Los usuarios deben poder crear tableros, listas y tarjetas. Las tarjetas deben ser arrastrables (drag-and-drop) entre listas, y todos los cambios deben reflejarse en tiempo real para todos los usuarios conectados.",
         technologies: ["React", "Next.js", "Tailwind CSS", "Prisma", "PostgreSQL", "Socket.IO", "React-dnd"],
@@ -545,7 +543,7 @@ export const weeklyChallenges: WeeklyChallenge[] = [
     },
     {
         language: "Python",
-        icon: <SiPython className="w-5 h-5" />,
+        iconKey: "python",
         title: "Plataforma de Trading de Criptomonedas (Simulada)",
         description: "Crea una aplicación web que simule el trading de criptomonedas. Conéctate a una API pública (ej. CoinGecko) para obtener precios en tiempo real. Los usuarios deben poder registrarse, recibir un saldo virtual y 'comprar/vender' criptos. Incluye gráficos históricos de precios y un panel de portafolio.",
         technologies: ["Django", "Django REST Framework", "Celery", "Redis", "Chart.js", "PostgreSQL"],
@@ -553,7 +551,7 @@ export const weeklyChallenges: WeeklyChallenge[] = [
     },
     {
         language: "Java",
-        icon: <SiJava className="w-5 h-5" />,
+        iconKey: "java",
         title: "Sistema de Reservas de Vuelos",
         description: "Desarrolla un sistema backend robusto para una aerolínea. Debe gestionar vuelos, asientos, precios dinámicos, reservas y perfiles de usuario. Implementa una API REST completa y segura con manejo de transacciones para garantizar la integridad de los datos.",
         technologies: ["Spring Boot", "Spring Security", "JPA/Hibernate", "PostgreSQL", "Maven/Gradle", "JUnit 5"],
@@ -561,7 +559,7 @@ export const weeklyChallenges: WeeklyChallenge[] = [
     },
     {
         language: "Go",
-        icon: <SiGo className="w-5 h-5" />,
+        iconKey: "go",
         title: "Proxy Inverso y Balanceador de Carga",
         description: "Crea una aplicación de alto rendimiento en Go que actúe como un proxy inverso y un balanceador de carga. Debe poder distribuir el tráfico entrante entre múltiples servidores backend utilizando diferentes algoritmos (ej. Round Robin, Least Connections).",
         technologies: ["Go (net/http)", "Goroutines", "Channels", "Docker"],
@@ -569,7 +567,7 @@ export const weeklyChallenges: WeeklyChallenge[] = [
     },
     {
         language: "Rust",
-        icon: <SiRust className="w-5 h-5" />,
+        iconKey: "rust",
         title: "Implementación de una Blockchain Simple",
         description: "Construye una pequeña blockchain desde cero. Debe incluir la creación de bloques, el minado con prueba de trabajo (Proof of Work), la validación de la cadena y una API simple para interactuar con ella. Enfócate en la seguridad y la concurrencia que ofrece Rust.",
         technologies: ["Rust", "Tokio", "Serde", "SHA-256", "Actix-web/Axum"],
@@ -577,7 +575,7 @@ export const weeklyChallenges: WeeklyChallenge[] = [
     },
     {
         language: "PHP",
-        icon: <SiPhp className="w-5 h-5" />,
+        iconKey: "php",
         title: "Plataforma E-commerce Multi-vendedor (Marketplace)",
         description: "Crea un marketplace completo donde múltiples vendedores puedan registrarse, publicar sus productos y gestionar sus ventas. La plataforma debe manejar carritos de compra, pasarelas de pago (simuladas), perfiles de vendedor y reseñas de productos.",
         technologies: ["Laravel", "MySQL/PostgreSQL", "Livewire/Vue.js", "Stripe API (Sandbox)", "PHPUnit"],
@@ -585,7 +583,7 @@ export const weeklyChallenges: WeeklyChallenge[] = [
     },
     {
         language: "C#",
-        icon: <SiCsharp className="w-5 h-5" />,
+        iconKey: "csharp",
         title: "Motor de Videojuego 2D Básico",
         description: "Utilizando .NET y una librería gráfica como MonoGame o Stride, crea un motor de juego 2D básico. Debe incluir un bucle de juego, renderizado de sprites, manejo de entrada, detección de colisiones simples y un sistema de entidades y componentes.",
         technologies: [".NET", "MonoGame/Stride", "C#", "Entity-Component-System (ECS)"],
@@ -593,7 +591,7 @@ export const weeklyChallenges: WeeklyChallenge[] = [
     },
     {
         language: "Swift",
-        icon: <SiSwift className="w-5 h-5" />,
+        iconKey: "swift",
         title: "Clon de Apple Music para iOS",
         description: "Desarrolla una aplicación para iOS que replique las funcionalidades principales de Apple Music. Incluye una biblioteca de canciones (local o desde una API), listas de reproducción, un reproductor de audio con controles y una interfaz de usuario pulida que siga las guías de diseño de Apple.",
         technologies: ["SwiftUI", "Combine", "AVFoundation", "Core Data/SwiftData"],
@@ -601,7 +599,7 @@ export const weeklyChallenges: WeeklyChallenge[] = [
     },
     {
         language: "Kotlin",
-        icon: <SiKotlin className="w-5 h-5" />,
+        iconKey: "kotlin",
         title: "Aplicación de Fitness y Seguimiento de Ejercicios",
         description: "Crea una aplicación para Android que permita a los usuarios registrar sus entrenamientos, seguir su progreso a lo largo del tiempo y visualizar estadísticas. Utiliza los componentes de Jetpack, Coroutines para operaciones asíncronas y almacena los datos localmente con Room.",
         technologies: ["Kotlin", "Jetpack Compose", "Coroutines", "Room", "Material Design 3"],
@@ -609,7 +607,7 @@ export const weeklyChallenges: WeeklyChallenge[] = [
     },
     {
         language: "TypeScript (Backend)",
-        icon: <SiTypescript className="w-5 h-5" />,
+        iconKey: "typescript",
         title: "API para un Sistema de Gestión de Inventarios",
         description: "Diseña y construye una API robusta y bien tipada para gestionar el inventario de un almacén. Debe incluir manejo de productos, proveedores, niveles de stock, órdenes de compra y alertas de stock bajo. Utiliza un framework como NestJS o AdonisJS para una arquitectura sólida.",
         technologies: ["TypeScript", "NestJS/AdonisJS", "TypeORM/Prisma", "PostgreSQL", "JWT", "Jest"],
