@@ -1,4 +1,3 @@
-
 import type { Notification, LearningPath, Course, CourseModule, Lesson, School } from "@/lib/types";
 import images from '@/app/lib/placeholder-images.json';
 

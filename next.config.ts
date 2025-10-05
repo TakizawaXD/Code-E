@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
     'preflight-response': false,
   },
   images: {
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     remotePatterns: [
       {
         protocol: 'https',
@@ -76,5 +78,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-
-    
