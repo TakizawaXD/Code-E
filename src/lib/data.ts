@@ -493,3 +493,4 @@ const coursesWithDetailedModules = allSchools.flatMap(school =>
 export const courses: Course[] = coursesWithDetailedModules;
 const allLearningPathsList = allSchools.flatMap(school => school.learningPaths.map(path => ({ ...path, courses: undefined, description: path.description || "" })));
 export const learningPaths: Omit<LearningPath, 'courses'>[] = allLearningPathsList;
+
