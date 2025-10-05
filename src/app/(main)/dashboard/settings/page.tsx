@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
-import { doc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import {
   Form,
   FormControl,
@@ -23,8 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
-import type { UserProfile, UpdateUserProfile } from "@/lib/types";
-import { updateUser } from "./actions";
+import type { UserProfile } from "@/lib/types";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres." }).max(50),
@@ -67,23 +66,17 @@ export default function SettingsPage() {
   }, [userProfile, form]);
 
   async function onSubmit(data: ProfileFormValues) {
-    if (!user) return;
+    if (!user || !userProfileRef) return;
     
-    const profileData: UpdateUserProfile = {
-        name: data.name,
-        description: data.description || "",
-    };
-
     try {
-        const result = await updateUser(profileData);
-        if (result.success) {
-            toast({
-                title: "¡Perfil actualizado!",
-                description: "Tus cambios han sido guardados correctamente.",
-            });
-        } else {
-            throw new Error(result.error || "Ocurrió un error desconocido.");
-        }
+        await updateDoc(userProfileRef, {
+            name: data.name,
+            description: data.description || '',
+        });
+        toast({
+            title: "¡Perfil actualizado!",
+            description: "Tus cambios han sido guardados correctamente.",
+        });
     } catch (error: any) {
       console.error("Error updating profile:", error);
       toast({
