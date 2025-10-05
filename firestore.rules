@@ -3,66 +3,66 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Reglas para la colección de usuarios
+    // Regla para la colección de usuarios
     match /users/{userId} {
-      // Permite a cualquier usuario autenticado LEER (get) el perfil de cualquier otro usuario.
-      allow get: if request.auth != null;
-      
-      // Permite a un usuario CREAR (create) o ACTUALIZAR (update) únicamente su propio perfil.
-      allow create, update: if request.auth != null && request.auth.uid == userId;
+      // CUALQUIERA puede leer (get) y listar (list) los perfiles de usuario.
+      // Esto es necesario para la tabla de clasificación y para ver perfiles públicos.
+      allow read: if true;
+
+      // SOLO el usuario autenticado y propietario del documento puede escribir en él.
+      allow write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Permite a cualquier usuario autenticado LISTAR (list) la colección completa de usuarios.
-    // Esto es necesario para funcionalidades como la tabla de clasificación.
-    match /users/{document=**} {
-      allow list: if request.auth != null;
-    }
-
-    // Reglas para los hilos del foro
-    match /forumThreads/{threadId} {
-      // Cualquiera puede leer los hilos
-      allow read: if request.auth != null;
-      // Solo usuarios autenticados pueden crear hilos
-      allow create: if request.auth != null;
-      // Solo el autor puede actualizar su propio hilo (ej. postCount)
-      allow update: if request.auth != null; // Simplificado para permitir actualizaciones como conteo de posts
-    }
-
-    // Reglas para los posts dentro de un hilo
-    match /forumThreads/{threadId}/posts/{postId} {
-        // Cualquiera puede leer los posts
-        allow read: if request.auth != null;
-        // Solo usuarios autenticados pueden crear posts
-        allow create: if request.auth != null;
-    }
-
-    // Reglas para las notificaciones de usuario
-    match /users/{userId}/notifications/{notificationId} {
-        // Un usuario solo puede leer y escribir sus propias notificaciones
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // Reglas para los cursos
-    match /courses/{courseId} {
-      allow read: if true; // Cualquiera puede leer la información de los cursos
-      
-      match /modules/{moduleId} {
-        allow read: if true;
-
-        match /lessons/{lessonId} {
-          allow read: if true;
-
-          match /comments/{commentId} {
-            allow read: if true;
-            allow create: if request.auth != null;
-          }
-        }
-      }
-    }
-    
-    // Reglas para las rutas de aprendizaje
+    // Reglas para rutas de aprendizaje, cursos, módulos y lecciones
+    // Se permite la lectura pública para que todos puedan ver el catálogo de cursos.
     match /learningPaths/{pathId} {
-        allow read: if true; // Cualquiera puede leer las rutas
+      allow read: if true;
+      allow write: if false; // Proteger contra escritura desde el cliente
+    }
+
+    match /courses/{courseId} {
+      allow read: if true;
+      allow write: if false; // Proteger contra escritura desde el cliente
+    }
+
+    match /courses/{courseId}/modules/{moduleId} {
+      allow read: if true;
+      allow write: if false; // Proteger contra escritura desde el cliente
+    }
+    
+    match /courses/{courseId}/modules/{moduleId}/lessons/{lessonId} {
+      allow read: if true;
+      allow write: if false; // Proteger contra escritura desde el cliente
+    }
+
+    // Reglas para los comentarios de las lecciones
+    match /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}/comments/{commentId} {
+      allow read: if true;
+      // Solo usuarios autenticados pueden crear comentarios.
+      // Permitir que el autor del comentario lo edite/borre en el futuro.
+      allow write: if request.auth != null;
+    }
+
+    // Reglas para los foros
+    match /forumThreads/{threadId} {
+      allow read: if true;
+      // Solo usuarios autenticados pueden crear hilos.
+      // Solo el autor puede actualizar o borrar su propio hilo.
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && request.resource.data.authorId == request.auth.uid;
+    }
+
+    match /forumThreads/{threadId}/posts/{postId} {
+        allow read: if true;
+        // Solo usuarios autenticados pueden crear respuestas.
+        allow create: if request.auth != null;
+        allow update, delete: if request.auth != null && request.resource.data.authorId == request.auth.uid;
+    }
+
+    // Reglas para las notificaciones del usuario
+    match /users/{userId}/notifications/{notificationId} {
+        // Un usuario solo puede acceder a sus propias notificaciones
+        allow read, write: if request.auth != null && request.auth.uid == userId;
     }
   }
 }
