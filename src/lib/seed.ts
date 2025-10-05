@@ -22,7 +22,8 @@ async function seedDatabase() {
         console.log('Seeding learning paths...');
         learningPaths.forEach(path => {
             const pathRef = doc(db, 'learningPaths', path.id);
-            batch.set(pathRef, { title: path.title, description: path.description });
+            const { courses: pathCourses, ...pathData } = path; // Exclude courses from path document
+            batch.set(pathRef, pathData);
         });
         console.log(`${learningPaths.length} learning paths added to batch.`);
 
@@ -73,3 +74,5 @@ seedDatabase().then(() => {
 }).catch(() => {
     process.exit(1);
 });
+
+    

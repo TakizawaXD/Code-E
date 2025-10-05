@@ -1,5 +1,4 @@
 
-
 import { FieldValue, Timestamp } from "firebase/firestore";
 
 export type NavItem = {
@@ -74,6 +73,8 @@ export type UserProfile = {
   createdAt: FieldValue;
   points?: number;
   avatarUrl?: string;
+  description?: string;
+  role?: 'student' | 'instructor' | 'admin';
 };
 
 export type Notification = {
@@ -148,3 +149,5 @@ export type ForumPost = {
     authorAvatarUrl?: string;
     createdAt: Timestamp;
 };
+
+    

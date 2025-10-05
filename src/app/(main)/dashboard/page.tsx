@@ -91,9 +91,11 @@ export default function DashboardPage() {
                         <div className="flex-1">
                             <h1 className="text-2xl font-bold tracking-tight">{displayName}</h1>
                             <p className="text-muted-foreground text-sm">{user.email}</p>
-                            <Button variant="outline" size="sm" className="mt-2">
+                            <Button variant="outline" size="sm" className="mt-2" asChild>
+                               <Link href="/dashboard/settings">
                                 <Edit className="mr-2 h-3 w-3" />
                                 Editar Perfil
+                               </Link>
                             </Button>
                         </div>
                     </header>
@@ -160,3 +162,5 @@ export default function DashboardPage() {
         </div>
     );
 }
+
+    
