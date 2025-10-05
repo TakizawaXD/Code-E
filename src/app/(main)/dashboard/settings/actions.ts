@@ -1,8 +1,9 @@
+
 "use server";
 
-import { getAdminApp } from "@/firebase/admin";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { getAdminApp } from "@/firebase/admin";
 
 const updateProfileSchema = z.object({
   name: z.string().min(2).max(50),
@@ -12,9 +13,11 @@ const updateProfileSchema = z.object({
 export async function updateUser(
   userId: string,
   data: z.infer<typeof updateProfileSchema>
-) {
+): Promise<{ success: boolean; error?: string }> {
   try {
     const validatedData = updateProfileSchema.parse(data);
+    
+    // This will throw if the SDK is not initialized, which is caught below.
     const adminApp = getAdminApp();
     const firestore = adminApp.firestore();
 
@@ -25,21 +28,20 @@ export async function updateUser(
       description: validatedData.description || "",
     });
 
-    // Revalidate the path to show updated info if the user navigates back
+    // Revalidate paths to show updated info
     revalidatePath("/dashboard/settings");
     revalidatePath("/dashboard");
 
     return { success: true };
   } catch (error: any) {
     console.error("Error in server action updateUser:", error);
-    // Handle Zod errors specifically if you want
     if (error instanceof z.ZodError) {
-      return { success: false, error: "Datos inválidos." };
+      return { success: false, error: "Invalid data provided." };
     }
+    // Provide a more generic but helpful error message
     return {
       success: false,
-      error:
-        error.message || "No se pudo actualizar el perfil.",
+      error: error.message || "Could not update profile. Please check server logs.",
     };
   }
 }
