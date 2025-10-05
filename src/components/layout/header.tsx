@@ -163,6 +163,9 @@ export function Header() {
                     <Link href="/guides" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
                       Guía de Entrevistas
                     </Link>
+                     <Link href="/challenges" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                      Retos Semanales
+                    </Link>
                   </nav>
                 </div>
               </SheetContent>
