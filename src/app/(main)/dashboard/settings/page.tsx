@@ -3,7 +3,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useUser } from "@/firebase";
+import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
+import { doc, updateDoc } from "firebase/firestore";
 import {
   Form,
   FormControl,
@@ -28,7 +29,6 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useEffect, useTransition } from "react";
 import type { UserProfile } from "@/lib/types";
-import { updateUser } from "./actions";
 
 const profileFormSchema = z.object({
   name: z
@@ -46,65 +46,70 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 export default function SettingsPage() {
   const { user, isUserLoading } = useUser();
-  // We cannot get userProfile from a hook because this is a server component now.
-  // We'll fetch it inside the server action.
-
+  const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
+  const userProfileRef = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return doc(firestore, "users", user.uid);
+  }, [user, firestore]);
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userProfileRef);
+
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    // We will set default values once user data is available client-side
+    defaultValues: {
+      name: "",
+      username: "",
+      description: "",
+    },
   });
 
-  // Since we don't have the profile data initially, we can load it on the client
-  // and populate the form. This avoids passing server data to a client component directly.
   useEffect(() => {
-    if (user) {
-      // In a real app, you might fetch the user's current profile data here
-      // and use form.reset() to populate the fields.
-      // For now, we'll just use the basic info from the auth object.
+    if (userProfile) {
       form.reset({
+        name: userProfile.name || "",
+        username: userProfile.username || user?.email || "",
+        description: userProfile.description || "",
+      });
+    } else if (user) {
+      // Fallback if profile is not yet created but user exists
+       form.reset({
         name: user.displayName || "",
-        username: user.email || "", // Assuming username is email for now
-        description: "", // This would be fetched
+        username: user.email || "",
+        description: "",
       });
     }
-  }, [user, form]);
+  }, [user, userProfile, form]);
 
   async function onSubmit(data: ProfileFormValues) {
-    if (!user) return;
+    if (!user || !userProfileRef) return;
 
     startTransition(async () => {
       try {
-        const result = await updateUser(user.uid, {
+        await updateDoc(userProfileRef, {
           name: data.name,
           description: data.description || "",
         });
 
-        if (result && result.success) {
-          toast({
-            title: "¡Perfil actualizado!",
-            description: "Tus cambios han sido guardados correctamente.",
-          });
-          // Optionally, refresh the page or re-fetch data if needed
-          router.refresh();
-        } else {
-          throw new Error(result?.error || "Ocurrió un error desconocido.");
-        }
+        toast({
+          title: "¡Perfil actualizado!",
+          description: "Tus cambios han sido guardados correctamente.",
+        });
+        router.refresh();
       } catch (error: any) {
         console.error("Error updating profile:", error);
         toast({
           variant: "destructive",
           title: "Error al actualizar",
-          description: error.message,
+          description: error.message || "No se pudo actualizar el perfil. Revisa los permisos de Firestore.",
         });
       }
     });
   }
 
-  if (isUserLoading) {
+  if (isUserLoading || isProfileLoading) {
     return (
       <div className="container flex justify-center py-20">
         <Loader2 className="w-8 h-8 animate-spin" />
