@@ -5,12 +5,13 @@ import { useUser, useFirestore, useDoc, useMemoFirebase, useCollection } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2, Edit, BookOpen, GraduationCap } from "lucide-react";
-import type { UserProfile, ForumThread } from "@/lib/types";
+import type { UserProfile, ForumThread, Course } from "@/lib/types";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { collection, query, where, doc } from "firebase/firestore";
 import Link from "next/link";
 import { courses } from "@/lib/data";
+import { CourseCard } from "@/components/course-card";
 
 function UserStats() {
     const { user } = useUser();
@@ -55,7 +56,8 @@ function UserStats() {
 export default function DashboardPage() {
     const { user, isUserLoading } = useUser();
     
-    const suggestedCourse = useMemo(() => courses.find(c => c.id === 'english-entrevistas'), []);
+    // For demonstration, we'll show a few courses as "in progress"
+    const inProgressCourses: Course[] = useMemo(() => courses.slice(0, 4), []);
 
     if (isUserLoading) {
         return (
@@ -66,7 +68,12 @@ export default function DashboardPage() {
     }
     
     if (!user) {
-        return <div className="container py-8 text-center">Inicia sesión para ver tu panel.</div>;
+        // Redirect or show a message if the user is not logged in
+        return (
+            <div className="container py-8 text-center">
+                <p>Por favor, <Link href="/auth/login" className="text-primary hover:underline">inicia sesión</Link> para ver tu panel.</p>
+            </div>
+        );
     }
 
     const displayName = user.displayName || user.email;
@@ -76,13 +83,14 @@ export default function DashboardPage() {
         <div className="bg-secondary/40 min-h-screen">
             <div className="bg-background">
                 <div className="container py-6">
-                    <header className="flex items-center gap-4">
+                    <header className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
                         <Avatar className="h-20 w-20 border-4 border-primary">
                             {user.photoURL && <AvatarImage src={user.photoURL} alt={displayName || "User"} />}
                             <AvatarFallback className="text-3xl">{userInitial}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
                             <h1 className="text-2xl font-bold tracking-tight">{displayName}</h1>
+                            <p className="text-muted-foreground text-sm">{user.email}</p>
                             <Button variant="outline" size="sm" className="mt-2">
                                 <Edit className="mr-2 h-3 w-3" />
                                 Editar Perfil
@@ -98,24 +106,25 @@ export default function DashboardPage() {
                     <UserStats />
 
                     <section>
-                        <h2 className="text-xl font-bold mb-4">Tus cursos</h2>
-                        {suggestedCourse ? (
-                             <Card className="overflow-hidden">
-                                 <CardContent className="p-4 flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
-                                        <BookOpen className="w-6 h-6 text-muted-foreground"/>
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="text-xs text-muted-foreground">Te sugerimos iniciar con el</p>
-                                        <p className="font-semibold line-clamp-1">{suggestedCourse.title}</p>
-                                    </div>
-                                    <Button asChild size="sm" className="bg-green-500 hover:bg-green-600 flex-shrink-0">
-                                        <Link href={`/courses/${suggestedCourse.id}`}>Comenzar</Link>
-                                    </Button>
-                                 </CardContent>
-                             </Card>
+                        <h2 className="text-xl font-bold mb-4">Cursos en progreso</h2>
+                        {inProgressCourses.length > 0 ? (
+                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                {inProgressCourses.map(course => (
+                                    <CourseCard key={course.id} course={course} progress={Math.floor(Math.random() * 80) + 10} />
+                                ))}
+                             </div>
                         ): (
-                            <p className="text-muted-foreground">No tienes cursos en progreso.</p>
+                            <Card>
+                                <CardContent className="p-6 text-center">
+                                    <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-4 flex items-center justify-center">
+                                        <BookOpen className="w-8 h-8 text-muted-foreground"/>
+                                    </div>
+                                    <p className="text-muted-foreground mb-4">Aún no has comenzado ningún curso.</p>
+                                    <Button asChild>
+                                        <Link href="/courses">Explorar Cursos</Link>
+                                    </Button>
+                                </CardContent>
+                            </Card>
                         )}
                     </section>
 
@@ -126,8 +135,8 @@ export default function DashboardPage() {
                                 <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-4 flex items-center justify-center">
                                     <GraduationCap className="w-8 h-8 text-muted-foreground"/>
                                 </div>
-                                <p className="text-muted-foreground mb-4">Te recomendamos iniciar:</p>
-                                <Button variant="outline" asChild className="bg-green-100 dark:bg-green-900/50 border-green-500 text-green-700 dark:text-green-400 hover:bg-green-200">
+                                <p className="text-muted-foreground mb-4">Explora nuestras rutas de aprendizaje para convertirte en un experto.</p>
+                                <Button variant="outline" asChild>
                                     <Link href="/paths">Ver Carreras</Link>
                                 </Button>
                            </CardContent>
@@ -135,21 +144,13 @@ export default function DashboardPage() {
                     </section>
                     
                     <section>
-                        <h2 className="text-xl font-bold mb-4">Tutoriales</h2>
-                        <Card>
-                            <CardContent className="p-4">
-                                <p className="font-semibold">Aún no has creado tutoriales</p>
-                                <p className="text-sm text-muted-foreground mt-1">Comparte tus conocimientos con la comunidad.</p>
-                            </CardContent>
-                        </Card>
-                    </section>
-                    
-                    <section>
                         <h2 className="text-xl font-bold mb-4">Tus preguntas</h2>
                         <Card>
-                             <CardContent className="p-4">
-                                 <p className="font-semibold">Aún no has hecho preguntas</p>
-                                 <p className="text-sm text-muted-foreground mt-1">La comunidad está lista para ayudarte.</p>
+                             <CardContent className="p-6 text-center text-muted-foreground">
+                                 <p>Aún no has hecho preguntas en la comunidad.</p>
+                                 <Button variant="secondary" size="sm" asChild className="mt-4">
+                                    <Link href="/community">Ir a la comunidad</Link>
+                                 </Button>
                              </CardContent>
                         </Card>
                     </section>
