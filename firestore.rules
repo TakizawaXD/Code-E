@@ -1,304 +1,53 @@
-/**
- * @file Firestore Security Rules
- * @description This ruleset enforces a strict user-ownership model for user-specific data and allows public read access to course-related content.
- *
- * Data Structure:
- * - Users: /users/{userId} - Each user has their own document and subcollections.
- * - Courses: /courses/{courseId} - Publicly readable course information.
- * - Learning Paths: /learningPaths/{learningPathId} - Publicly readable learning paths.
- * - Forum Threads: /forumThreads/{threadId} - Publicly readable forum threads.
- *
- * Key Security Decisions:
- * - Users can only read and write their own user document and subcollections.
- * - Listing of all users is denied.
- * - Courses, learning paths, and forum threads are publicly readable but require authentication for creation, updates, and deletion.
- *
- * Denormalization for Authorization:
- * - The rules rely on the `request.auth.uid` to match the `{userId}` in the path for user-specific data.
- */
+
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    /**
-     * @description Prevents listing all users.
-     * @path /databases/{database}/documents/users
-     * @allow (get) Anyone can get a specific user if they know the userId.
-     * @deny (list) Listing all users is not allowed.
-     * @principle Prevents information disclosure by restricting user enumeration.
-     */
-    match /users {
-        allow list: if false;
-    }
-
-    /**
-     * @description Allows users to read and write their own user document.
-     * @path /databases/{database}/documents/users/{userId}
-     * @allow (create) User can create their own profile if the userId matches their auth.
-     * @allow (get) User can read their own profile.
-     * @allow (update) User can update their own profile.
-     * @allow (delete) User can delete their own profile.
-     * @deny (create) User cannot create a profile for another user.
-     * @deny (update) User cannot update another user's profile.
-     * @deny (delete) User cannot delete another user's profile.
-     * @principle Enforces document ownership for writes.
-     */
+    // Allow logged-in users to read public user profiles for leaderboards, etc.
+    // Allow users to update their own profile.
     match /users/{userId} {
-      allow get: if true;
-      allow create: if isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+      allow read: if request.auth != null;
+      allow update: if request.auth != null && request.auth.uid == userId;
     }
 
-    /**
-     * @description Allows users to manage their own course progress.
-     * @path /databases/{database}/documents/users/{userId}/progress/{progressId}
-     * @allow (create) User can create their own progress documents.
-     * @allow (get) User can read their own progress documents.
-     * @allow (list) User can list their own progress documents.
-     * @allow (update) User can update their own progress documents.
-     * @allow (delete) User can delete their own progress documents.
-     * @deny (create) User cannot create progress documents for another user.
-     * @deny (get) User cannot read progress documents for another user.
-     * @deny (list) User cannot list progress documents for another user.
-     * @deny (update) User cannot update progress documents for another user.
-     * @deny (delete) User cannot delete progress documents for another user.
-     * @principle Enforces document ownership for writes.
-     */
-    match /users/{userId}/progress/{progressId} {
-      allow get, list: if isOwner(userId);
-      allow create: if isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+    // Allow anyone to read courses, modules, and lessons
+    match /learningPaths/{pathId} {
+      allow read: if true;
     }
-
-    /**
-     * @description Allows users to manage their own notifications.
-     * @path /databases/{database}/documents/users/{userId}/notifications/{notificationId}
-     * @allow (create) User can create their own notifications.
-     * @allow (get) User can read their own notifications.
-     * @allow (list) User can list their own notifications.
-     * @allow (update) User can update their own notifications.
-     * @allow (delete) User can delete their own notifications.
-     * @deny (create) User cannot create notifications for another user.
-     * @deny (get) User cannot read notifications for another user.
-     * @deny (list) User cannot list notifications for another user.
-     * @deny (update) User cannot update notifications for another user.
-     * @deny (delete) User cannot delete notifications for another user.
-     * @principle Enforces document ownership for writes.
-     */
-    match /users/{userId}/notifications/{notificationId} {
-      allow get, list: if isOwner(userId);
-      allow create: if isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
-    }
-
-     /**
-      * @description Allows users to manage their own gamification stats.
-      * @path /databases/{database}/documents/users/{userId}/gamification/{statsId}
-      * @allow (create) User can create their own gamification stats.
-      * @allow (get) User can read their own gamification stats.
-      * @allow (list) User can list their own gamification stats.
-      * @allow (update) User can update their own gamification stats.
-      * @allow (delete) User can delete their own gamification stats.
-      * @deny (create) User cannot create gamification stats for another user.
-      * @deny (get) User cannot read gamification stats for another user.
-      * @deny (list) User cannot list gamification stats for another user.
-      * @deny (update) User cannot update gamification stats for another user.
-      * @deny (delete) User cannot delete gamification stats for another user.
-      * @principle Enforces document ownership for writes.
-      */
-    match /users/{userId}/gamification/{statsId} {
-      allow get, list: if isOwner(userId);
-      allow create: if isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
-    }
-
-     /**
-      * @description Allows users to manage their own badges.
-      * @path /databases/{database}/documents/users/{userId}/badges/{userBadgeId}
-      * @allow (create) User can create their own badges.
-      * @allow (get) User can read their own badges.
-      * @allow (list) User can list their own badges.
-      * @allow (update) User can update their own badges.
-      * @allow (delete) User can delete their own badges.
-      * @deny (create) User cannot create badges for another user.
-      * @deny (get) User cannot read badges for another user.
-      * @deny (list) User cannot list badges for another user.
-      * @deny (update) User cannot update badges for another user.
-      * @deny (delete) User cannot delete badges for another user.
-      * @principle Enforces document ownership for writes.
-      */
-    match /users/{userId}/badges/{userBadgeId} {
-      allow get, list: if isOwner(userId);
-      allow create: if isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description Allows public read access to learning paths, but requires authentication for writes.
-     * @path /databases/{database}/documents/learningPaths/{learningPathId}
-     * @allow (get) Anyone can read a learning path.
-     * @allow (list) Anyone can list learning paths.
-     * @allow (create) Only authenticated users can create learning paths.
-     * @allow (update) Only authenticated users can update learning paths.
-     * @allow (delete) Only authenticated users can delete learning paths.
-     * @deny (create) Non-authenticated users cannot create learning paths.
-     * @deny (update) Non-authenticated users cannot update learning paths.
-     * @deny (delete) Non-authenticated users cannot delete learning paths.
-     * @principle Public read access with authentication required for writes.
-     */
-    match /learningPaths/{learningPathId} {
-      allow get, list: if true;
-      allow create: if isSignedIn();
-      allow update: if isSignedIn();
-      allow delete: if isSignedIn();
-    }
-
-    /**
-     * @description Allows public read access to courses, but requires authentication for writes.
-     * @path /databases/{database}/documents/courses/{courseId}
-     * @allow (get) Anyone can read a course.
-     * @allow (list) Anyone can list courses.
-     * @allow (create) Only authenticated users can create courses.
-     * @allow (update) Only authenticated users can update courses.
-     * @allow (delete) Only authenticated users can delete courses.
-     * @deny (create) Non-authenticated users cannot create courses.
-     * @deny (update) Non-authenticated users cannot update courses.
-     * @deny (delete) Non-authenticated users cannot delete courses.
-     * @principle Public read access with authentication required for writes.
-     */
+    
     match /courses/{courseId} {
-      allow get, list: if true;
-      allow create: if isSignedIn();
-      allow update: if isSignedIn();
-      allow delete: if isSignedIn();
+      allow read: if true;
     }
 
-    /**
-     * @description Allows public read access to course modules, but requires authentication for writes.
-     * @path /databases/{database}/documents/courses/{courseId}/modules/{moduleId}
-     * @allow (get) Anyone can read a course module.
-     * @allow (list) Anyone can list course modules.
-     * @allow (create) Only authenticated users can create course modules.
-     * @allow (update) Only authenticated users can update course modules.
-     * @allow (delete) Only authenticated users can delete course modules.
-     * @deny (create) Non-authenticated users cannot create course modules.
-     * @deny (update) Non-authenticated users cannot update course modules.
-     * @deny (delete) Non-authenticated users cannot delete course modules.
-     * @principle Public read access with authentication required for writes.
-     */
     match /courses/{courseId}/modules/{moduleId} {
-      allow get, list: if true;
-      allow create: if isSignedIn();
-      allow update: if isSignedIn();
-      allow delete: if isSignedIn();
+      allow read: if true;
     }
 
-    /**
-     * @description Allows public read access to lessons, but requires authentication for writes.
-     * @path /databases/{database}/documents/courses/{courseId}/modules/{moduleId}/lessons/{lessonId}
-     * @allow (get) Anyone can read a lesson.
-     * @allow (list) Anyone can list lessons.
-     * @allow (create) Only authenticated users can create lessons.
-     * @allow (update) Only authenticated users can update lessons.
-     * @allow (delete) Only authenticated users can delete lessons.
-     * @deny (create) Non-authenticated users cannot create lessons.
-     * @deny (update) Non-authenticated users cannot update lessons.
-     * @deny (delete) Non-authenticated users cannot delete lessons.
-     * @principle Public read access with authentication required for writes.
-     */
     match /courses/{courseId}/modules/{moduleId}/lessons/{lessonId} {
-      allow get, list: if true;
-      allow create: if isSignedIn();
-      allow update: if isSignedIn();
-      allow delete: if isSignedIn();
+      allow read: if true;
     }
 
-      /**
-       * @description Allows public read access to comments for lessons, but requires authentication for writes.
-       * @path /databases/{database}/documents/courses/{courseId}/modules/{moduleId}/lessons/{lessonId}/comments/{commentId}
-       * @allow (get) Anyone can read a comment.
-       * @allow (list) Anyone can list comments.
-       * @allow (create) Only authenticated users can create comments.
-       * @allow (update) Only authenticated users can update comments.
-       * @allow (delete) Only authenticated users can delete comments.
-       * @deny (create) Non-authenticated users cannot create comments.
-       * @deny (update) Non-authenticated users cannot update comments.
-       * @deny (delete) Non-authenticated users cannot delete comments.
-       * @principle Public read access with authentication required for writes.
-       */
-    match /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}/comments/{commentId} {
-        allow get, list: if true;
-        allow create: if isSignedIn();
-        allow update: if isSignedIn();
-        allow delete: if isSignedIn();
-    }
-
-      /**
-       * @description Allows public read access to forum threads, but requires authentication for writes.
-       * @path /databases/{database}/documents/forumThreads/{threadId}
-       * @allow (get) Anyone can read a thread.
-       * @allow (list) Anyone can list threads.
-       * @allow (create) Only authenticated users can create threads.
-       * @allow (update) Only authenticated users can update threads.
-       * @allow (delete) Only authenticated users can delete threads.
-       * @deny (create) Non-authenticated users cannot create threads.
-       * @deny (update) Non-authenticated users cannot update threads.
-       * @deny (delete) Non-authenticated users cannot delete threads.
-       * @principle Public read access with authentication required for writes.
-       */
+    // Forum threads can be read by anyone, but only created/updated by logged-in users.
     match /forumThreads/{threadId} {
-      allow get, list: if true;
-      allow create: if isSignedIn();
-      allow update: if isSignedIn();
-      allow delete: if isSignedIn();
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null;
     }
 
-      /**
-       * @description Allows public read access to posts within a thread, but requires authentication for writes.
-       * @path /databases/{database}/documents/forumThreads/{threadId}/posts/{postId}
-       * @allow (get) Anyone can read a post.
-       * @allow (list) Anyone can list posts.
-       * @allow (create) Only authenticated users can create posts.
-       * @allow (update) Only authenticated users can update posts.
-       * @allow (delete) Only authenticated users can delete posts.
-       * @deny (create) Non-authenticated users cannot create posts.
-       * @deny (update) Non-authenticated users cannot update posts.
-       * @deny (delete) Non-authenticated users cannot delete posts.
-       * @principle Public read access with authentication required for writes.
-       */
+    // Forum posts can be read by anyone, but only created by logged-in users.
     match /forumThreads/{threadId}/posts/{postId} {
-      allow get, list: if true;
-      allow create: if isSignedIn();
-      allow update: if isSignedIn();
-      allow delete: if isSignedIn();
+        allow read: if true;
+        allow create: if request.auth != null;
+    }
+    
+    // Users can only manage their own progress and notifications.
+    match /users/{userId}/progress/{progressId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    /**
-     * @description Allows public read access to Badges, but requires authentication for writes.
-     * @path /databases/{database}/documents/badges/{badgeId}
-     */
-    match /badges/{badgeId} {
-        allow get, list: if true;
-        allow create: if isSignedIn();
-        allow update: if isSignedIn();
-        allow delete: if isSignedIn();
-    }
-
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-
-    function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
+    match /users/{userId}/notifications/{notificationId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
     }
   }
 }
