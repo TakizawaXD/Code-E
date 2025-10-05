@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -16,8 +17,13 @@ import { useAuth, useFirebase, useUser } from "@/firebase";
 import { CreditCard, LogOut, Settings, User as UserIcon } from "lucide-react";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import type { UserProfile } from "@/lib/types";
 
-export function UserNav() {
+interface UserNavProps {
+  userProfile: UserProfile | undefined;
+}
+
+export function UserNav({ userProfile }: UserNavProps) {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
   const router = useRouter();
@@ -40,15 +46,20 @@ export function UserNav() {
   }
 
   const userInitial = user.displayName ? user.displayName.charAt(0) : user.email?.charAt(0).toUpperCase();
+  const displayName = user.displayName || user.email?.split('@')[0];
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-9 w-9">
-            {user.photoURL && <AvatarImage src={user.photoURL} alt={user.displayName || "User"} />}
-            <AvatarFallback>{userInitial}</AvatarFallback>
-          </Avatar>
+         <Button variant="ghost" className="relative h-10 w-auto px-2 space-x-2">
+            <Avatar className="h-8 w-8">
+                {user.photoURL && <AvatarImage src={user.photoURL} alt={user.displayName || "User"} />}
+                <AvatarFallback>{userInitial}</AvatarFallback>
+            </Avatar>
+            <div className="hidden md:flex flex-col items-start">
+                <span className="text-xs font-bold">{displayName}</span>
+                <span className="text-xs text-muted-foreground">{userProfile?.points || 0}pts</span>
+            </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>

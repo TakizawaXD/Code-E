@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import Link from "next/link";
@@ -18,19 +19,26 @@ import { MainNav } from "@/components/layout/main-nav";
 import { UserNav } from "@/components/layout/user-nav";
 import { CodeELogo } from "@/components/icons";
 import { useFirebase, useUser, useCollection, useFirestore, useMemoFirebase } from "@/firebase";
-import type { Notification } from "@/lib/types";
+import type { Notification, UserProfile } from "@/lib/types";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { collection, query, orderBy, doc, updateDoc } from "firebase/firestore";
+import { collection, query, orderBy, doc, updateDoc, writeBatch, where } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 export function Header() {
   const { user } = useUser();
   const firestore = useFirestore();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+
+  const userProfileQuery = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return query(collection(firestore, "users"), where("email", "==", user.email));
+  }, [user, firestore]);
+  const { data: userProfileData } = useCollection<UserProfile>(userProfileQuery);
+  const userProfile = userProfileData?.[0];
 
   const notificationsQuery = useMemoFirebase(() => {
     if (!user || !firestore) return null;
@@ -50,7 +58,8 @@ export function Header() {
   };
 
   const handleMarkNotificationsAsRead = async () => {
-    if (!user || !firestore || !notifications) return;
+    if (!user || !firestore || !notifications || !hasUnread) return;
+    
     const unreadNotifications = notifications.filter(n => !n.read);
     if (unreadNotifications.length === 0) return;
 
@@ -77,14 +86,17 @@ export function Header() {
           <div className="relative hidden w-full max-w-sm items-center md:flex">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Buscar cursos..."
+              placeholder="¿Qué quieres aprender?"
               className="pl-9"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleSearch}
             />
           </div>
-          <nav className="flex items-center space-x-2">
+          <nav className="flex items-center space-x-1 md:space-x-2">
+            <Button variant="ghost" asChild>
+                <Link href="/pricing">Planes</Link>
+            </Button>
             <ThemeToggle />
             <DropdownMenu onOpenChange={(open) => { if(open) { handleMarkNotificationsAsRead() }}}>
               <DropdownMenuTrigger asChild>
@@ -115,7 +127,7 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <UserNav />
+            <UserNav userProfile={userProfile} />
 
             <Sheet>
               <SheetTrigger asChild>

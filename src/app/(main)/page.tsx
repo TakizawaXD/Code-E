@@ -13,7 +13,6 @@ import { cn } from "@/lib/utils";
 import images from "@/lib/placeholder-images.json";
 
 function PopularCourses() {
-    // Taking the first 3 courses as "popular"
     const courses = allCourses.slice(0, 3);
 
     return (
@@ -57,7 +56,7 @@ function LearningCategories() {
                 </div>
                 <div className="mx-auto grid grid-cols-2 gap-4 py-12 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                     {learningCategories.map((category) => (
-                        <Link key={category.name} href="/paths">
+                        <Link key={category.name} href={`/paths#${category.name.toLowerCase().replace(/ y | & /g, '-').replace(/ /g, '-')}`}>
                             <Card className="h-full transform transition-all duration-300 hover:scale-105 hover:shadow-lg flex flex-col items-center justify-center p-4 text-center">
                                 <div className="mb-3 text-primary h-8 w-8 flex items-center justify-center">{category.icon}</div>
                                 <CardTitle className="text-sm font-semibold">{category.name}</CardTitle>
@@ -70,60 +69,9 @@ function LearningCategories() {
     )
 }
 
-const codeExamples = [
-    { language: 'ruby', code: 'puts "Hola Mundo"' },
-    { language: 'julia', code: 'println("Hola Mundo")' },
-    { language: 'r', code: 'print("Hola Mundo")' },
-    { language: 'go', code: 'package main\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hola Mundo")\n}' },
-    { language: 'perl', code: 'print "Hola Mundo\\n";' },
-    { language: 'lua', code: 'print("Hola Mundo")' },
-    { language: 'swift', code: 'print("Hola Mundo")' },
-    { language: 'kotlin', code: 'fun main() {\n    println("Hola Mundo")\n}' },
-    { language: 'php', code: '<?php\n  echo "Hola Mundo";\n?>' },
-    { language: 'scala', code: 'object HelloWorld {\n  def main(args: Array[String]): Unit = {\n    println("Hola Mundo")\n  }\n}' }
-];
-
-function CodeExamples() {
-    return (
-        <section className="w-full py-12 md:py-24 lg:py-32">
-            <div className="container px-4 md:px-6">
-                <div className="flex flex-col items-center justify-center space-y-4 text-center">
-                    <div className="space-y-2">
-                        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl font-headline">Ejemplos de "Hola Mundo"</h2>
-                        <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                            Un primer paso en cualquier lenguaje de programación.
-                        </p>
-                    </div>
-                </div>
-                <div className="mx-auto grid grid-cols-1 gap-6 py-12 sm:grid-cols-2 lg:grid-cols-3">
-                    {codeExamples.map((example) => (
-                        <div key={example.language} className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden">
-                            <div className="flex items-center justify-between bg-muted px-4 py-2 border-b">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                </div>
-                                <span className="text-sm font-medium text-muted-foreground capitalize">{example.language}</span>
-                            </div>
-                            <div className="p-4 bg-zinc-900">
-                                <pre className="text-sm text-white font-mono overflow-x-auto">
-                                    <code>
-                                        {example.code}
-                                    </code>
-                                </pre>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    )
-}
-
 
 export default function HomePage() {
-  const learningPaths = allLearningPaths;
+  const learningPaths = allLearningPaths.slice(0, 5); // Show first 5 paths on home
   const heroImage = images['hero-image'];
 
   return (
@@ -131,20 +79,20 @@ export default function HomePage() {
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 bg-secondary/50">
           <div className="container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
+            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-[1fr_550px]">
               <div className="flex flex-col justify-center space-y-4">
-                <div className="space-y-2">
-                  <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none font-headline">
-                    Desbloquea tu Potencial en Programación
+                <div className="space-y-4">
+                  <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none font-headline">
+                    Domina las habilidades más demandadas del mercado laboral
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                    Únete a Code-E y transforma tu carrera con cursos diseñados por expertos de la industria. Aprende a tu propio ritmo.
+                    Aprende sin límite con los más de 1.900 cursos online de programación, IA, inglés, marketing, ciberseguridad, liderazgo y más.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
                   <Button asChild size="lg" className="group">
-                    <Link href="/courses">
-                      Explorar Cursos
+                    <Link href="/paths">
+                      Explorar Rutas
                       <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                     </Link>
                   </Button>
@@ -155,7 +103,7 @@ export default function HomePage() {
                 width="600"
                 height="400"
                 alt="Hero"
-                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last lg:aspect-square"
+                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last"
                 data-ai-hint="programming abstract"
                 priority
               />
@@ -164,8 +112,6 @@ export default function HomePage() {
         </section>
 
         <LearningCategories />
-        
-        <CodeExamples />
 
         <section className="w-full py-12 md:py-24 lg:py-32 bg-secondary/50">
           <div className="container px-4 md:px-6">
@@ -182,32 +128,6 @@ export default function HomePage() {
                 <Button asChild variant="outline">
                     <Link href="/courses">Ver todos los cursos</Link>
                 </Button>
-            </div>
-          </div>
-        </section>
-
-        <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl font-headline">Rutas de Aprendizaje</h2>
-                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Sigue nuestras rutas de aprendizaje estructuradas para dominar una habilidad desde los fundamentos hasta un nivel avanzado.
-                </p>
-              </div>
-            </div>
-            <div className="mx-auto grid grid-cols-1 gap-6 py-12 sm:grid-cols-2 lg:grid-cols-1">
-              {!learningPaths && <p>Cargando...</p>}
-              {learningPaths?.map((path) => (
-                <Link key={path.id} href={`/paths#${path.id}`}>
-                  <Card className="h-full transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                    <CardHeader>
-                      <CardTitle>{path.title}</CardTitle>
-                      <CardDescription>{path.description}</CardDescription>
-                    </CardHeader>
-                  </Card>
-                </Link>
-              ))}
             </div>
           </div>
         </section>
