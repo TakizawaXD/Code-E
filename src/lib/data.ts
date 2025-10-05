@@ -1,6 +1,6 @@
 
 import type { Notification, LearningPath, Course, CourseModule, Lesson, School } from "@/lib/types";
-import images from './placeholder-images.json';
+import images from '@/app/lib/placeholder-images.json';
 
 // This file now only contains types and potentially non-user-specific, non-db data.
 // All user, course, and learning path data will be fetched from Firestore.

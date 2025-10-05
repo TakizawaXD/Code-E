@@ -9,7 +9,7 @@ import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/com
 import { CourseCard } from "@/components/course-card";
 import { courses as allCourses, learningPaths as allLearningPaths } from "@/lib/data";
 import { cn } from "@/lib/utils";
-import images from "@/lib/placeholder-images.json";
+import images from "@/app/lib/placeholder-images.json";
 
 function PopularCourses() {
     const courses = allCourses.slice(0, 3);
