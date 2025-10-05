@@ -1,44 +1,33 @@
 
 "use client";
 
-import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from "@/firebase";
+import { useUser } from "@/firebase";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CourseCard } from "@/components/course-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Award, BookOpen, Download, Loader2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import type { Course, Progress, UserProfile } from "@/lib/types";
+import type { Course } from "@/lib/types";
+import { courses as allCourses } from "@/lib/data";
 import { useMemo } from "react";
-import { collection, query, doc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
     const { user, isUserLoading } = useUser();
-    const firestore = useFirestore();
-
-    const userProfileQuery = useMemoFirebase(() => {
-        if (!user || !firestore) return null;
-        return doc(firestore, `users/${user.uid}`);
-    }, [firestore, user]);
-
-    const { data: userProfile } = useDoc<UserProfile>(userProfileQuery);
-
-    const progressQuery = useMemoFirebase(() => {
-        if (!user || !firestore) return null;
-        return collection(firestore, `users/${user.uid}/progress`);
-    }, [firestore, user]);
-
-    const coursesQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
-        return collection(firestore, "courses");
-    }, [firestore]);
-
-    const { data: progressData, isLoading: isProgressLoading } = useCollection<Progress>(progressQuery);
-    const { data: allCourses, isLoading: areCoursesLoading } = useCollection<Course>(coursesQuery);
+    
+    // Mocking progress data
+    const progressData = useMemo(() => {
+        if (!user) return [];
+        // In a real app, this would be fetched from Firestore
+        return [
+            { courseId: 'prog-python', progress: 60, completed: false },
+            { courseId: 'web-react', progress: 100, completed: true },
+        ];
+    }, [user]);
 
     const { coursesInProgress, completedCourses } = useMemo(() => {
-        if (!progressData || !allCourses) return { coursesInProgress: [], completedCourses: [] };
+        if (!progressData) return { coursesInProgress: [], completedCourses: [] };
 
         const inProgress: (Course & { progress: number })[] = [];
         const completed: Course[] = [];
@@ -46,24 +35,18 @@ export default function DashboardPage() {
         progressData.forEach(progressItem => {
             const course = allCourses.find(c => c.id === progressItem.courseId);
             if (!course) return;
-            
-            // This is a temporary fix as modules are not being loaded with the course object from the collection
-            const totalLessons = 10; 
 
             if (progressItem.completed) {
                 completed.push(course);
             } else {
-                 const progressPercentage = totalLessons > 0 
-                    ? Math.round((progressItem.completedLessons.length / totalLessons) * 100) 
-                    : 0;
-                inProgress.push({ ...course, progress: progressPercentage });
+                inProgress.push({ ...course, progress: progressItem.progress });
             }
         });
 
         return { coursesInProgress: inProgress, completedCourses: completed };
-    }, [progressData, allCourses]);
+    }, [progressData]);
     
-    if (isUserLoading || isProgressLoading || areCoursesLoading) {
+    if (isUserLoading) {
         return (
             <div className="container py-8 text-center flex justify-center items-center h-64">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -75,7 +58,7 @@ export default function DashboardPage() {
         return <div className="container py-8 text-center">Inicia sesión para ver tu panel.</div>;
     }
 
-    const displayName = user.displayName || userProfile?.name || user.email;
+    const displayName = user.displayName || user.email;
     const userInitial = displayName ? displayName.charAt(0).toUpperCase() : '?';
 
     return (

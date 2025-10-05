@@ -1,3 +1,4 @@
+
 import { FieldValue, Timestamp } from "firebase/firestore";
 
 export type NavItem = {
@@ -47,6 +48,7 @@ export type Course = {
   instructorAvatarUrl: string;
   imageUrl: string;
   pathId: string;
+  modules: CourseModule[];
 };
 
 export type LearningPath = {
@@ -68,7 +70,7 @@ export type Notification = {
   id: string;
   title: string;
   description: string;
-  date: Timestamp;
+  date: Date | Timestamp;
 };
 
 export type Progress = {

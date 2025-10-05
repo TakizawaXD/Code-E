@@ -4,9 +4,9 @@
 import { notFound, useSearchParams, useRouter } from "next/navigation";
 import React, { useState, useMemo, useEffect, Suspense } from "react";
 import Image from "next/image";
-import { useFirebase, useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from "@/firebase";
-import { setDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
-import type { Course, Lesson, CourseModule, Progress } from "@/lib/types";
+import { useUser } from "@/firebase";
+import { courses as allCourses } from "@/lib/data";
+import type { Course, Lesson, CourseModule } from "@/lib/types";
 import {
   Accordion,
   AccordionContent,
@@ -28,8 +28,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { QuizComponent } from "@/components/quiz";
 import { Badge } from "@/components/ui/badge";
-import { collection, query, where, doc, getDocs, serverTimestamp, orderBy, increment } from "firebase/firestore";
-import { CommentSection } from "@/components/comment-section";
 
 function getNextLesson(modules: CourseModule[], currentModuleId: string, currentLessonId: string): { moduleId: string; lessonId: string } | null {
   const currentModuleIndex = modules.findIndex(m => m.id === currentModuleId);
@@ -58,68 +56,10 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { user } = useUser();
-    const firestore = useFirestore();
 
-    const courseRef = useMemoFirebase(() => {
-        if (!firestore) return null;
-        return doc(firestore, `courses/${courseId}`);
-    }, [firestore, courseId]);
-
-    const modulesRef = useMemoFirebase(() => {
-        if(!courseRef) return null;
-        return collection(courseRef, "modules");
-    }, [courseRef]);
-    
-    const modulesQuery = useMemoFirebase(() => {
-        if(!modulesRef) return null;
-        return query(modulesRef, orderBy("order"));
-    }, [modulesRef]);
-    
-    const { data: course, isLoading: isCourseLoading } = useDoc<Course>(courseRef);
-    const { data: modules, isLoading: areModulesLoading } = useCollection<CourseModule>(modulesQuery);
-    
-    // This part is tricky. We need to fetch lessons for ALL modules.
-    // For simplicity, we'll fetch them after modules are loaded.
-    const [allLessons, setAllLessons] = useState<{[moduleId: string]: Lesson[]}>({});
-    const [areLessonsLoading, setAreLessonsLoading] = useState(true);
-
-    useEffect(() => {
-        if (!firestore || !modules || modules.length === 0) {
-            if(!areModulesLoading) setAreLessonsLoading(false);
-            return;
-        };
-
-        setAreLessonsLoading(true);
-        const fetchAllLessons = async () => {
-            const lessonsData: {[moduleId: string]: Lesson[]} = {};
-            for (const module of modules) {
-                const lessonsRef = collection(firestore, `courses/${courseId}/modules/${module.id}/lessons`);
-                const lessonsQuery = query(lessonsRef, orderBy("order"));
-                const lessonsSnapshot = await getDocs(lessonsQuery);
-                lessonsData[module.id] = lessonsSnapshot.docs.map(d => ({ id: d.id, ...d.data() } as Lesson));
-            }
-            setAllLessons(lessonsData);
-            setAreLessonsLoading(false);
-        };
-        fetchAllLessons();
-    }, [firestore, modules, courseId, areModulesLoading]);
-
-
-    const fullModules = useMemo(() => {
-        if (!modules) return [];
-        return modules.map(m => ({
-            ...m,
-            lessons: allLessons[m.id] || []
-        }));
-    }, [modules, allLessons]);
-
-    const progressQuery = useMemoFirebase(() => {
-        if (!user || !firestore || !courseId) return null;
-        return query(collection(firestore, `users/${user.uid}/progress`), where("courseId", "==", courseId));
-    }, [firestore, user, courseId]);
-
-    const { data: progressData } = useCollection<Progress>(progressQuery);
-    const progress = useMemo(() => progressData?.[0], [progressData]);
+    const course = useMemo(() => {
+        return allCourses.find((c) => c.id === courseId);
+    }, [courseId]);
 
     const [currentLesson, setCurrentLesson] = useState<{
         moduleId: string;
@@ -127,34 +67,34 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
     } | null>(null);
 
     const { lesson, module } = useMemo(() => {
-        if (!fullModules || !currentLesson) return { lesson: null, module: null };
-        const foundModule = fullModules.find(m => m.id === currentLesson.moduleId);
+        if (!course || !currentLesson) return { lesson: null, module: null };
+        const foundModule = course.modules.find(m => m.id === currentLesson.moduleId);
         if (!foundModule) return { lesson: null, module: null };
         const foundLesson = foundModule.lessons.find(l => l.id === currentLesson.lessonId);
         return { lesson: foundLesson, module: foundModule };
-    }, [fullModules, currentLesson]);
+    }, [course, currentLesson]);
 
     useEffect(() => {
-        if (areModulesLoading || areLessonsLoading) return;
         const moduleId = searchParams.get("module");
         const lessonId = searchParams.get("lesson");
 
         if (moduleId && lessonId) {
             setCurrentLesson({ moduleId, lessonId });
-        } else if (fullModules.length > 0 && fullModules[0].lessons.length > 0) {
-            const firstModule = fullModules[0];
+        } else if (course && course.modules.length > 0 && course.modules[0].lessons.length > 0) {
+            const firstModule = course.modules[0];
             const firstLesson = firstModule.lessons[0];
             handleSetLesson(firstModule.id, firstLesson.id);
         }
-    }, [searchParams, fullModules, areModulesLoading, areLessonsLoading]);
+    }, [searchParams, course]);
 
-    const completedLessons = useMemo(() => new Set(progress?.completedLessons || []), [progress]);
+    // Mock progress
+    const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
 
     const lastCompletedLessonIndex = useMemo(() => {
-        if (!fullModules || !progress || progress.completedLessons.length === 0) return -1;
+        if (!course || completedLessons.size === 0) return -1;
         let flatIndex = -1;
         let lastIndex = -1;
-        for (const mod of fullModules) {
+        for (const mod of course.modules) {
             for (const less of mod.lessons) {
                 flatIndex++;
                 if (completedLessons.has(less.id)) {
@@ -163,65 +103,28 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
             }
         }
         return lastIndex;
-    }, [fullModules, progress, completedLessons]);
+    }, [course, completedLessons]);
 
     const handleSetLesson = (moduleId: string, lessonId: string) => {
-        if (!courseId) return;
+        if (!course) return;
         setCurrentLesson({ moduleId, lessonId });
-        const newUrl = `/courses/${courseId}?module=${moduleId}&lesson=${lessonId}`;
+        const newUrl = `/courses/${course.id}?module=${moduleId}&lesson=${lessonId}`;
         router.push(newUrl, { scroll: false });
     };
 
-    const handleMarkAsCompleted = async () => {
-        if (!user || !course || !fullModules || !currentLesson || !firestore || completedLessons.has(currentLesson.lessonId)) return;
-    
-        const nextLesson = getNextLesson(fullModules, currentLesson.moduleId, currentLesson.lessonId);
-        const newCompletedLessons = Array.from(new Set([...completedLessons, currentLesson.lessonId]));
-        const isCourseComplete = !nextLesson;
-    
-        const progressRef = collection(firestore, `users/${user.uid}/progress`);
-        const q = query(progressRef, where("courseId", "==", course.id));
-        const querySnapshot = await getDocs(q);
-    
-        // Award points
-        const userRef = doc(firestore, "users", user.uid);
-        setDocumentNonBlocking(userRef, { points: increment(10) }, { merge: true });
-    
-        if (querySnapshot.empty) {
-            const progressDocRef = doc(progressRef); // Auto-generate ID
-             setDocumentNonBlocking(progressDocRef, {
-                courseId: course.id,
-                completedLessons: newCompletedLessons,
-                completed: isCourseComplete,
-                startedAt: serverTimestamp(),
-            }, { merge: true });
-        } else {
-            const progressDocRef = querySnapshot.docs[0].ref;
-            setDocumentNonBlocking(progressDocRef, {
-                completedLessons: newCompletedLessons,
-                completed: isCourseComplete,
-                lastUpdatedAt: serverTimestamp(),
-                ...(isCourseComplete && { completedAt: serverTimestamp() })
-            }, { merge: true });
-        }
-    
-        if (isCourseComplete) {
-            // Award bonus points for completing a course
-            setDocumentNonBlocking(userRef, { points: increment(50) }, { merge: true });
-    
-            const notificationsRef = collection(firestore, `users/${user.uid}/notifications`);
-            addDocumentNonBlocking(notificationsRef, {
-                title: `¡Curso completado!`,
-                description: `Has completado "${course.title}". ¡Tu certificado ya está disponible! (+50 puntos)`,
-                date: serverTimestamp(),
-            });
-        }
-    
+    const handleMarkAsCompleted = () => {
+        if (!user || !course || !currentLesson || completedLessons.has(currentLesson.lessonId)) return;
+        
+        setCompletedLessons(prev => new Set(prev).add(currentLesson.lessonId));
+
+        const nextLesson = getNextLesson(course.modules, currentLesson.moduleId, currentLesson.lessonId);
         if (nextLesson) {
             handleSetLesson(nextLesson.moduleId, nextLesson.lessonId);
+        } else {
+            // Course completed
+            alert("¡Felicidades, has completado el curso!");
         }
     };
-    
 
     const getDifficultyBadge = (difficulty: 'Fácil' | 'Medio' | 'Difícil' | undefined) => {
         switch (difficulty) {
@@ -232,11 +135,8 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
         }
     };
     
-    if (isCourseLoading || areModulesLoading || areLessonsLoading || !currentLesson) {
+    if (!course || !currentLesson) {
         return <div className="container flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin" /></div>;
-    }
-     if (!course) {
-        notFound();
     }
 
     const instructorAvatar = { imageUrl: course.instructorAvatarUrl, name: course.instructor };
@@ -265,10 +165,10 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
                 className="w-full"
                 value={currentLesson?.moduleId || ""}
                 >
-                {fullModules.map((moduleItem, moduleIndex) => {
+                {course.modules.map((moduleItem, moduleIndex) => {
                     let lessonFlatIndexOffset = 0;
                     for(let i = 0; i < moduleIndex; i++) {
-                        lessonFlatIndexOffset += fullModules[i].lessons.length;
+                        lessonFlatIndexOffset += course.modules[i].lessons.length;
                     }
 
                     return (
@@ -412,13 +312,13 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
                 <h2 className="text-2xl font-bold flex items-center gap-2">
                 <MessageSquare className="w-6 h-6" /> Comentarios
                 </h2>
-                {course.id && currentLesson?.moduleId && currentLesson?.lessonId && (
-                    <CommentSection 
-                        courseId={course.id} 
-                        moduleId={currentLesson.moduleId} 
-                        lessonId={currentLesson.lessonId}
-                    />
-                )}
+                <Card>
+                <CardContent className="pt-6">
+                    <p className="text-muted-foreground">
+                    La sección de comentarios estará disponible próximamente.
+                    </p>
+                </CardContent>
+                </Card>
             </div>
         </div>
       </div>
@@ -426,7 +326,8 @@ function CourseDetailContent({ courseId }: { courseId: string }) {
     );
 }
 
-export default function CourseDetailPage({ params: { id } }: { params: { id: string } }) {
+export default function CourseDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   if (!id) {
     notFound();
   }
@@ -437,5 +338,3 @@ export default function CourseDetailPage({ params: { id } }: { params: { id: str
     </Suspense>
   );
 }
-
-    

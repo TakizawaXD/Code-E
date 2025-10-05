@@ -3,49 +3,32 @@
 
 import { useMemo, Suspense } from "react";
 import { CourseCard } from "@/components/course-card";
+import { courses as allCourses, learningPaths } from "@/lib/data";
 import type { Course, LearningPath } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
-import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 
 function CoursesContent() {
     const searchParams = useSearchParams();
     const pathFilter = searchParams.get('path');
     const searchQuery = searchParams.get('q');
-    const firestore = useFirestore();
     
-    const learningPathsQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
-        return query(collection(firestore, "learningPaths"), orderBy("title"));
-    }, [firestore]);
-
-    const { data: learningPaths } = useCollection<LearningPath>(learningPathsQuery);
-    
-    const coursesQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
-        let q = query(collection(firestore, "courses"));
-        if (pathFilter) {
-            q = query(q, where("pathId", "==", pathFilter));
-        }
-        return q;
-    }, [firestore, pathFilter]);
-
-    const { data: allCourses } = useCollection<Course>(coursesQuery);
-
     const filteredCourses = useMemo(() => {
-        if (!allCourses) return [];
-        if (!searchQuery) return allCourses;
-
-        const lowercasedQuery = searchQuery.toLowerCase();
-        return allCourses.filter(c => 
-            c.title.toLowerCase().includes(lowercasedQuery) ||
-            c.description.toLowerCase().includes(lowercasedQuery) ||
-            c.instructor.toLowerCase().includes(lowercasedQuery)
-        );
-    }, [allCourses, searchQuery]);
+        let courses = allCourses;
+        if (pathFilter) {
+            courses = courses.filter(c => c.pathId === pathFilter);
+        }
+        if (searchQuery) {
+            const lowercasedQuery = searchQuery.toLowerCase();
+            courses = courses.filter(c => 
+                c.title.toLowerCase().includes(lowercasedQuery) ||
+                c.description.toLowerCase().includes(lowercasedQuery) ||
+                c.instructor.toLowerCase().includes(lowercasedQuery)
+            );
+        }
+        return courses;
+    }, [pathFilter, searchQuery]);
 
     const coursesByPath = useMemo(() => {
-        if (!filteredCourses || !learningPaths) return {};
         return filteredCourses.reduce((acc, course) => {
             const path = learningPaths.find(p => p.id === course.pathId);
             if (path) {
@@ -57,19 +40,15 @@ function CoursesContent() {
             return acc;
         }, {} as { [key: string]: LearningPath & { courses: Course[] } });
 
-    }, [filteredCourses, learningPaths]);
+    }, [filteredCourses]);
     
     let pathsToRender;
-    if (learningPaths) {
-        if (pathFilter) {
-            pathsToRender = learningPaths?.filter(p => p.id === pathFilter) || [];
-        } else if (searchQuery) {
-            pathsToRender = learningPaths?.filter(p => coursesByPath[p.id]?.courses.length > 0) || [];
-        } else {
-            pathsToRender = learningPaths || [];
-        }
+    if (pathFilter) {
+        pathsToRender = learningPaths.filter(p => p.id === pathFilter);
+    } else if (searchQuery) {
+        pathsToRender = learningPaths.filter(p => coursesByPath[p.id]?.courses.length > 0);
     } else {
-        pathsToRender = [];
+        pathsToRender = learningPaths;
     }
     
     const pageTitle = searchQuery ? `Resultados para "${searchQuery}"` : "Catálogo de Cursos";

@@ -148,5 +148,3 @@ export default function NewThreadPage() {
     </div>
   );
 }
-
-    
