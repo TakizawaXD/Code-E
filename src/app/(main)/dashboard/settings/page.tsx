@@ -28,7 +28,7 @@ import type { UserProfile } from "@/lib/types";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres." }).max(50),
-  username: z.string().min(3, { message: "El nombre de usuario debe tener al menos 3 caracteres." }).max(30).regex(/^[a-z0-9_.]+$/, "Solo letras minúsculas, números, puntos y guiones bajos."),
+  username: z.string(), // No validation needed, it's read-only
   description: z.string().max(160, { message: "La descripción no puede tener más de 160 caracteres." }).optional(),
 });
 
@@ -70,10 +70,9 @@ export default function SettingsPage() {
     if (!user || !userProfileRef) return;
 
     try {
-      // Update Firestore document, ensuring description is never undefined
+      // Update Firestore document, ONLY editable fields
       await updateDoc(userProfileRef, {
         name: data.name,
-        username: data.username,
         description: data.description || "",
       });
 
@@ -140,10 +139,10 @@ export default function SettingsPage() {
                   <FormItem>
                     <FormLabel>Nombre de Usuario</FormLabel>
                     <FormControl>
-                      <Input placeholder="tu_usuario" {...field} />
+                      <Input placeholder="tu_usuario" {...field} readOnly className="cursor-not-allowed bg-muted/50" />
                     </FormControl>
                      <FormDescription>
-                      Tu identificador único en la plataforma.
+                      Tu nombre de usuario es único y no se puede cambiar.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
