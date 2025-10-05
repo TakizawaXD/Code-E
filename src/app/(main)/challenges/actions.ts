@@ -10,21 +10,21 @@ const submitChallengeSchema = z.object({
   githubUrl: z.string().url("Por favor, introduce una URL de GitHub válida."),
 });
 
-// IMPORTANT: Create an account at https://resend.com and get your API key.
-// Add the key to your environment variables (.env.local) as RESEND_API_KEY
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const recipientEmail = "andresmontalvo2222@gmail.com";
 
 export async function submitChallengeAction(
   data: z.infer<typeof submitChallengeSchema>
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    if (!process.env.RESEND_API_KEY) {
+        throw new Error("La clave de API de Resend no está configurada en el servidor. El administrador necesita añadirla para que esta función esté disponible.");
+    }
+
     const validatedData = submitChallengeSchema.parse(data);
 
-    if (!process.env.RESEND_API_KEY) {
-        throw new Error("La clave de API de Resend no está configurada en el servidor.");
-    }
+    // IMPORTANT: Create an account at https://resend.com and get your API key.
+    // Add the key to your environment variables (.env.local) as RESEND_API_KEY
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     await resend.emails.send({
       from: 'Code-E Platform <onboarding@resend.dev>', // This must be a verified domain in Resend. 'onboarding@resend.dev' is for testing.
