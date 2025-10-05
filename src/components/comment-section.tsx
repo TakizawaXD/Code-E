@@ -2,8 +2,8 @@
 "use client";
 
 import { useState } from "react";
-import { useUser, useFirestore, useCollection, useMemoFirebase, addDocumentNonBlocking } from "@/firebase";
-import { collection, query, orderBy, serverTimestamp } from "firebase/firestore";
+import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { collection, query, orderBy, serverTimestamp, addDoc } from "firebase/firestore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +12,7 @@ import { Send } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
+import type { Comment } from "@/lib/types";
 
 interface CommentSectionProps {
     courseId: string;
@@ -23,6 +24,7 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
     const { user } = useUser();
     const firestore = useFirestore();
     const [newComment, setNewComment] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const commentsRef = useMemoFirebase(() => {
         if (!firestore) return null;
@@ -34,24 +36,30 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
         return query(commentsRef, orderBy('createdAt', 'desc'));
     }, [commentsRef]);
     
-    const { data: comments, isLoading } = useCollection(commentsQuery);
+    const { data: comments, isLoading } = useCollection<Comment>(commentsQuery);
 
     const handleAddComment = async () => {
         if (!user || !newComment.trim() || !commentsRef) return;
         
-        const commentData = {
-            userId: user.uid,
-            userName: user.displayName || "Usuario Anónimo",
-            userAvatarUrl: user.photoURL || "",
-            text: newComment.trim(),
-            createdAt: serverTimestamp(),
-        };
-
-        addDocumentNonBlocking(commentsRef, commentData);
-        setNewComment("");
+        setIsSubmitting(true);
+        try {
+            const commentData = {
+                authorId: user.uid,
+                authorName: user.displayName || "Usuario Anónimo",
+                authorAvatarUrl: user.photoURL || "",
+                content: newComment.trim(),
+                createdAt: serverTimestamp(),
+            };
+            await addDoc(commentsRef, commentData);
+            setNewComment("");
+        } catch (error) {
+            console.error("Error adding comment: ", error);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
-    const userInitial = user?.displayName ? user.displayName.charAt(0) : user?.email?.charAt(0).toUpperCase();
+    const userInitial = user?.displayName ? user.displayName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase();
 
     return (
         <div className="space-y-6">
@@ -66,11 +74,12 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
                             <Textarea 
                                 value={newComment}
                                 onChange={(e) => setNewComment(e.target.value)}
-                                placeholder="Escribe tu comentario..."
+                                placeholder="Escribe tu comentario o pregunta..."
                                 className="w-full"
                             />
-                            <Button onClick={handleAddComment} disabled={!newComment.trim()}>
-                                <Send className="mr-2" /> Enviar Comentario
+                            <Button onClick={handleAddComment} disabled={!newComment.trim() || isSubmitting}>
+                                <Send className="mr-2" />
+                                {isSubmitting ? "Enviando..." : "Enviar Comentario"}
                             </Button>
                         </div>
                     </CardContent>
@@ -84,24 +93,24 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
             )}
 
             <div className="space-y-4">
-                {isLoading && <p>Cargando comentarios...</p>}
+                {isLoading && <p className="text-center text-muted-foreground">Cargando comentarios...</p>}
                 {comments && comments.length === 0 && !isLoading && (
-                    <p className="text-muted-foreground text-center">No hay comentarios todavía. ¡Sé el primero!</p>
+                    <p className="text-muted-foreground text-center py-4">No hay comentarios todavía. ¡Sé el primero en preguntar!</p>
                 )}
                 {comments?.map(comment => (
                     <div key={comment.id} className="flex gap-4">
                         <Avatar>
-                            <AvatarImage src={comment.userAvatarUrl} alt={comment.userName}/>
-                            <AvatarFallback>{comment.userName.charAt(0).toUpperCase()}</AvatarFallback>
+                            <AvatarImage src={comment.authorAvatarUrl} alt={comment.authorName}/>
+                            <AvatarFallback>{comment.authorName?.charAt(0).toUpperCase()}</AvatarFallback>
                         </Avatar>
-                        <div className="flex-1">
+                        <div className="flex-1 bg-muted/50 p-4 rounded-lg">
                             <div className="flex items-center gap-2">
-                                <p className="font-semibold">{comment.userName}</p>
+                                <p className="font-semibold">{comment.authorName}</p>
                                 <p className="text-xs text-muted-foreground">
                                     {comment.createdAt ? formatDistanceToNow(comment.createdAt.toDate(), { addSuffix: true, locale: es }) : ''}
                                 </p>
                             </div>
-                            <p className="text-foreground/90">{comment.text}</p>
+                            <p className="text-foreground/90 mt-1">{comment.content}</p>
                         </div>
                     </div>
                 ))}
@@ -109,3 +118,4 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
         </div>
     );
 }
+

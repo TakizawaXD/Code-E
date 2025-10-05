@@ -25,9 +25,9 @@ export type Quiz = {
 export type Lesson = {
   id: string;
   title: string;
-  duration: string;
-  content: string; 
-  difficulty: 'Fácil' | 'Medio' | 'Difícil';
+  duration?: string;
+  content?: string; 
+  difficulty?: 'Fácil' | 'Medio' | 'Difícil';
   quiz?: Quiz;
   order: number;
   imageUrl?: string;
@@ -97,10 +97,10 @@ export type Progress = {
 
 export type Comment = {
     id: string;
-    userId: string;
-    userName: string;
-    userAvatarUrl: string;
-    text: string;
+    authorId: string;
+    authorName: string;
+    authorAvatarUrl?: string;
+    content: string;
     createdAt: Timestamp;
 };
 

@@ -167,41 +167,61 @@ export const allSchools: School[] = [
 ];
 
 
-const allCoursesList = allSchools.flatMap(school => school.learningPaths.flatMap(path => path.courses));
-export const courses: Course[] = allCoursesList.map(course => ({
-    ...course,
-    modules: course.modules.length > 0 ? course.modules : [{
-        id: `${course.id}-m1`,
-        title: 'Contenido del Curso',
-        order: 1,
-        lessons: [{
-            id: `${course.id}-l1`,
-            title: 'Lección Próximamente',
-            duration: 'N/A',
-            difficulty: 'Fácil',
-            content: '<p>El contenido detallado para este curso estará disponible muy pronto. ¡Gracias por tu paciencia!</p>',
-            order: 1,
-            imageUrl: images['lesson-default']
-        }]
-    }]
-}));
+const coursesWithModules = allSchools.flatMap(school => 
+    school.learningPaths.flatMap(path => 
+        path.courses.map(course => {
+            if (course.modules && course.modules.length > 0) {
+                return course;
+            }
+            // Add default module and lesson if none exist
+            return {
+                ...course,
+                modules: [{
+                    id: `${course.id}-m1`,
+                    title: 'Módulo de Introducción',
+                    order: 1,
+                    lessons: [{
+                        id: `${course.id}-l1-intro`,
+                        title: 'Bienvenido al curso',
+                        order: 1,
+                        difficulty: 'Fácil',
+                        content: `<p>En este curso sobre <strong>${course.title}</strong>, aprenderás los conceptos fundamentales y avanzados para llevar tus habilidades al siguiente nivel.</p><p>Explora las lecciones en la barra lateral para comenzar tu viaje de aprendizaje. ¡Mucho éxito!</p>`,
+                        imageUrl: course.imageUrl
+                    },
+                    {
+                        id: `${course.id}-l2-video`,
+                        title: 'Video de Introducción',
+                        order: 2,
+                        difficulty: 'Fácil',
+                        youtubeVideoId: 'dQw4w9WgXcQ', // Rickroll as placeholder
+                        content: `<p>Este video te dará una visión general de lo que cubriremos en el curso. Presta atención a los conceptos clave presentados por el instructor.</p>`
+                    },
+                    {
+                        id: `${course.id}-l3-quiz`,
+                        title: 'Cuestionario Inicial',
+                        order: 3,
+                        difficulty: 'Fácil',
+                        quiz: {
+                            id: `${course.id}-q1`,
+                            title: 'Prueba de conocimientos previos',
+                            questions: [
+                                { id: 'q1', question: `¿Cuál es un concepto clave en ${course.title}?`, options: ['Opción A', 'Opción B', 'Opción C', 'Todas las anteriores'], correctAnswer: 3 },
+                                { id: 'q2', question: '¿Es este curso para principiantes?', options: ['Sí', 'No'], correctAnswer: 0 },
+                            ]
+                        },
+                        content: `<p>Demuestra lo que sabes antes de empezar. Este cuestionario nos ayudará a entender tu nivel actual.</p>`
+                    }
+                    ]
+                }]
+            };
+        })
+    )
+);
 
-// Add a quiz to the first lesson of a specific course for demonstration
-const courseToHaveQuiz = courses.find(c => c.id === 'fund-arq-software');
-if (courseToHaveQuiz && courseToHaveQuiz.modules[0] && courseToHaveQuiz.modules[0].lessons[0]) {
-    courseToHaveQuiz.modules[0].lessons[0].quiz = {
-        id: 'quiz-fund-arq-1',
-        title: 'Prueba de Conocimientos: Fundamentos',
-        questions: [
-            { id: 'q1', question: '¿Qué es la escalabilidad en arquitectura de software?', options: ['La capacidad de un sistema para manejar una carga creciente', 'La seguridad del sistema', 'La velocidad de la primera carga', 'La facilidad para cambiar el diseño'], correctAnswer: 0 },
-            { id: 'q2', question: 'Un monolito se caracteriza por...', options: ['Estar compuesto de microservicios', 'Ser una única unidad de despliegue', 'Ser inherentemente escalable', 'No tener base de datos'], correctAnswer: 1 },
-        ]
-    };
-}
-
-
+export const courses: Course[] = coursesWithModules;
 const allLearningPathsList = allSchools.flatMap(school => school.learningPaths.map(path => ({ ...path, courses: undefined, description: path.description || "" })));
 export const learningPaths: Omit<LearningPath, 'courses'>[] = allLearningPathsList;
 
 
     
+
