@@ -1,5 +1,6 @@
 import type { Notification, LearningPath, Course, CourseModule, Lesson, School } from "@/lib/types";
 import images from '@/app/lib/placeholder-images.json';
+import videos from '@/app/lib/placeholder-videos.json';
 
 // This file now only contains types and potentially non-user-specific, non-db data.
 // All user, course, and learning path data will be fetched from Firestore.
@@ -417,14 +418,12 @@ export const allSchools: School[] = [
   },
 ];
 
-const youtubeVideoIds = [
-    'dQw4w9WgXcQ', '3JZ_D3ELwOQ', 'a_i6G-qP_0g', 'L_LUpnjgPso', 'k-rN74S3X-o',
-    '8sXyfY2mR2k', 'm65hbG-hW6w', '9bZkp7q19f0', '2l3x2M1b3sY', '0-S5a0eXPoc'
-];
+const videoIdKeys = Object.keys(videos) as (keyof typeof videos)[];
 
 // Function to generate detailed content for each lesson
 const generateDetailedLesson = (course: Course, module: CourseModule, lesson: Lesson, lessonIndex: number): Lesson => {
-    const videoId = youtubeVideoIds[(lesson.order -1) % youtubeVideoIds.length];
+    const videoKey = videoIdKeys[(lesson.order - 1) % videoIdKeys.length];
+    const videoId = videos[videoKey];
     return {
         ...lesson,
         content: `<h3>Sobre esta lección</h3>
