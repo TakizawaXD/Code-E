@@ -1,6 +1,5 @@
 "use server";
 
-import "dotenv/config";
 import { getAdminApp } from "@/firebase/admin";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
@@ -16,7 +15,7 @@ export async function updateUser(
 ) {
   try {
     const validatedData = updateProfileSchema.parse(data);
-    const adminApp = await getAdminApp();
+    const adminApp = getAdminApp();
     const firestore = adminApp.firestore();
 
     const userRef = firestore.collection("users").doc(userId);
@@ -40,7 +39,7 @@ export async function updateUser(
     return {
       success: false,
       error:
-        error.message || "No se pudo inicializar el SDK de Admin de Firebase.",
+        error.message || "No se pudo actualizar el perfil.",
     };
   }
 }

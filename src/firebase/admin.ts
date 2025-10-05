@@ -1,39 +1,28 @@
 import * as admin from 'firebase-admin';
+import { ServiceAccount } from 'firebase-admin';
+import serviceAccount from './firebase.json';
 
-// IMPORTANT: DO NOT MODIFY THIS FUNCTION
-export async function getAdminApp() {
-  const appName = 'firebase-admin-app-e-learning';
-  const existingApp = admin.apps.find(app => app?.name === appName);
-  
-  if (existingApp) {
-    return existingApp;
-  }
+const appName = 'firebase-admin-app-e-learning';
 
-  // Attempt to initialize from environment variables (recommended for production)
+// Check if the app is already initialized
+if (!admin.apps.some(app => app?.name === appName)) {
   try {
-    return admin.initializeApp({
-      credential: admin.credential.applicationDefault(),
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount as ServiceAccount),
     }, appName);
-  } catch (e: any) {
-    if (e.code === 'app/duplicate-app') {
-       // This can happen in dev with hot-reloading, it's safe to ignore.
-       const anApp = admin.app(appName);
-       if (anApp) return anApp;
-    }
-    console.error('Admin SDK initialization from env vars failed. This is expected in local dev if service account is not set.', e.message);
+    console.log('Firebase Admin SDK initialized successfully.');
+  } catch (error) {
+    console.error('Firebase Admin SDK initialization error:', error);
+    throw new Error('Could not initialize Firebase Admin SDK. Please check your service account credentials.');
   }
-  
-  // Fallback for local development: use service account key file
-  // Ensure the GOOGLE_APPLICATION_CREDENTIALS env var is set to the path of your service account key file.
-  // This approach is not recommended for production environments.
-  if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-      console.warn("GOOGLE_APPLICATION_CREDENTIALS not set. Admin SDK might not initialize correctly in local dev.");
-  }
-  
-  // If we've reached here, it means initialization failed. We re-throw to make it clear.
-  throw new Error("Firebase Admin SDK failed to initialize. Ensure environment variables or service account key are set correctly.");
 }
 
-export function getAdminAuth(app: admin.app.App) {
-    return app.auth();
+const adminApp = admin.app(appName);
+
+export function getAdminApp() {
+  return adminApp;
+}
+
+export function getAdminAuth() {
+  return adminApp.auth();
 }
