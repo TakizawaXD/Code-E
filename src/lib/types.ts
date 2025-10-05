@@ -45,7 +45,7 @@ export type Course = {
   id: string;
   title: string;
   description?: string;
-  instructor: string;
+  instructor: string | string[];
   instructorAvatarUrl?: string;
   imageUrl: string;
   pathId: string;
@@ -148,3 +148,5 @@ export type ForumPost = {
     authorAvatarUrl?: string;
     createdAt: Timestamp;
 };
+
+    
