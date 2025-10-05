@@ -3,61 +3,88 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Reglas para los perfiles de usuario
+    // Regla para la colección de usuarios
     match /users/{userId} {
-      // PERMISOS DE LECTURA:
-      // - Cualquier usuario autenticado puede leer perfiles (para la tabla de clasificación).
-      // - "read" incluye "get" (leer un doc) y "list" (listar la colección).
-      allow read: if request.auth != null;
+      // Permite a cualquier usuario autenticado leer un perfil de usuario individual.
+      allow get: if request.auth != null;
 
-      // PERMISOS DE ESCRITURA:
-      // - Un usuario solo puede crear o actualizar su propio perfil.
-      allow write: if request.auth != null && request.auth.uid == userId;
+      // Permite a un usuario crear su propio perfil.
+      allow create: if request.auth != null && request.auth.uid == userId;
+
+      // Permite a un usuario actualizar su propio perfil.
+      allow update: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Reglas para los cursos
+    // Permite a cualquier usuario autenticado listar la colección de usuarios (para la tabla de clasificación).
+    match /users/{document=**} {
+      allow list: if request.auth != null;
+    }
+
+    // Reglas para las rutas de aprendizaje, cursos, módulos y lecciones
+    // Cualquiera puede leerlos.
+    match /learningPaths/{pathId} {
+      allow read: if true;
+    }
+
     match /courses/{courseId} {
-      allow read: if true; // Cualquiera puede ver los cursos
+      allow read: if true;
+    }
+
+    match /courses/{courseId}/modules/{moduleId} {
+      allow read: if true;
+    }
+
+    match /courses/{courseId}/modules/{moduleId}/lessons/{lessonId} {
+      allow read: if true;
       
-      match /modules/{moduleId} {
-        allow read: if true; // Cualquiera puede ver los módulos
-
-        match /lessons/{lessonId} {
-          allow read: if true; // Cualquiera puede ver las lecciones
-
-          match /comments/{commentId} {
-            allow read: if true; // Cualquiera puede leer comentarios
-            allow create: if request.auth != null; // Solo usuarios autenticados pueden crear comentarios
-          }
-        }
+      // Regla para los comentarios dentro de una lección
+      match /comments/{commentId} {
+        // Cualquiera puede leer los comentarios.
+        allow read: if true;
+        // Solo los usuarios autenticados pueden crear comentarios.
+        allow create: if request.auth != null;
       }
     }
 
-    // Reglas para las rutas de aprendizaje
-    match /learningPaths/{pathId} {
-        allow read: if true; // Cualquiera puede ver las rutas
+    // Reglas para el progreso del usuario
+    // Un usuario solo puede acceder a su propio progreso.
+    match /users/{userId}/progress/{progressId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Reglas para el progreso del usuario
-    match /users/{userId}/progress/{courseId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // Reglas para las notificaciones del usuario
+    // Reglas para notificaciones
     match /users/{userId}/notifications/{notificationId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Reglas para el foro
-    match /forumThreads/{threadId} {
-        allow read: if true; // Cualquiera puede leer las discusiones
-        allow create: if request.auth != null; // Usuarios autenticados pueden crear discusiones
-        allow update: if request.auth != null; // Usuarios autenticados pueden actualizar (para contador de posts, etc)
+    // Reglas para la gamificación (puntos, rachas, etc.)
+    match /users/{userId}/gamification/{statId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Reglas para las insignias
+     match /badges/{badgeId} {
+      allow read: if true;
+    }
 
-        match /posts/{postId} {
-            allow read: if true; // Cualquiera puede leer respuestas
-            allow create: if request.auth != null; // Usuarios autenticados pueden responder
-        }
+    match /users/{userId}/badges/{userBadgeId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Reglas para los foros de la comunidad
+    match /forumThreads/{threadId} {
+      // Cualquiera puede leer los hilos.
+      allow read: if true;
+      // Solo usuarios autenticados pueden crear y actualizar hilos.
+      allow create, update: if request.auth != null;
+
+      // Reglas para las respuestas (posts) dentro de un hilo
+      match /posts/{postId} {
+         // Cualquiera puede leer las respuestas.
+        allow read: if true;
+        // Solo usuarios autenticados pueden crear respuestas.
+        allow create: if request.auth != null;
+      }
     }
   }
 }
