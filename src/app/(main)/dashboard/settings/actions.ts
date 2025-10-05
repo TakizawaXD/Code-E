@@ -1,5 +1,6 @@
 'use server';
 
+import 'dotenv/config';
 import { getAdminApp, getAdminAuth } from '@/firebase/admin';
 import { UpdateUserProfile } from '@/lib/types';
 import { cookies } from 'next/headers';
