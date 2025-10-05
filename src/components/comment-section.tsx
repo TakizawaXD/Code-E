@@ -59,7 +59,7 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
         }
     };
 
-    const userInitial = user?.displayName ? user.displayName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase();
+    const userInitial = user?.displayName ? user.displayName.charAt(0).toUpperCase() : (user?.email ? user.email.charAt(0).toUpperCase() : '?');
 
     return (
         <div className="space-y-6">

@@ -89,6 +89,14 @@ export default function SignupPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!auth || !firestore) {
+      toast({
+        variant: "destructive",
+        title: "Error de configuración",
+        description: "Los servicios de Firebase no están disponibles.",
+      });
+      return;
+    }
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -110,6 +118,9 @@ export default function SignupPage() {
         email: values.email,
         createdAt: serverTimestamp(),
         points: 0,
+        description: "",
+        avatarUrl: "",
+        role: "student",
       }, {});
 
       toast({

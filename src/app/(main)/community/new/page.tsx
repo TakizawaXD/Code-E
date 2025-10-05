@@ -53,7 +53,7 @@ export default function NewThreadPage() {
       const newThread = {
         ...values,
         authorId: user.uid,
-        authorName: user.displayName || user.email,
+        authorName: user.displayName || user.email || "Usuario Anónimo",
         authorAvatarUrl: user.photoURL || "",
         createdAt: now,
         lastPostAt: now,

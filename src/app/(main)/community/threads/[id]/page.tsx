@@ -2,7 +2,7 @@
 "use client";
 
 import { useUser, useDoc, useCollection, useFirestore, useMemoFirebase } from "@/firebase";
-import { doc, collection, query, orderBy, serverTimestamp, updateDoc, addDoc } from "firebase/firestore";
+import { doc, collection, query, orderBy, serverTimestamp, updateDoc, addDoc, increment } from "firebase/firestore";
 import { notFound, useRouter } from "next/navigation";
 import type { ForumThread, ForumPost } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -16,18 +16,21 @@ import Link from "next/link";
 import { ArrowLeft, Loader2, Send } from "lucide-react";
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { useToast } from "@/hooks/use-toast";
 
-export default function ThreadPage({ params: { id } }: { params: { id: string } }) {
+export default function ThreadPage({ params }: { params: { id: string } }) {
     const { user } = useUser();
     const firestore = useFirestore();
     const router = useRouter();
     const [newPostContent, setNewPostContent] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { toast } = useToast();
 
     const threadRef = useMemoFirebase(() => {
         if (!firestore) return null;
-        return doc(firestore, "forumThreads", id);
-    }, [firestore, id]);
+        return doc(firestore, "forumThreads", params.id);
+    }, [firestore, params.id]);
     
     const { data: thread, isLoading: isThreadLoading } = useDoc<ForumThread>(threadRef);
 
@@ -52,8 +55,8 @@ export default function ThreadPage({ params: { id } }: { params: { id: string } 
             const postData = {
                 content: newPostContent.trim(),
                 authorId: user.uid,
-                authorName: "Anónimo",
-                authorAvatarUrl: "",
+                authorName: user.displayName || "Usuario Anónimo",
+                authorAvatarUrl: user.photoURL || '',
                 createdAt: now,
             };
 
@@ -63,6 +66,15 @@ export default function ThreadPage({ params: { id } }: { params: { id: string } 
             await updateDoc(threadRef, {
                 postCount: (thread.postCount || 1) + 1,
                 lastPostAt: now,
+            });
+
+            // Award points for replying
+            const userRef = doc(firestore, "users", user.uid);
+            setDocumentNonBlocking(userRef, { points: increment(2) }, { merge: true });
+
+            toast({
+                title: "¡Respuesta publicada!",
+                description: "Has ganado 2 puntos por participar.",
             });
 
             setNewPostContent("");
@@ -97,9 +109,10 @@ export default function ThreadPage({ params: { id } }: { params: { id: string } 
                 <div className="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                         <Avatar className="h-6 w-6">
-                            <AvatarFallback>?</AvatarFallback>
+                            <AvatarImage src={thread.authorAvatarUrl} alt={thread.authorName} />
+                            <AvatarFallback>{thread.authorName?.charAt(0).toUpperCase()}</AvatarFallback>
                         </Avatar>
-                        <span>Iniciado por <span className="font-semibold text-foreground">Anónimo</span></span>
+                        <span>Iniciado por <span className="font-semibold text-foreground">{thread.authorName}</span></span>
                     </div>
                     <span>•</span>
                     <span>{thread.createdAt ? format(thread.createdAt.toDate(), "d 'de' MMMM 'de' yyyy", { locale: es }) : ''}</span>
@@ -107,7 +120,7 @@ export default function ThreadPage({ params: { id } }: { params: { id: string } 
             </header>
 
             <div className="space-y-6">
-                <ForumPostCard post={{...thread, content: thread.content, id: thread.id}} />
+                <ForumPostCard post={{...thread, id: thread.id}} />
 
                 <Separator />
                 
@@ -125,7 +138,8 @@ export default function ThreadPage({ params: { id } }: { params: { id: string } 
                             <h3 className="text-lg font-semibold mb-4">Añadir una respuesta</h3>
                             <div className="flex gap-4">
                                 <Avatar>
-                                    <AvatarFallback>{user.displayName?.charAt(0).toUpperCase() || 'A'}</AvatarFallback>
+                                    {user.photoURL && <AvatarImage src={user.photoURL} alt={user.displayName || "User"} />}
+                                    <AvatarFallback>{user.displayName?.charAt(0).toUpperCase()}</AvatarFallback>
                                 </Avatar>
                                 <div className="w-full space-y-2">
                                     <Textarea 
