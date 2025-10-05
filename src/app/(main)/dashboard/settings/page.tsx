@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { doc, updateDoc } from "firebase/firestore";
-import { updateProfile } from "firebase/auth";
 import {
   Form,
   FormControl,
@@ -70,9 +69,9 @@ export default function SettingsPage() {
     if (!user || !userProfileRef) return;
 
     try {
-      // --- THE FIX ---
-      // ONLY update the Firestore document. Do NOT try to update the Auth profile object.
-      // This is the source of the permission error.
+      // THE FIX: Only update the Firestore document.
+      // Do not attempt to update the Firebase Auth profile object (user).
+      // The user's profile data should live exclusively in Firestore as the source of truth.
       await updateDoc(userProfileRef, {
         name: data.name,
         description: data.description || "",
