@@ -40,7 +40,7 @@ const contentData = {
             <p class="text-muted-foreground mt-2">"Pienso que lo ideal es que el producto salga a producción después de que tú mismo hayas puesto en práctica los conceptos en entrevistas reales, hayas refinado el sitio y hayas conseguido trabajo. Al desarrollar esto, espero que entiendas los conceptos y las prácticas, y así te vuelvas un experto en el tema."</p>
         </div>
 
-        <p>Esta guía es un testimonio del propio proceso de aprendizaje. Cada algoritmo, cada explicación y cada prueba ha sido implementada y refinada con la ayuda de IA, y luego revisada manualmente, siguiendo el mismo ciclo de feedback que tú experimentarás en tu carrera.</p>
+        <p>Esta guía es un testimonio del propio proceso de aprendizaje. Cada algoritmo, cada explicación y cada prueba ha sido implementada y refinada con la ayuda de IA, y luego revisada manually, siguiendo el mismo ciclo de feedback que tú experimentarás en tu carrera.</p>
         <p>Usa el menú de la izquierda para navegar. ¡La experimentación es la clave!</p>`,
     'part1-sec1': `<h2>Sección 1: Dominando el Proceso de Aprendizaje</h2>
         <p>El enfoque moderno para la preparación de entrevistas técnicas ha experimentado una transformación fundamental, alejándose de la memorización de soluciones específicas hacia el desarrollo de una comprensión profunda de los patrones de resolución de problemas subyacentes. Este método, conocido como "Grokking", se centra en identificar categorías de problemas recurrentes y dominar las técnicas algorítmicas para abordarlos. La clave no es saber la solución a 100 problemas, sino reconocer que muchos de esos 100 problemas son variaciones de 10 patrones fundamentales.</p>
@@ -106,7 +106,7 @@ const contentData = {
             <li><strong>Sorting Algorithms (Algoritmos de Ordenamiento):</strong> Debes conocer los más comunes, sus complejidades y casos de uso.
                 <ul>
                     <li><strong>Merge Sort:</strong> Divide y vencerás. Estable, O(n log n) en todos los casos. Requiere espacio extra O(n).</li>
-                    <li><strong>Quick Sort:</strong> Divide y vencerás. O(n log n) en promedio, pero O(n²) en el peor caso. Generalmente más rápido en la práctica que Merge Sort debido a un menor uso de memoria.</li>
+                    <li><strong>Quick Sort:</strong> Divide y vencerás. O(n log n) en promedio, pero O(n²) en el peor caso. Generalmente más rápido en la práctica que Merge Sort due a un menor uso de memoria.</li>
                     <li><strong>Heap Sort:</strong> Usa un Heap para ordenar. O(n log n) en todos los casos. Ordena in-place (no requiere memoria extra significativa).</li>
                 </ul>
             </li>
@@ -302,8 +302,8 @@ const quizData = {
             { id: 'p1q1', q: '¿Qué estructura de datos sigue el principio LIFO (Last-In, First-Out)?', o: ['Cola (Queue)', 'Pila (Stack)', 'Lista Enlazada', 'Árbol'], a: 1 },
             { id: 'p1q2', q: '¿Cuál es la complejidad temporal promedio para buscar un elemento en un Hash Table?', o: ['O(1)', 'O(n)', 'O(log n)', 'O(n^2)'], a: 0 },
             { id: 'p1q3', q: '¿Qué estructura de datos es más adecuada para implementar una cola de prioridad?', o: ['Array no ordenado', 'Pila (Stack)', 'Montículo (Heap)', 'Hash Table'], a: 2 },
-            { id: 'p1q4', q: '¿En qué consiste el principio de "divide y vencerás"?', o: ['Dividir un problema en subproblemas más pequeños, resolverlos y combinar las soluciones.', 'Iterar sobre un problema hasta encontrar la solución.', 'Almacenar resultados de subproblemas para evitar recalcularlos.', 'Probar todas las soluciones posibles una por una.'], a: 0 },
-            { id: 'p1q5', q: 'Un nodo en un árbol binario de búsqueda, ¿qué propiedad cumple?', o: ['Todos los nodos a su izquierda son mayores.', 'Todos los nodos a su derecha son menores.', 'Todos los nodos en su subárbol izquierdo son menores que el nodo.', 'No tiene ninguna propiedad de orden.'], a: 2 },
+            { id: 'p1q4', q: 'Un algoritmo con complejidad O(n log n) es generalmente más rápido que uno con O(n²).', o: ['Verdadero', 'Falso'], a: 0 },
+            { id: 'p1q5', q: 'BFS (Búsqueda en Amplitud) utiliza una _______ para explorar un grafo.', o: ['Pila (Stack)', 'Recursión', 'Cola (Queue)', 'Tabla Hash'], a: 2 },
         ]
     },
     'part2-quiz': {
@@ -311,11 +311,27 @@ const quizData = {
         unlocks: 'part3',
         questions: [
             { id: 'p2q1', q: 'El patrón "Sliding Window" (Ventana Deslizante) es más útil para problemas que involucran:', o: ['Listas enlazadas con ciclos.', 'Subarrays o substrings contiguos.', 'Árboles y grafos.', 'Ordenamiento de elementos.'], a: 1 },
-            { id: 'p2q2', q: '¿En qué tipo de array el patrón "Two Pointers" (Dos Punteros) es especialmente efectivo?', o: ['En un array no ordenado.', 'En un array ordenado.', 'Solo en arrays de strings.', 'En arrays multidimensionales.'], a: 1 },
-            { id: 'p2q3', q: 'El algoritmo de la "Liebre y la Tortuga" es un método clásico para:', o: ['Encontrar el elemento medio de un array.', 'Fusionar dos intervalos.', 'Detectar un ciclo en una lista enlazada.', 'Recorrer un árbol nivel por nivel.'], a: 2 },
+            { id: 'p2q2', q: '¿Para qué se usa comúnmente el patrón de punteros "Fast & Slow"?', o: ['Para encontrar el elemento más grande en un array.', 'Para detectar ciclos en una lista enlazada.', 'Para ordenar un array en tiempo O(n).', 'Para fusionar dos arrays ordenados.'], a: 1 },
+            { id: 'p2q3', q: 'El ordenamiento topológico se puede aplicar a cualquier tipo de grafo.', o: ['Verdadero', 'Falso'], a: 1 },
         ]
     },
-    // Add more quizzes here...
+    'part3-quiz': {
+        title: 'Cuestionario: El Arquitecto',
+        unlocks: 'part4',
+        questions: [
+            { id: 'p3q1', q: '¿Qué significa "Escalabilidad Horizontal"?', o: ['Añadir más recursos (CPU, RAM) a un único servidor.', 'Añadir más servidores al sistema.', 'Optimizar el código para que sea más rápido.', 'Reducir la latencia de la red.'], a: 1 },
+            { id: 'p3q2', q: 'Según el Teorema CAP, en un sistema distribuido con una partición de red, ¿qué dos propiedades debes elegir entre ellas?', o: ['Consistencia y Performance', 'Disponibilidad y Seguridad', 'Consistencia y Disponibilidad', 'Latencia y Rendimiento'], a: 2 },
+            { id: 'p3q3', q: 'Redis y Memcached son ejemplos de:', o: ['Bases de datos relacionales.', 'Sistemas de colas de mensajes.', 'Sistemas de caché en memoria.', 'Balanceadores de carga.'], a: 2 },
+        ]
+    },
+     'part4-quiz': {
+        title: 'Cuestionario: El Elemento Humano',
+        unlocks: null, // No desbloquea nada nuevo
+        questions: [
+            { id: 'p4q1', q: '¿Qué significa la "A" en el método STAR?', o: ['Análisis', 'Acción', 'Actitud', 'Audiencia'], a: 1 },
+            { id: 'p4q2', q: 'En una entrevista, si no sabes la solución óptima a un problema de algoritmos, ¿qué deberías hacer primero?', o: ['Quedarte en silencio hasta que se te ocurra.', 'Proponer una solución de fuerza bruta funcional y luego discutir optimizaciones.', 'Pedir inmediatamente la solución.', 'Cambiar de tema.'], a: 1 },
+        ]
+    },
 };
 
 const codeExamples = {
@@ -363,17 +379,17 @@ const navStructure = [
 
 // --- REACT COMPONENTS ---
 
-const CodeRunner = ({ codeId, onRun, onExplain, onTest }) => {
-    const [editor, setEditor] = useState(null);
-    const [output, setOutput] = useState([]);
+const CodeRunner = ({ codeId }: { codeId: string }) => {
+    const [editor, setEditor] = useState<any>(null);
+    const [output, setOutput] = useState<string[]>([]);
     const [error, setError] = useState('');
-    const editorRef = React.useRef(null);
+    const editorRef = React.useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (!window.CodeMirror) return;
+        if (!window.CodeMirror || !editorRef.current) return;
         
         const cm = window.CodeMirror(editorRef.current, {
-            value: codeExamples[codeId],
+            value: codeExamples[codeId as keyof typeof codeExamples],
             mode: 'javascript',
             theme: 'material-darker',
             lineNumbers: true,
@@ -388,6 +404,7 @@ const CodeRunner = ({ codeId, onRun, onExplain, onTest }) => {
                 editorRef.current.innerHTML = '';
             }
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [codeId]);
 
     const runCode = () => {
@@ -396,22 +413,22 @@ const CodeRunner = ({ codeId, onRun, onExplain, onTest }) => {
         setOutput([]);
         setError('');
 
-        const capturedLogs = [];
+        const capturedLogs: string[] = [];
         const originalLog = console.log;
         console.log = (...args) => {
             capturedLogs.push(args.map(arg => {
                 if (typeof arg === 'object' && arg !== null) {
                     try { return JSON.stringify(arg, null, 2); } catch (e) { return '[Object]'; }
                 }
-                return arg;
+                return String(arg);
             }).join(' '));
         };
 
         try {
             new Function(code)();
             setOutput(capturedLogs);
-        } catch (e) {
-            setError(e.stack);
+        } catch (e: any) {
+            setError(e.stack || e.toString());
         } finally {
             console.log = originalLog;
         }
@@ -419,14 +436,14 @@ const CodeRunner = ({ codeId, onRun, onExplain, onTest }) => {
     
     const resetCode = () => {
         if (editor) {
-            editor.setValue(codeExamples[codeId]);
+            editor.setValue(codeExamples[codeId as keyof typeof codeExamples]);
         }
     };
 
     return (
         <Card className="my-6">
             <CardContent className="p-0">
-                <div ref={editorRef} className="code-editor-container"></div>
+                <div ref={editorRef} className="code-editor-container [&_.CodeMirror]:rounded-t-lg [&_.CodeMirror]:border-0"></div>
             </CardContent>
             <CardFooter className="flex-col items-start gap-4 p-4 bg-muted/50">
                  <div className="w-full flex flex-wrap items-center justify-between gap-2">
@@ -471,16 +488,16 @@ const CodeRunner = ({ codeId, onRun, onExplain, onTest }) => {
     );
 };
 
-const Quiz = ({ quizId, onPass }) => {
+const Quiz = ({ quizId, onPass }: { quizId: keyof typeof quizData; onPass: (part: string | null) => void; }) => {
     const quiz = quizData[quizId];
-    const [answers, setAnswers] = useState({});
+    const [answers, setAnswers] = useState<Record<string, number>>({});
     const [isSubmitted, setIsSubmitted] = useState(false);
     
     if (!quiz) return <p>Cuestionario no encontrado.</p>;
     
     const { questions } = quiz;
 
-    const handleSelect = (questionId, answerIndex) => {
+    const handleSelect = (questionId: string, answerIndex: number) => {
         if (isSubmitted) return;
         setAnswers(prev => ({ ...prev, [questionId]: answerIndex }));
     };
@@ -488,7 +505,7 @@ const Quiz = ({ quizId, onPass }) => {
     const handleSubmit = () => {
         setIsSubmitted(true);
         const score = questions.reduce((acc, q) => acc + (answers[q.id] === q.a ? 1 : 0), 0);
-        if ((score / questions.length) >= 0.8 && onPass) {
+        if ((score / questions.length) >= 0.8) {
             onPass(quiz.unlocks);
         }
     };
@@ -502,10 +519,10 @@ const Quiz = ({ quizId, onPass }) => {
     const percentage = isSubmitted ? (score / questions.length) * 100 : 0;
 
     return (
-        <Card className="my-8">
+        <Card className="my-8 border-primary border-2 shadow-lg">
             <CardHeader>
                 <CardTitle>{quiz.title}</CardTitle>
-                {!isSubmitted && <CardDescription>Selecciona la respuesta correcta para cada pregunta.</CardDescription>}
+                {!isSubmitted && <CardDescription>Selecciona la respuesta correcta para cada pregunta. Necesitas un 80% para desbloquear la siguiente sección.</CardDescription>}
             </CardHeader>
             <CardContent>
                 {isSubmitted ? (
@@ -557,29 +574,40 @@ const Quiz = ({ quizId, onPass }) => {
 
 export default function GuidesPage() {
     const [currentSectionId, setCurrentSectionId] = useState('welcome');
-    const [unlockedParts, setUnlockedParts] = useState({'part1': true});
+    const [unlockedParts, setUnlockedParts] = useState<Record<string, boolean>>({'part1': true});
     const [isSidebarOpen, setSidebarOpen] = useState(false);
-    
-    // Load state from localStorage on mount
+    const [isClient, setIsClient] = useState(false);
+
     useEffect(() => {
-        const savedState = localStorage.getItem('guideUnlockedParts');
-        if (savedState) {
-            setUnlockedParts(JSON.parse(savedState));
+        setIsClient(true);
+        try {
+            const savedState = localStorage.getItem('guideUnlockedParts');
+            if (savedState) {
+                setUnlockedParts(JSON.parse(savedState));
+            }
+        } catch (error) {
+            console.error("Failed to parse unlocked parts from localStorage", error);
+            setUnlockedParts({'part1': true});
         }
     }, []);
 
-    // Save state to localStorage whenever it changes
     useEffect(() => {
-        localStorage.setItem('guideUnlockedParts', JSON.stringify(unlockedParts));
-    }, [unlockedParts]);
+        if (isClient) {
+            try {
+                localStorage.setItem('guideUnlockedParts', JSON.stringify(unlockedParts));
+            } catch (error) {
+                 console.error("Failed to save unlocked parts to localStorage", error);
+            }
+        }
+    }, [unlockedParts, isClient]);
 
-    const handlePassQuiz = (partToUnlock) => {
+    const handlePassQuiz = (partToUnlock: string | null) => {
         if (partToUnlock) {
             setUnlockedParts(prev => ({ ...prev, [partToUnlock]: true }));
         }
     };
     
-    const handleSelectSection = (id) => {
+    const handleSelectSection = (id: string) => {
         setCurrentSectionId(id);
         setSidebarOpen(false); // Close sidebar on selection
     }
@@ -596,33 +624,13 @@ export default function GuidesPage() {
     }, [currentSectionId]);
     
     const renderContent = () => {
-        if (currentSectionId.includes('-quiz')) {
-            return <Quiz quizId={currentSectionId} onPass={handlePassQuiz} />;
+        if (currentSectionId.endsWith('-quiz')) {
+            return <Quiz quizId={currentSectionId as keyof typeof quizData} onPass={handlePassQuiz} />;
         }
 
-        const htmlContent = contentData[currentSectionId] || '<p>Contenido no disponible.</p>';
-        const contentWithPlaceholders = htmlContent.replace(/<div class="code-container" data-id="([^"]+)"><\/div>/g, (match, p1) => {
-            return `<div id="code-runner-${p1}"></div>`;
-        });
-        
-        return <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: contentWithPlaceholders }} />;
+        const htmlContent = contentData[currentSectionId as keyof typeof contentData] || '<p>Contenido no disponible.</p>';
+        return <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: htmlContent }} />;
     };
-    
-    useEffect(() => {
-        if (currentSectionId.includes('-quiz')) return;
-        
-        const codeContainers = document.querySelectorAll('.code-editor-container');
-        codeContainers.forEach(container => {
-           if(container.parentElement) {
-              const runnerId = container.parentElement.id.replace('code-runner-', '');
-              if(runnerId) {
-                  // This is a workaround since we can't directly render React components into innerHTML
-                  // In a real app, we'd parse the content and map placeholders to components
-              }
-           }
-        });
-    }, [currentSectionId]);
-
 
     const Sidebar = () => (
          <aside className={cn(
@@ -637,7 +645,7 @@ export default function GuidesPage() {
             </div>
             <nav className="p-4 space-y-2">
                 {navStructure.map(item => {
-                    const isPartUnlocked = !!unlockedParts[item.id] || !item.id.startsWith('part');
+                    const isPartUnlocked = !!unlockedParts[item.id] || item.id === 'welcome';
                     if (item.children) {
                         return (
                              <details key={item.id} className="group" open={item.id === 'part1'}>
@@ -663,7 +671,7 @@ export default function GuidesPage() {
                                                )}
                                                onClick={(e) => { e.preventDefault(); handleSelectSection(child.id); }}
                                             >
-                                                {child.title.includes('Cuestionario') ? <BrainCircuit className="mr-2 h-4 w-4"/> : <PlayCircle className="mr-2 h-4 w-4"/>}
+                                                {child.id.endsWith('-quiz') ? <BrainCircuit className="mr-2 h-4 w-4"/> : <PlayCircle className="mr-2 h-4 w-4"/>}
                                                 {child.title}
                                             </a>
                                         ))}
@@ -702,7 +710,7 @@ export default function GuidesPage() {
             <div className="flex h-[calc(100vh-4rem)]">
                 <Sidebar />
                 <main className="flex-1 flex flex-col overflow-hidden">
-                    <header className="flex items-center justify-between border-b p-4">
+                    <header className="flex items-center justify-between border-b p-4 md:justify-start md:gap-4">
                         <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSidebarOpen(true)}>
                             <Menu/>
                         </Button>
@@ -712,7 +720,7 @@ export default function GuidesPage() {
                     <div className="flex-1 overflow-y-auto p-6 md:p-8 lg:p-10">
                          <div className="max-w-4xl mx-auto">
                            {renderContent()}
-                           {currentSectionId === 'part2-sec4' && (
+                           {isClient && currentSectionId === 'part2-sec4' && (
                                <>
                                 <div id="code-runner-sliding-window-1"><CodeRunner codeId="sliding-window-1" /></div>
                                 <div id="code-runner-two-pointers-1"><CodeRunner codeId="two-pointers-1" /></div>
@@ -736,3 +744,5 @@ declare global {
     CodeMirror: any;
   }
 }
+
+    
