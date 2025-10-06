@@ -1,79 +1,54 @@
 /**
- * @fileoverview Firestore Security Rules for Kursor Platform (Prototyping Mode)
+ * @fileoverview Firestore Security Rules for Kursor Platform
  *
- * Core Philosophy: This ruleset prioritizes secure authorization while maintaining data shape flexibility for rapid prototyping.  It enforces strict user-ownership for user profiles and applies a public-read/owner-write pattern where applicable, defaulting to owner-only access when the intent is unclear.  Data validation is minimized to focus on authorization.
+ * Core Philosophy:
+ * This ruleset enforces a user-ownership model for user profiles. Each user can only create their own profile and no one else can modify it.
  *
  * Data Structure:
- * - `/users/{userId}`:  User profiles.  Each user can only access their own profile.
- * - `/comunicacion`:  A top-level collection.  Currently configured for open read access.
+ * - /users/{userId}: Stores public profile data for each user.
  *
  * Key Security Decisions:
- * - User listing is generally disallowed unless explicitly specified otherwise.
- * - Ambiguous access scenarios default to the most restrictive interpretation (owner-only).
- * - Data validation is relaxed to allow for rapid schema iteration.
+ * - Users can only create their profile if request.auth.uid matches the {userId}
+ * - Users can only update their profile if request.auth.uid matches the {userId}
+ * - Users can not list all users.
+ * - No schema validation is performed in this prototype beyond ownership constraints.
  *
  * Denormalization for Authorization:
- *   None currently needed.  Existing ownership patterns are enforced via path matching.
+ *  N/A - The /users/{userId} path inherently links the document to the user's UID, avoiding the need for denormalized owner fields.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Grants owner-only access to user profiles.
+     * @description Manages user profiles. Only the authenticated user can create, read, update or delete their own profile.
      * @path /users/{userId}
-     * @allow (create) - User 'alice' with UID 'alice_uid' can create their profile at /users/alice_uid.
-     * @deny (create) - User 'bob' with UID 'bob_uid' cannot create a profile at /users/alice_uid.
-     * @allow (get, update, delete) - User 'alice' with UID 'alice_uid' can read, update, and delete their profile at /users/alice_uid.
-     * @deny (get, update, delete) - User 'bob' with UID 'bob_uid' cannot read, update, or delete the profile at /users/alice_uid.
-     * @principle Enforces document ownership for all operations on user profiles.
+     * @allow (create) User with UID 'user_abc' creates a profile at /users/user_abc.
+     * @allow (get) User with UID 'user_abc' reads their profile at /users/user_abc.
+     * @allow (update) User with UID 'user_abc' updates their profile at /users/user_abc.
+     * @allow (delete) User with UID 'user_abc' deletes their profile at /users/user_abc.
+     * @deny (create) User with UID 'user_xyz' attempts to create a profile at /users/user_abc.
+     * @deny (update) User with UID 'user_xyz' attempts to update the profile at /users/user_abc.
+     * @deny (delete) User with UID 'user_xyz' attempts to delete the profile at /users/user_abc.
+     * @principle Enforces document ownership for writes.
      */
     match /users/{userId} {
-      allow get: if isOwner(userId);
-      allow list: if false; // User listing is disabled for privacy.
+      // Helper function to check if the request is made by the owner.
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      // Helper function to check if the request is made by an existing owner.
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if true;
+      allow list: if false;
+
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
-    }
-
-    /**
-     * @description Allows public read access to the 'comunicacion' collection.
-     * @path /comunicacion
-     * @allow (get, list) - Any user, including unauthenticated users, can read documents in the 'comunicacion' collection.
-     * @deny (create, update, delete) -  All users cannot create, update, delete documents in the 'comunicacion' collection.
-     * @principle Public read access for 'comunicacion'
-     */
-    match /comunicacion/{document} {
-      allow get, list: if true;
-      allow create, update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
-    }
-
-    // --- Helper Functions ---
-
-    /**
-     * @description Checks if the request is made by the owner of the resource.
-     * @param {string} userId - The user ID from the path.
-     * @return {bool} - True if the request is made by the owner, false otherwise.
-     */
-    function isOwner(userId) {
-      return request.auth != null && request.auth.uid == userId;
-    }
-
-    /**
-     * @description Checks if the request is made by the existing owner of the resource and if the resource exists.
-     * @param {string} userId - The user ID from the path.
-     * @return {bool} - True if the request is made by the owner and the resource exists, false otherwise.
-     */
-    function isExistingOwner(userId) {
-      return isOwner(userId) && exists(/databases/$(database)/documents/users/$(userId));
-    }
-
-    /**
-     * @description Checks if a user is signed in.
-     * @return {bool} - True if the user is signed in, false otherwise.
-     */
-    function isSignedIn() {
-      return request.auth != null;
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
   }
 }
