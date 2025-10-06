@@ -8,7 +8,7 @@ import { Loader2, Edit, BookOpen, GraduationCap, Trophy, HelpCircle, MessageSqua
 import type { UserProfile, Course, Comment } from "@/lib/types";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { collection, query, where, doc } from "firebase/firestore";
+import { collection, query, where, doc, limit } from "firebase/firestore";
 import Link from "next/link";
 import { courses } from "@/lib/data";
 import { CourseCard } from "@/components/course-card";
@@ -29,17 +29,15 @@ function UserStats() {
     }, [user, firestore]);
     const { data: enrolledCourses, isLoading: isCoursesLoading } = useCollection(enrolledCoursesQuery);
     
-    // This query will likely fail if there's no composite index. 
-    // We are temporarily disabling it to solve other permission issues first.
+    // This query is expensive and requires a composite index.
+    // It's better to get a summary or a few recent comments.
     const userCommentsQuery = useMemoFirebase(() => {
         if (!user || !firestore) return null;
-        // This is an expensive query and requires a composite index.
-        // Temporarily disabled. We will address this with a different pattern.
-        return null; // query(collection(firestore, `comments`), where('authorId', '==', user.uid));
+        return query(collection(firestore, 'comments'), where('authorId', '==', user.uid), limit(50));
     }, [user, firestore]);
     const { data: userComments, isLoading: isCommentsLoading } = useCollection<Comment>(userCommentsQuery);
 
-    const isLoading = isProfileLoading || isCoursesLoading || isCommentsLoading;
+    const isLoading = isProfileLoading || isCoursesLoading; // Comments are secondary, don't block render for them.
     
     if (isLoading) {
       return (
@@ -65,7 +63,7 @@ function UserStats() {
           </div>
            <div className="p-6 text-center">
             <MessageSquare className="mx-auto h-8 w-8 text-green-500 mb-2"/>
-            <p className="text-2xl font-bold">{userComments?.length ?? 0}</p>
+            <p className="text-2xl font-bold">{isCommentsLoading ? <Loader2 className="h-5 w-5 animate-spin mx-auto" /> : (userComments?.length ?? 0)}</p>
             <p className="text-xs text-muted-foreground uppercase">Comentarios</p>
           </div>
         </Card>
@@ -178,3 +176,5 @@ export default function DashboardPage() {
         </div>
     );
 }
+
+    

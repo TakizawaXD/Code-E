@@ -58,11 +58,15 @@ const formSchema = z.object({
   username: z.string().min(3, { message: "El nombre de usuario debe tener al menos 3 caracteres." }).regex(/^[a-z0-9_.]+$/, { message: "Solo letras minúsculas, números, puntos y guiones bajos."}),
   email: z.string().email({ message: "Por favor, introduce un correo electrónico válido." }),
   password: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres." }),
+  confirmPassword: z.string(),
   country: z.string({ required_error: "Por favor, selecciona tu país." }),
   birthDate: z.date({ required_error: "Tu fecha de nacimiento es requerida." }),
   terms: z.boolean().refine(value => value === true, {
     message: "Debes aceptar los términos y condiciones.",
   }),
+}).refine(data => data.password === data.confirmPassword, {
+    message: "Las contraseñas no coinciden.",
+    path: ["confirmPassword"],
 }).refine(data => {
     const today = new Date();
     const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
@@ -115,6 +119,7 @@ export default function SignupPage() {
       username: "",
       email: "",
       password: "",
+      confirmPassword: "",
       terms: false,
     },
   });
@@ -325,6 +330,19 @@ export default function SignupPage() {
                 </FormItem>
               )}
             />
+             <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirmar Contraseña</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="••••••••" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="terms"
@@ -370,3 +388,5 @@ export default function SignupPage() {
     </Card>
   );
 }
+
+    

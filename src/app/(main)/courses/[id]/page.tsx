@@ -4,10 +4,10 @@
 import { notFound, useSearchParams, useRouter, useParams } from "next/navigation";
 import React, { useState, useMemo, useEffect, Suspense } from "react";
 import Image from "next/image";
-import { useUser, useFirestore } from "@/firebase";
+import { useUser, useFirestore, useDoc, useCollection, useMemoFirebase } from "@/firebase";
 import { courses as allCourses } from "@/lib/data";
-import type { Course, Lesson, CourseModule } from "@/lib/types";
-import { setDoc, doc, serverTimestamp } from "firebase/firestore";
+import type { Course, Lesson, CourseModule, Progress } from "@/lib/types";
+import { setDoc, doc, serverTimestamp, collection } from "firebase/firestore";
 import allVideos from "@/app/lib/placeholder-videos.json";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,7 +67,7 @@ function CourseDetailContent() {
         lessonId: string;
     } | null>(null);
 
-     const [isNavOpen, setIsNavOpen] = useState(false);
+    const [isNavOpen, setIsNavOpen] = useState(false);
 
     const { lesson, module } = useMemo(() => {
         if (!course || !currentLesson) return { lesson: null, module: null };
@@ -77,42 +77,47 @@ function CourseDetailContent() {
         return { lesson: foundLesson, module: foundModule };
     }, [course, currentLesson]);
     
-    // Set initial lesson and mark course as started
+    // Set initial lesson from URL or default to the first one
     useEffect(() => {
+        if (!course) return;
         const moduleId = searchParams.get("module");
         const lessonId = searchParams.get("lesson");
 
-        let initialModuleId: string | null = null;
-        let initialLessonId: string | null = null;
-
         if (moduleId && lessonId) {
-            initialModuleId = moduleId;
-            initialLessonId = lessonId;
             setCurrentLesson({ moduleId, lessonId });
-        } else if (course && course.modules.length > 0 && course.modules[0].lessons.length > 0) {
+        } else if (course.modules.length > 0 && course.modules[0].lessons.length > 0) {
             const firstModule = course.modules[0];
             const firstLesson = firstModule.lessons[0];
-            initialModuleId = firstModule.id;
-            initialLessonId = firstLesson.id;
             handleSetLesson(firstModule.id, firstLesson.id, 'replace');
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [course, searchParams]);
 
-        if (user && firestore && courseId && initialModuleId && initialLessonId) {
-            // Mark course as enrolled/started for the user
+    // Mark course as started for the user
+    useEffect(() => {
+        if (user && firestore && courseId && course) {
             const enrolledCourseRef = doc(firestore, 'users', user.uid, 'enrolledCourses', courseId);
             setDoc(enrolledCourseRef, { 
                 courseId: courseId,
+                title: course.title,
+                imageUrl: course.imageUrl,
                 startedAt: serverTimestamp(),
-                title: course?.title,
-                imageUrl: course?.imageUrl,
             }, { merge: true });
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParams, course, user, firestore]);
+    }, [user, firestore, courseId, course]);
 
+    // Fetch user progress for this course
+    const progressCollectionRef = useMemoFirebase(() => {
+        if (!user || !firestore || !courseId) return null;
+        return collection(firestore, `users/${user.uid}/progress/${courseId}/lessons`);
+    }, [user, firestore, courseId]);
 
-    // Mock progress state
-    const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
+    const { data: progressData } = useCollection<Progress>(progressCollectionRef);
+
+    const completedLessons = useMemo(() => {
+        if (!progressData) return new Set<string>();
+        return new Set(progressData.map(p => p.id));
+    }, [progressData]);
 
     const handleSetLesson = (moduleId: string, lessonId: string, method: 'push' | 'replace' = 'push') => {
         if (!course) return;
@@ -127,10 +132,12 @@ function CourseDetailContent() {
     };
 
     const handleMarkAsCompleted = async () => {
-        if (!user || !course || !currentLesson || completedLessons.has(currentLesson.lessonId)) return;
+        if (!user || !firestore || !course || !currentLesson || completedLessons.has(currentLesson.lessonId)) return;
         
         await awardPointsForLesson(user.uid, currentLesson.lessonId);
-        setCompletedLessons(prev => new Set(prev).add(currentLesson.lessonId));
+        
+        const progressRef = doc(firestore, `users/${user.uid}/progress/${course.id}/lessons`, currentLesson.lessonId);
+        await setDoc(progressRef, { completedAt: serverTimestamp() });
 
         const nextLesson = getNextLesson(course.modules, currentLesson.moduleId, currentLesson.lessonId);
         if (nextLesson) {
@@ -279,3 +286,5 @@ export default function CourseDetailPage() {
     </Suspense>
   );
 }
+
+    
