@@ -31,6 +31,7 @@ export function Header() {
   const firestore = useFirestore();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const userProfileRef = useMemoFirebase(() => {
     if (!user || !firestore) return null;
@@ -68,6 +69,10 @@ export function Header() {
     });
     await batch.commit();
   }
+
+  const handleMobileLinkClick = () => {
+    setIsMobileMenuOpen(false);
+  };
 
 
   return (
@@ -127,7 +132,7 @@ export function Header() {
 
             <UserNav userProfile={userProfile} />
 
-            <Sheet>
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button
                   variant="ghost"
@@ -146,29 +151,30 @@ export function Header() {
                    <Link
                     href="/"
                     className="flex items-center gap-2 text-lg font-semibold mb-8"
+                    onClick={handleMobileLinkClick}
                   >
                     <CodeELogo className="h-6 w-auto" />
                   </Link>
                   <nav className="grid gap-6 text-base font-medium">
-                    <Link href="/" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                    <Link href="/" className="flex items-center justify-between text-muted-foreground hover:text-foreground" onClick={handleMobileLinkClick}>
                       Inicio
                     </Link>
-                    <Link href="/paths" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                    <Link href="/paths" className="flex items-center justify-between text-muted-foreground hover:text-foreground" onClick={handleMobileLinkClick}>
                       Rutas
                     </Link>
-                    <Link href="/dashboard" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                    <Link href="/dashboard" className="flex items-center justify-between text-muted-foreground hover:text-foreground" onClick={handleMobileLinkClick}>
                       Mi Progreso
                     </Link>
-                    <Link href="/community" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                    <Link href="/community" className="flex items-center justify-between text-muted-foreground hover:text-foreground" onClick={handleMobileLinkClick}>
                       Comunidad
                     </Link>
-                    <Link href="/guides" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                    <Link href="/guides" className="flex items-center justify-between text-muted-foreground hover:text-foreground" onClick={handleMobileLinkClick}>
                       Guía de Entrevistas
                     </Link>
-                     <Link href="/challenges" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                     <Link href="/challenges" className="flex items-center justify-between text-muted-foreground hover:text-foreground" onClick={handleMobileLinkClick}>
                       Retos Semanales
                     </Link>
-                    <Link href="/termux" className="flex items-center justify-between text-muted-foreground hover:text-foreground">
+                    <Link href="/termux" className="flex items-center justify-between text-muted-foreground hover:text-foreground" onClick={handleMobileLinkClick}>
                       <span className="flex items-center gap-2">
                         <Smartphone className="h-4 w-4" />
                         Programación sin PC
