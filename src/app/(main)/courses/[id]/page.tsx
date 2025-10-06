@@ -8,7 +8,7 @@ import { useUser, useFirestore } from "@/firebase";
 import { courses as allCourses } from "@/lib/data";
 import type { Course, Lesson, CourseModule } from "@/lib/types";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
-
+import allVideos from "@/app/lib/placeholder-videos.json";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { BottomBar } from "@/components/layout/bottom-bar";
 import { MobileCourseNav } from "@/components/layout/mobile-course-nav";
 import { awardPointsForLesson } from "./actions";
+import { CommentSection } from "@/components/comment-section";
 
 function getNextLesson(modules: CourseModule[], currentModuleId: string, currentLessonId: string): { moduleId: string; lessonId: string } | null {
   const currentModuleIndex = modules.findIndex(m => m.id === currentModuleId);
@@ -87,6 +88,7 @@ function CourseDetailContent() {
         if (moduleId && lessonId) {
             initialModuleId = moduleId;
             initialLessonId = lessonId;
+            setCurrentLesson({ moduleId, lessonId });
         } else if (course && course.modules.length > 0 && course.modules[0].lessons.length > 0) {
             const firstModule = course.modules[0];
             const firstLesson = firstModule.lessons[0];
@@ -155,6 +157,8 @@ function CourseDetailContent() {
     const completedCount = completedLessons.size;
     const totalLessons = course.modules.reduce((acc, mod) => acc + mod.lessons.length, 0);
     const courseProgress = totalLessons > 0 ? (completedCount / totalLessons) * 100 : 0;
+    
+    const videoId = lesson ? allVideos[lesson.id as keyof typeof allVideos] || lesson.youtubeVideoId : undefined;
 
     return (
     <div className="container mx-auto py-8 pb-24 md:pb-8">
@@ -179,11 +183,11 @@ function CourseDetailContent() {
                     <Separator />
 
                     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
-                        {lesson.youtubeVideoId && (
+                        {videoId && (
                         <div className="aspect-video w-full">
                             <iframe
                             className="w-full h-full rounded-lg border"
-                            src={`https://www.youtube.com/embed/${lesson.youtubeVideoId}`}
+                            src={`https://www.youtube.com/embed/${videoId}`}
                             title="YouTube video player"
                             frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -192,7 +196,7 @@ function CourseDetailContent() {
                         </div>
                         )}
                         
-                        {lesson.imageUrl && !lesson.youtubeVideoId && (
+                        {lesson.imageUrl && !videoId && (
                         <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
                             <Image
                             src={lesson.imageUrl}
@@ -214,7 +218,7 @@ function CourseDetailContent() {
                         {lesson.quiz ? (
                           <QuizComponent key={lesson.id} quiz={lesson.quiz} />
                         ) : (
-                           !lesson.content && !lesson.imageUrl && !lesson.youtubeVideoId && (
+                           !lesson.content && !lesson.imageUrl && !videoId && (
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Contenido de la Lección</CardTitle>
@@ -230,14 +234,7 @@ function CourseDetailContent() {
                     <Separator />
 
                     {currentLesson && (
-                        <div className="space-y-6">
-                            <h2 className="text-2xl font-bold">Comentarios</h2>
-                            <Card>
-                                <CardContent className="p-6 text-center text-muted-foreground">
-                                    La sección de comentarios estará disponible próximamente.
-                                </CardContent>
-                            </Card>
-                        </div>
+                        <CommentSection lessonId={currentLesson.lessonId} />
                     )}
                 </>
             ) : (
@@ -282,5 +279,3 @@ export default function CourseDetailPage() {
     </Suspense>
   );
 }
-
-    

@@ -2,79 +2,36 @@
  * @fileoverview Firestore Security Rules for Kursor Platform
  *
  * Core Philosophy:
- * This ruleset enforces a user-ownership model for user profiles,
- * ensuring that only authenticated users can access and modify their own data.
+ * This ruleset enforces a strict user-ownership model for user profiles. Each user can only read and write their own profile data.
  *
  * Data Structure:
- * - User profiles are stored under `/users/{userId}`.
+ * - User profiles are stored under `/users/{userId}`, where `{userId}` corresponds to the Firebase Authentication UID.
  *
  * Key Security Decisions:
- * - Users can only read and write their own profile data.
- * - Listing all users is disallowed.
- * - Role-based access control is not yet implemented.
+ * - Users can only create their own profile.
+ * - Users can only read, update, and delete their own profile.
+ * - Listing all users is not allowed to protect user privacy.
+ * - Data validation is relaxed in this prototyping phase to allow rapid iteration.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Manages access to user profile data.
+     * @description Controls access to user profile documents.
      * @path /users/{userId}
-     * @allow (get) Authenticated user can read their own profile.
-     *   Request: auth.uid = 'user123'
-     * @allow (create) Authenticated user can create their own profile.
-     *   Request: auth.uid = 'user123', data.id = 'user123'
-     * @allow (update) Authenticated user can update their own profile.
-     *   Request: auth.uid = 'user123', resource.data.id = 'user123'
-     * @allow (delete) Authenticated user can delete their own profile.
-     *   Request: auth.uid = 'user123', resource.data.id = 'user123'
-     * @deny (get) Authenticated user cannot read another user's profile.
-     *   Request: auth.uid = 'user456'
-     * @deny (create) Unauthenticated user cannot create a profile.
-     *   Request: auth.uid = null
-     * @deny (update) Authenticated user cannot update another user's profile.
-     *   Request: auth.uid = 'user456'
-     * @deny (delete) Authenticated user cannot delete another user's profile.
-     *   Request: auth.uid = 'user456'
-     * @principle Enforces document ownership for reads and writes, validates ownership on create, and restricts access to a user's own data tree.
+     * @allow (create) - User with UID 'user123' can create their own profile at /users/user123 if the document's 'id' field also equals 'user123'.
+     * @allow (get, update, delete) - User with UID 'user123' can read, update, and delete their profile at /users/user123.
+     * @deny (create) - User with UID 'user456' cannot create a profile at /users/user123.
+     * @deny (get, update, delete) - User with UID 'user456' cannot read, update, or delete the profile at /users/user123.
+     * @principle Enforces document ownership, validates identity on create, and allows only the owner to modify or delete.
      */
     match /users/{userId} {
-      allow get: if isSignedIn() && isOwner(userId);
+      allow get: if isOwner(userId);
       allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isSignedIn() && isExistingOwner(userId);
-    }
-
-    /**
-     * @description Manages access to enrolled courses data for a user.
-     * @path /users/{userId}/enrolledCourses/{courseId}
-     * @allow (get) Authenticated user can read their own enrolled courses.
-     *   Request: auth.uid = 'user123'
-     * @allow (list) Authenticated user can list their own enrolled courses.
-     *   Request: auth.uid = 'user123'
-     * @allow (create) Authenticated user can create an enrolled course for themselves.
-     *   Request: auth.uid = 'user123'
-     * @allow (update) Authenticated user can update their enrolled courses.
-     *   Request: auth.uid = 'user123'
-     * @allow (delete) Authenticated user can delete their enrolled courses.
-     *   Request: auth.uid = 'user123'
-     * @deny (get) Authenticated user cannot read another user's enrolled courses.
-     *   Request: auth.uid = 'user456'
-     * @deny (create) Unauthenticated user cannot create enrolled courses.
-     *   Request: auth.uid = null
-     * @deny (update) Authenticated user cannot update another user's enrolled courses.
-     *   Request: auth.uid = 'user456'
-     * @deny (delete) Authenticated user cannot delete another user's enrolled courses.
-     *   Request: auth.uid = 'user456'
-     * @principle Enforces document ownership for reads and writes, restricts access to a user's own data.
-     */
-    match /users/{userId}/enrolledCourses/{courseId} {
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isExistingOwner(userId);
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      allow create: if isSignedIn() && request.auth.uid == userId && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
     }
 
     // Helper functions
@@ -87,7 +44,7 @@ service cloud.firestore {
     }
 
     function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
+        return isOwner(userId) && resource != null;
     }
   }
 }
