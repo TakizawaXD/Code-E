@@ -19,7 +19,8 @@ import {
     PlayCircle,
     X,
     BrainCircuit,
-    Lightbulb
+    Lightbulb,
+    Languages
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -326,10 +327,58 @@ const quizData = {
     },
      'part4-quiz': {
         title: 'Cuestionario: El Elemento Humano',
-        unlocks: null, // No desbloquea nada nuevo
+        unlocks: 'part5',
         questions: [
             { id: 'p4q1', q: '¿Qué significa la "A" en el método STAR?', o: ['Análisis', 'Acción', 'Actitud', 'Audiencia'], a: 1 },
             { id: 'p4q2', q: 'En una entrevista, si no sabes la solución óptima a un problema de algoritmos, ¿qué deberías hacer primero?', o: ['Quedarte en silencio hasta que se te ocurra.', 'Proponer una solución de fuerza bruta funcional y luego discutir optimizaciones.', 'Pedir inmediatamente la solución.', 'Cambiar de tema.'], a: 1 },
+        ]
+    },
+    'part5-quiz-js': {
+        title: 'Cuestionario: JavaScript',
+        unlocks: null,
+        questions: [
+            { id: 'jsq1', q: '¿Cuál de las siguientes declaraciones es FALSA sobre `let` y `const`?', o: ['Las variables `let` pueden ser reasignadas.', 'Las variables `const` deben ser inicializadas en su declaración.', 'El alcance de `let` y `const` es de bloque.', 'Las variables `const` son inmutables para objetos y arrays.'], a: 3 },
+            { id: 'jsq2', q: '¿Qué imprimirá en la consola: `console.log(typeof null)`?', o: ['"null"', '"undefined"', '"object"', '"function"'], a: 2 },
+            { id: 'jsq3', q: '¿Cuál es la diferencia principal entre `==` y `===`?', o: ['`===` es más rápido que `==`.', '`==` realiza coerción de tipo, `===` no.', '`===` solo funciona para números.', 'No hay diferencia real.'], a: 1 },
+            { id: 'jsq4', q: '¿Qué método de array se utiliza para crear un nuevo array con todos los elementos que pasan una prueba?', o: ['`.forEach()`', '`.map()`', '`.filter()`', '`.reduce()`'], a: 2 },
+            { id: 'jsq5', q: 'El resultado de `"5" - 3` es:', o: ['"53"', '2', 'NaN', 'Error'], a: 1 },
+            { id: 'jsq6', q: '¿Qué es una "Closure" (clausura) en JavaScript?', o: ['Una función que no tiene acceso a variables externas.', 'Un objeto que describe una función.', 'Una función que recuerda las variables del ámbito en el que fue creada.', 'Una forma de cerrar el navegador con código.'], a: 2 },
+            { id: 'jsq7', q: '¿Para qué sirve `Promise.all()`?', o: ['Para ejecutar una promesa después de todas las demás.', 'Para obtener el resultado de la primera promesa que se resuelva.', 'Para manejar un conjunto de promesas y obtener sus resultados cuando todas se completen.', 'Para cancelar todas las promesas.'], a: 2 },
+            { id: 'jsq8', q: '¿Qué hace la palabra clave `async` antes de una función?', o: ['Hace que la función se ejecute en un hilo separado.', 'Pausa la ejecución de todo el script.', 'Permite el uso de `await` dentro de la función y la hace devolver una promesa.', 'La convierte en una función síncrona.'], a: 2 },
+            { id: 'jsq9', q: '¿Cuál es el propósito del "Event Loop" (bucle de eventos)?', o: ['Ejecutar código en un bucle infinito.', 'Manejar operaciones asíncronas moviendo funciones entre la pila de llamadas y la cola de tareas.', 'Dibujar elementos en la pantalla.', 'Manejar únicamente los eventos del mouse.'], a: 1 },
+            { id: 'jsq10', q: 'El "this" en una arrow function (`=>`) se refiere a:', o: ['El objeto global `window`.', 'El contexto de la función que la contiene (ámbito léxico).', 'El elemento que disparó el evento.', 'Siempre es `undefined`.'], a: 1 },
+        ]
+    },
+    'part5-quiz-python': {
+        title: 'Cuestionario: Python',
+        unlocks: null,
+        questions: [
+            { id: 'pyq1', q: '¿Cuál de estas estructuras de datos es inmutable en Python?', o: ['list', 'dict', 'set', 'tuple'], a: 3 },
+            { id: 'pyq2', q: '¿Para qué se utiliza la palabra clave `yield`?', o: ['Para terminar la ejecución de una función.', 'Para crear un generador.', 'Para declarar una variable global.', 'Para manejar excepciones.'], a: 1 },
+            { id: 'pyq3', q: '¿Qué método se invoca al crear una instancia de una clase?', o: ['`__main__`', '`__init__`', '`__new__`', '`__create__`'], a: 1 },
+            { id: 'pyq4', q: '¿Qué es una "list comprehension"?', o: ['Una forma de documentar listas.', 'Un bucle `for` para iterar sobre una lista.', 'Una sintaxis concisa para crear listas.', 'Una librería para comprimir listas.'], a: 2 },
+            { id: 'pyq5', q: 'Si `a = [1, 2, 3]`, ¿qué hace `b = a[:]`?', o: ['Crea una referencia a la misma lista `a`.', 'Crea una copia superficial (shallow copy) de `a`.', 'Crea una copia profunda (deep copy) de `a`.', 'Produce un error.'], a: 1 },
+            { id: 'pyq6', q: '¿Qué significa el decorador `@staticmethod`?', o: ['Que el método no recibe ningún argumento.', 'Que el método pertenece a la clase en lugar de a la instancia.', 'Que el método solo puede ser llamado desde dentro de la clase.', 'Que el método es obsoleto.'], a: 1 },
+            { id: 'pyq7', q: '¿Cuál es la diferencia entre un `set` y un `frozenset`?', o: ['`frozenset` es ordenado.', '`set` puede contener duplicados.', '`frozenset` es inmutable.', 'No hay diferencia.'], a: 2 },
+            { id: 'pyq8', q: 'El "GIL" (Global Interpreter Lock) en CPython significa que:', o: ['Python no puede usar múltiples procesadores.', 'Solo un hilo puede ejecutar bytecode de Python a la vez en un solo proceso.', 'Python es más seguro que otros lenguajes.', 'La memoria se gestiona automáticamente.'], a: 1 },
+            { id: 'pyq9', q: '¿Para qué sirve el archivo `__init__.py` en un directorio?', o: ['Es el script principal del proyecto.', 'Define las variables de entorno.', 'Convierte el directorio en un paquete de Python.', 'Contiene los tests del paquete.'], a: 2 },
+            { id: 'pyq10', q: '¿Qué devuelve `range(3)`?', o: ['`[0, 1, 2]`', '`[1, 2, 3]`', 'Un objeto iterable que produce 0, 1, 2.', 'Un error.'], a: 2 },
+        ]
+    },
+    'part5-quiz-java': {
+        title: 'Cuestionario: Java',
+        unlocks: null,
+        questions: [
+            { id: 'jvq1', q: '¿Cuál de las siguientes afirmaciones sobre Java es FALSA?', o: ['Es un lenguaje fuertemente tipado.', 'El código Java se compila a bytecode.', 'La gestión de memoria es manual usando `malloc` y `free`.', 'Sigue el paradigma de Programación Orientada a Objetos.'], a: 2 },
+            { id: 'jvq2', q: 'La palabra clave `final` en una variable significa que:', o: ['Es la última variable declarada en el método.', 'Su valor no puede ser modificado después de la inicialización.', 'Solo puede ser accedida por la misma clase.', 'Es una variable global.'], a: 1 },
+            { id: 'jvq3', q: '¿Qué es la JVM (Java Virtual Machine)?', o: ['Un compilador de Java.', 'Un entorno de ejecución que interpreta el bytecode de Java.', 'Una librería estándar de Java.', 'Un depurador de código.'], a: 1 },
+            { id: 'jvq4', q: '¿Cuál es la diferencia entre una clase `abstract` y una `interface`?', o: ['Una clase puede implementar múltiples interfaces, pero solo heredar de una clase abstracta.', 'Las interfaces solo pueden tener métodos abstractos (antes de Java 8).', 'Las clases abstractas pueden tener variables de instancia y constructores.', 'Todas las anteriores son correctas.'], a: 3 },
+            { id: 'jvq5', q: '¿Cuál es la colección que no permite elementos duplicados?', o: ['`ArrayList`', '`LinkedList`', '`HashSet`', '`HashMap`'], a: 2 },
+            { id: 'jvq6', q: 'El bloque `finally` en un `try-catch-finally` se ejecuta:', o: ['Solo si ocurre una excepción.', 'Solo si no ocurre una excepción.', 'Siempre, independientemente de si ocurre una excepción o no.', 'Solo si la excepción es de tipo `IOException`.'], a: 2 },
+            { id: 'jvq7', q: '¿Para qué se usa la palabra clave `static` en un método?', o: ['Para que el método sea más rápido.', 'Para que el método pertenezca a la clase, no a una instancia específica.', 'Para que el método no pueda ser sobreescrito.', 'Para que el método sea síncrono.'], a: 1 },
+            { id: 'jvq8', q: 'La sobrecarga de métodos (Overloading) se refiere a:', o: ['Tener múltiples métodos con el mismo nombre pero diferentes parámetros en la misma clase.', 'Redefinir un método de una clase padre en una clase hija.', 'Crear un método que llama a otro repetidamente.', 'Un método que consume demasiada memoria.'], a: 0 },
+            { id: 'jvq9', q: '¿Cuál de estos no es un principio de la Programación Orientada a Objetos?', o: ['Encapsulamiento', 'Herencia', 'Polimorfismo', 'Recursión'], a: 3 },
+            { id: 'jvq10', q: '¿Qué hace el "Garbage Collector" (Recolector de Basura)?', o: ['Limpia la caché del programa.', 'Elimina archivos temporales.', 'Libera automáticamente la memoria de objetos que ya no son referenciados.', 'Comprime el código fuente.'], a: 2 },
         ]
     },
 };
@@ -373,6 +422,13 @@ const navStructure = [
             { title: '9. El Metajuego del Proceso', id: 'part4-sec9' },
             { title: 'Cuestionario: El Elemento Humano', id: 'part4-quiz' },
         ] 
+    },
+    {
+        id: 'part5', title: 'Parte V: Cuestionarios por Lenguaje', icon: <Languages />, children: [
+            { title: 'Cuestionario: JavaScript', id: 'part5-quiz-js' },
+            { title: 'Cuestionario: Python', id: 'part5-quiz-python' },
+            { title: 'Cuestionario: Java', id: 'part5-quiz-java' },
+        ]
     }
 ];
 
@@ -535,7 +591,7 @@ const Quiz = ({ quizId, onPass }: { quizId: keyof typeof quizData; onPass: (part
                         </p>
                         {percentage >= 80 ? (
                             <p className="text-green-500 font-semibold flex items-center justify-center gap-2">
-                            <CheckCircle2 /> ¡Excelente! Has desbloqueado la siguiente sección.
+                            <CheckCircle2 /> {quiz.unlocks ? "¡Excelente! Has desbloqueado la siguiente sección." : "¡Excelente! Cuestionario completado."}
                             </p>
                         ) : (
                             <p className="text-orange-500 font-semibold">Necesitas al menos 80% para pasar. ¡Sigue intentando!</p>
@@ -648,7 +704,7 @@ export default function GuidesPage() {
                     const isPartUnlocked = !!unlockedParts[item.id] || item.id === 'welcome';
                     if (item.children) {
                         return (
-                             <details key={item.id} className="group" open={item.id === 'part1'}>
+                             <details key={item.id} className="group" open={['part1', 'part5'].includes(item.id)}>
                                 <summary className={cn(
                                     "flex items-center px-3 py-2 text-sm font-semibold uppercase text-muted-foreground tracking-wider cursor-pointer list-none rounded-md",
                                     !isPartUnlocked && 'opacity-50'
