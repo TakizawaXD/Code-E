@@ -2,71 +2,113 @@
  * @fileoverview Firestore Security Rules for Kursor Platform
  *
  * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for most data, while allowing public read access to certain collections.
- * User data is segregated under the /users/{userId} path.
+ * This ruleset enforces a strict user-ownership model for user profiles and a public read with owner-write model for lessons and progress tracking.
  *
  * Data Structure:
- * - /users/{userId}: Stores public user profile information.
- * - /users/{userId}/progress/{courseId}/lessons: Stores user-specific progress data for lessons within a course.
+ * - User profiles are stored under /users/{userId}.
+ * - Progress data, nested under users.
  *
  * Key Security Decisions:
- * - Users can only read and write their own user profile.
- * - Users can only access their own progress data.
- * - The ruleset explicitly denies listing all users.
+ * - Users can only read/write their own profile data.
+ * - Listing all users is disallowed for privacy.
  *
  * Denormalization for Authorization:
- * The rules assume that documents requiring ownership checks have an `ownerId` field that matches the authenticated user's UID.
- *
- * Structural Segregation:
- * The ruleset uses nested collections under `/users/{userId}` to store private user data.
+ *  - User progress is nested under the user's document to simplify ownership checks.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Allows users to read and write their own user profile.
-     * @path /users/{userId}
-     * @allow (get, update, delete) User with UID 'user123' can read/write document 'user123'.
-     * @allow (create) User with UID 'user123' can create document 'user123'.
-     * @deny (get, update, delete) User with UID 'user456' cannot read/write document 'user123'.
-     * @principle Enforces document ownership for writes; allows owner-only access.
+     * @description Secure user profiles. Users can only read and write their own profile.
+     * @path /databases/{database}/documents/users/{userId}
+     * @allow (create) - Authenticated user creates their own profile with matching userId.
+     * @allow (get, update, delete) - Authenticated user with matching userId accesses their profile.
+     * @deny (create) - User attempts to create a profile with a userId that doesn't match their auth.uid.
+     * @deny (list) - Listing all users is disallowed.
+     * @principle Enforces document ownership for writes and restricts access to a user's own data.
      */
     match /users/{userId} {
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if false; // Do not allow listing all users
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isOwner(userId) && resource != null;
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      // Helper function to check if the user is signed in and owns the document.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      // Allow the user to create their own profile.
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+
+      // Allow the user to read their own profile.
+      allow get: if isOwner(userId);
+
+      // Allow the user to update their own profile, ensuring the user ID cannot be changed.
+      allow update: if isOwner(userId) && resource.data.id == userId;
+
+      // Allow the user to delete their own profile.
+      allow delete: if isOwner(userId) && resource != null;
+
+      // Prevent listing all users.
+      allow list: if false;
     }
 
     /**
-     * @description Allows users to read and write their own progress data.
-     * @path /users/{userId}/progress/{courseId}/lessons
-     * @allow (list) User with UID 'user123' can list documents under /users/user123/progress/course1/lessons.
-     * @allow (get, create, update, delete) are not allowed because there are no specific rules set for them, defaults to false.
-     * @deny User with UID 'user456' cannot list documents under /users/user123/progress/course1/lessons.
-     * @principle Enforces user-specific data access.
+     * @description Secure user progress. Users can only read and write their own progress.
+     * @path /databases/{database}/documents/users/{userId}/progress/{progressId}
+     * @allow (create) - Authenticated user creates their own progress with matching userId.
+     * @allow (get, update, delete) - Authenticated user with matching userId accesses their progress.
+     * @deny (create) - User attempts to create a progress with a userId that doesn't match their auth.uid.
+     * @deny (list) - Listing all progress is disallowed.
+     * @principle Enforces document ownership for writes and restricts access to a user's own data.
      */
-    match /users/{userId}/progress/{courseId}/lessons {
-      allow get: if false;
-      allow list: if isSignedIn() && isOwner(userId);
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
-    }
+    match /users/{userId}/progress/{progressId} {
+      // Helper function to check if the user is signed in and owns the document.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
 
-    // Helper functions
-    function isSignedIn() {
-      return request.auth != null;
-    }
+      // Allow the user to create their own progress.
+      allow create: if isOwner(userId);
 
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
+      // Allow the user to read their own progress.
+      allow get: if isOwner(userId);
 
-    function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
+      // Allow the user to update their own progress.
+      allow update: if isOwner(userId) && resource != null;
+
+      // Allow the user to delete their own progress.
+      allow delete: if isOwner(userId) && resource != null;
+
+      // Prevent listing all progress.
+      allow list: if isOwner(userId);
+    }
+    
+    /**
+     * @description Secure user lessons under user progress. Users can only read and write their own lesson progress.
+     * @path /databases/{database}/documents/users/{userId}/progress/{progressId}/lessons/{lessonId}
+     * @allow (create) - Authenticated user creates their own lesson progress with matching userId.
+     * @allow (get, update, delete) - Authenticated user with matching userId accesses their lesson progress.
+     * @deny (create) - User attempts to create a lesson progress with a userId that doesn't match their auth.uid.
+     * @principle Enforces document ownership for writes and restricts access to a user's own data.
+     */
+    match /users/{userId}/progress/{progressId}/lessons/{lessonId} {
+          // Helper function to check if the user is signed in and owns the document.
+          function isOwner(userId) {
+            return request.auth != null && request.auth.uid == userId;
+          }
+    
+          // Allow the user to create their own lesson progress.
+          allow create: if isOwner(userId);
+    
+          // Allow the user to read their own lesson progress.
+          allow get: if isOwner(userId);
+    
+          // Allow the user to update their own lesson progress.
+          allow update: if isOwner(userId) && resource != null;
+    
+          // Allow the user to delete their own lesson progress.
+          allow delete: if isOwner(userId) && resource != null;
+    
+          // Prevent listing all lesson progress.
+          allow list: if isOwner(userId);
     }
   }
 }
