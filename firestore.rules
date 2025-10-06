@@ -1,230 +1,55 @@
 /**
- * @fileOverview Firestore Security Rules for the Code-E platform.
+ * @file Overview
  *
  * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for user-specific data
- * and leverages role-based access control for collaborative resources.
+ * This ruleset enforces a strict user-ownership model for user profiles. Each user can only read and write their own profile data.
  *
  * Data Structure:
- * - User-specific data (profiles, notifications, subscriptions) is nested under `/users/{userId}`.
- * - Course, LearningPath, and Instructor data resides in top-level collections (`/courses`, `/learning_paths`, `/instructors`).
- * - Module and VideoLesson data are nested under their respective courses.
- * - Comments are nested under their respective video lessons.
+ * User profiles are stored under the `/users/{userId}` path, where `{userId}` corresponds to the Firebase Authentication UID.
  *
  * Key Security Decisions:
- * - Users can only read and write their own profile data, notifications, and subscriptions.
- * - Public read access is granted to courses, learning paths, and instructors.
- * - Write access to courses, learning paths, and instructors is not explicitly defined in the IR and thus denied.
- * - Listing of notifications and subscriptions is allowed only for the owner.
+ * - Users can only create, read, update, and delete their own profile.
+ * - Listing all users is disallowed for privacy.
  *
  * Denormalization for Authorization:
- *  - No denormalization needed, path based ownership is sufficient.
- *
- * Structural Segregation:
- * - Private user data is stored under `/users/{userId}`, while public course and learning path data are in top-level collections.
+ * - The `userId` is part of the path (`/users/{userId}`), so no denormalization is required.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Checks if the request is authenticated.
-     * @returns {boolean} True if the user is signed in, false otherwise.
+     * @description Controls access to user profiles.
+     * @path /users/{userId}
+     * @allow (create) User with UID 'user123' can create their own profile.
+     * @allow (get) User with UID 'user123' can read their own profile.
+     * @allow (update) User with UID 'user123' can update their own profile.
+     * @allow (delete) User with UID 'user123' can delete their own profile.
+     * @deny (create) User with UID 'user123' cannot create a profile with a different userId in the document.
+     * @deny (get) User with UID 'user456' cannot read the profile of user with UID 'user123'.
+     * @deny (update) User with UID 'user456' cannot update the profile of user with UID 'user123'.
+     * @deny (delete) User with UID 'user456' cannot delete the profile of user with UID 'user123'.
+     * @principle Enforces document ownership for all operations.
      */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.email == request.auth.token.email;
+      allow update: if isExistingOwner(userId) && request.resource.data.email == request.auth.token.email;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    // Helper functions
     function isSignedIn() {
       return request.auth != null;
     }
 
-    /**
-     * @description Checks if the authenticated user ID matches the provided user ID.
-     * @param {string} userId The user ID to compare against.
-     * @returns {boolean} True if the user is the owner, false otherwise.
-     */
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    /**
-     * @description Checks if the authenticated user is the owner and the resource exists.
-     * @param {string} userId The user ID to compare against.
-     * @returns {boolean} True if the user is the existing owner, false otherwise.
-     */
     function isExistingOwner(userId) {
       return isOwner(userId) && resource != null;
-    }
-
-    /**
-     * @description Security rules for user profiles.
-     * @path /users/{userId}
-     * @allow (create) User with ID 'user123' creates their profile.
-     *     request.auth.uid == 'user123'
-     * @allow (get) User with ID 'user123' reads their profile.
-     *     request.auth.uid == 'user123'
-     * @allow (update) User with ID 'user123' updates their profile.
-     *     request.auth.uid == 'user123'
-     * @deny (create) User with ID 'user456' attempts to create a profile for 'user123'.
-     *     request.auth.uid == 'user456'
-     * @deny (update) User with ID 'user456' attempts to update profile 'user123'.
-     *     request.auth.uid == 'user456'
-     * @principle Enforces document ownership for reads and writes.
-     */
-    match /users/{userId} {
-      allow get: if isOwner(userId);
-      allow list: if false; // Listing users is not permitted.
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description Security rules for user notifications.
-     * @path /users/{userId}/notifications/{notificationId}
-     * @allow (create) User with ID 'user123' creates a notification for themselves.
-     *     request.auth.uid == 'user123'
-     * @allow (get) User with ID 'user123' reads their own notification.
-     *     request.auth.uid == 'user123'
-     * @allow (update) User with ID 'user123' updates their own notification.
-     *     request.auth.uid == 'user123'
-     * @deny (create) User with ID 'user456' attempts to create a notification for 'user123'.
-     *     request.auth.uid == 'user456'
-     * @deny (update) User with ID 'user456' attempts to update notification 'notification123' of user 'user123'.
-     *     request.auth.uid == 'user456'
-     * @principle Restricts access to a user's own data tree.
-     */
-    match /users/{userId}/notifications/{notificationId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.userId == userId;
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description Security rules for user subscriptions.
-     * @path /users/{userId}/subscriptions/{subscriptionId}
-     * @allow (create) User with ID 'user123' creates a subscription for themselves.
-     *     request.auth.uid == 'user123'
-     * @allow (get) User with ID 'user123' reads their subscription.
-     *     request.auth.uid == 'user123'
-     * @allow (update) User with ID 'user123' updates their subscription.
-     *     request.auth.uid == 'user123'
-     * @deny (create) User with ID 'user456' attempts to create a subscription for 'user123'.
-     *     request.auth.uid == 'user456'
-     * @deny (update) User with ID 'user456' attempts to update subscription 'subscription123' of user 'user123'.
-     *     request.auth.uid == 'user456'
-     * @principle Restricts access to a user's own data tree.
-     */
-    match /users/{userId}/subscriptions/{subscriptionId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.userId == userId;
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description Security rules for courses. Public read, owner-only write (not implemented).
-     * @path /courses/{courseId}
-     * @allow (get) Any user can read course information.
-     * @allow (list) Any user can list courses.
-     * @deny (create) No one can create a course, unless further rules are added.
-     * @deny (update) No one can update a course, unless further rules are added.
-     * @deny (delete) No one can delete a course, unless further rules are added.
-     * @principle Public read access with owner-only writes.
-     */
-    match /courses/{courseId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
-    }
-
-    /**
-     * @description Security rules for learning paths. Public read, owner-only write (not implemented).
-     * @path /learning_paths/{learningPathId}
-     * @allow (get) Any user can read learning path information.
-     * @allow (list) Any user can list learning paths.
-     * @deny (create) No one can create a learning path, unless further rules are added.
-     * @deny (update) No one can update a learning path, unless further rules are added.
-     * @deny (delete) No one can delete a learning path, unless further rules are added.
-     * @principle Public read access with owner-only writes.
-     */
-    match /learning_paths/{learningPathId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
-    }
-
-    /**
-     * @description Security rules for instructors. Public read, owner-only write (not implemented).
-     * @path /instructors/{instructorId}
-     * @allow (get) Any user can read instructor information.
-     * @allow (list) Any user can list instructors.
-     * @deny (create) No one can create an instructor, unless further rules are added.
-     * @deny (update) No one can update an instructor, unless further rules are added.
-     * @deny (delete) No one can delete an instructor, unless further rules are added.
-     * @principle Public read access with owner-only writes.
-     */
-    match /instructors/{instructorId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
-    }
-
-    /**
-     * @description Security rules for modules within a course.
-     * @path /courses/{courseId}/modules/{moduleId}
-     * @allow (get) Any user can read module information.
-     * @allow (list) Any user can list modules.
-     * @deny (create) No one can create a module, unless further rules are added.
-     * @deny (update) No one can update a module, unless further rules are added.
-     * @deny (delete) No one can delete a module, unless further rules are added.
-     */
-    match /courses/{courseId}/modules/{moduleId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
-    }
-
-    /**
-     * @description Security rules for video lessons within a module.
-     * @path /courses/{courseId}/modules/{moduleId}/video_lessons/{videoLessonId}
-     * @allow (get) Any user can read video lesson information.
-     * @allow (list) Any user can list video lessons.
-     * @deny (create) No one can create a video lesson, unless further rules are added.
-     * @deny (update) No one can update a video lesson, unless further rules are added.
-     * @deny (delete) No one can delete a video lesson, unless further rules are added.
-     */
-    match /courses/{courseId}/modules/{moduleId}/video_lessons/{videoLessonId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
-    }
-
-    /**
-     * @description Security rules for comments on a video lesson.
-     * @path /courses/{courseId}/modules/{moduleId}/video_lessons/{videoLessonId}/comments/{commentId}
-     * @allow (get) Any user can read comment information.
-     * @allow (list) Any user can list comments.
-     * @deny (create) No one can create a comment, unless further rules are added.
-     * @deny (update) No one can update a comment, unless further rules are added.
-     * @deny (delete) No one can delete a comment, unless further rules are added.
-     */
-    match /courses/{courseId}/modules/{moduleId}/video_lessons/{videoLessonId}/comments/{commentId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
     }
   }
 }
