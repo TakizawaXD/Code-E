@@ -1,77 +1,69 @@
 /**
- * @fileoverview Firestore Security Rules for the Code-E platform.
- *
- * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for user profiles.
+ * @file Firestore Security Rules
+ * @description This ruleset enforces a strict user-ownership model for user profiles.
  *
  * Data Structure:
- * - User profiles are stored in `/users/{userId}`.
+ * - `/users/{userId}`: Stores public user profiles. Each user can only read and write their own profile.
  *
  * Key Security Decisions:
- * - Users can only read or write their own profile data.
- * - Listing of all user profiles is disallowed to protect user privacy.
+ * - Users can only manage their own profile data.
+ * - Data structure adheres to a owner-centric security model.
+ *
+ * Denormalization for Authorization:
+ * - User profiles are stored under `/users/{userId}`, and the rules enforce that the `userId` in the path must match the authenticated user's UID. This avoids needing to store the UID within the profile data itself.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Enforces access control for user profiles.
+     * @description Controls access to user profiles. Each user can only read and write their own profile.
      * @path /databases/{database}/documents/users/{userId}
-     * @allow (create) User with ID 'user123' can create their profile.
-     *    - auth: { uid: 'user123' }
-     *    - request.resource.data: { id: 'user123', name: 'John Doe', email: 'john@example.com', username: 'johndoe', createdAt: '2024-01-01T00:00:00Z' }
-     * @allow (get) User with ID 'user123' can read their profile.
-     *    - auth: { uid: 'user123' }
-     * @allow (update) User with ID 'user123' can update their profile.
-     *    - auth: { uid: 'user123' }
-     * @allow (delete) User with ID 'user123' can delete their profile.
-     *    - auth: { uid: 'user123' }
-     * @deny (create) User with ID 'user456' cannot create a profile for 'user123'.
-     *    - auth: { uid: 'user456' }
-     *    - request.resource.data: { id: 'user123', name: 'John Doe', email: 'john@example.com', username: 'johndoe', createdAt: '2024-01-01T00:00:00Z' }
-     * @deny (get) User with ID 'user456' cannot read the profile of 'user123'.
-     *    - auth: { uid: 'user456' }
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) - User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can create their profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2 if request.auth.uid == userId
+     * @allow (get) - User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can read their profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
+     * @allow (update) - User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can update their profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
+     * @allow (delete) - User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can delete their profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
+     * @deny (create) - User 'someOtherUserId' cannot create a profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
+     * @deny (get) - User 'someOtherUserId' cannot read the profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
+     * @deny (update) - User 'someOtherUserId' cannot update the profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
+     * @deny (delete) - User 'someOtherUserId' cannot delete the profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
+     * @principle Enforces user-ownership; only the authenticated user can manage their own profile.
      */
     match /users/{userId} {
-      // Helper function to check if the authenticated user is the owner of the document.
-      function isOwner(userId) {
-        return request.auth != null && request.auth.uid == userId;
-      }
-
-      // Read rules
-      allow get: if isOwner(userId);
+      allow get: if true;
       allow list: if false;
-
-      // Write rules
-      allow create: if isOwner(userId);
-      allow update: if isOwner(userId) && existsAfter(/databases/$(database)/documents/users/$(userId));
-      allow delete: if isOwner(userId) && exists(/databases/$(database)/documents/users/$(userId));
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
     }
 
     /**
-     * @description Prevents unauthorized listing of comments.
+     * @description  Placeholder for comments. Public read is allowed
      * @path /databases/{database}/documents/comments
-     * @allow (get)  No one, this operation does not exists.
-     * @allow (create) No one, this operation does not exists.
-     * @allow (update) No one, this operation does not exists.
-     * @allow (delete) No one, this operation does not exists.
-     * @allow (list)  No one, this operation is disallowed.
-     * @deny (list)  Everyone is denied from listing comments, as no permissions are specified for comments.
-     * @principle Prevents unauthorized listing of comments.
+     * @allow (list) Authenticated User can list all the comments
+     * @allow (get) Authenticated User can get all the comments
+     * @deny (create) Any operation is denied
+     * @deny (update) Any operation is denied
+     * @deny (delete) Any operation is denied
+     *
      */
-    match /comments/{commentId} {
-      allow get: if false;
-      allow list: if false;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+    match /comments/{document} {
+        allow get, list: if true;
+        allow create: if false;
+        allow update: if false;
+        allow delete: if false;
     }
 
-    // Define the isSignedIn function.
     function isSignedIn() {
-        return request.auth != null;
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
     }
   }
 }

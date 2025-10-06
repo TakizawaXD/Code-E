@@ -3,12 +3,12 @@
 
 import { useState } from "react";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection, query, orderBy, serverTimestamp, addDoc, FieldValue } from "firebase/firestore";
+import { collection, query, orderBy, serverTimestamp, addDoc, FieldValue, where } from "firebase/firestore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Send } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -89,7 +89,7 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
                                 className="w-full"
                             />
                             <Button onClick={handleAddComment} disabled={!newComment.trim() || isSubmitting}>
-                                <Send className="mr-2" />
+                                {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
                                 {isSubmitting ? "Enviando..." : "Enviar Comentario"}
                             </Button>
                         </div>
