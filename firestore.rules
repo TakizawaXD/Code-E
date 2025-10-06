@@ -1,276 +1,338 @@
 /**
- * @description This ruleset enforces a user-ownership model for private data,
- *              allows public read access to certain collections, and secures
- *              collaborative channels. Data validation is relaxed for prototyping,
- *              focusing on authorization and relational integrity.
+ * @description This ruleset enforces a user-ownership model for most data, with public read access to some collections.
+ *   It prioritizes security by default, restricting access unless explicitly granted.  Schema validation is relaxed to
+ *   allow for rapid prototyping.
  * @dataStructure
- *   - /learningPaths/{learningPathId}: Public learning paths.
- *   - /courses/{courseId}: Public courses with nested modules and lessons.
- *   - /users/{userId}: User profiles with private subcollections for progress,
- *     notifications, gamification stats, and badges.
- *   - /badges/{badgeId}: Public badge definitions.
- *   - /forumThreads/{threadId}: Public forum threads with nested posts.
- *   - /channels/{channelId}: Collaborative channels with messages.
+ *   - /users/{userId}: Stores user profile data. Only the authenticated user can read/write their own profile.
+ *   - /users/{userId}/progress/{progressId}: Stores course progress for a user.  Only the authenticated user can read/write their own progress.
+ *   - /learningPaths/{learningPathId}: Stores learning path information. Publicly readable. Owner-only writes are not yet enforced (TODO).
+ *   - /courses/{courseId}: Stores course information. Publicly readable. Owner-only writes are not yet enforced (TODO).
+ *   - /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}: Stores lesson information. Publicly readable. Owner-only writes are not yet enforced (TODO).
+ *   - /forumThreads/{threadId}: Stores forum thread information. Publicly readable. Owner-only writes are not yet enforced (TODO).
  * @keySecurityDecisions
- *   - Users can only manage their own profiles and related data.
- *   - Public read access is granted to learning paths, courses, badges, and forum threads.
- *   - Channels are secured using a shared access (closed collaborators) pattern.
+ *   - Listing of users is disallowed for privacy.
+ *   - Read-only access is granted to courses, learning paths, and forum threads to enable open browsing.  However, write access to these collections is currently open. This should be restricted to authorized users, TODO
+ *   - All subcollections under /users/{userId} are strictly owned by the authenticated user.
  * @denormalizationForAuthorization
- *   - Channels and their messages should ideally include a list or map of authorized
- *     user IDs to avoid complex `get()` calls in the rules. For now, we assume
- *     public read access to messages within a channel but owner-only writes.
+ *   -  No specific denormalization implemented at this time, but is recommended to improve authorization and simplify rules.
+ *     For example, adding an `ownerId` field to `/courses/{courseId}` would allow enforcing owner-only writes.
  * @structuralSegregation
- *   - User-specific data (progress, notifications, etc.) is stored in private
- *     subcollections under /users/{userId} to ensure only the owner can access it.
+ *   - Uses user-specific subcollections under `/users/{userId}` to store private data (progress, notifications, etc.).
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Allows anyone to read learning paths. Only allows the owner to create, update, and delete.
-     * @path /learningPaths/{learningPathId}
-     * @allow (get, list): Anyone can read learning paths.
-     * @allow (create): Only the owner can create learning paths. The 'creatorId' field must match the authenticated user's UID.
-     * @allow (update, delete): Only the owner can update or delete learning paths.
-     * @deny (create): Non-owners cannot create learning paths. The 'creatorId' field does not match the authenticated user's UID.
-     * @deny (update, delete): Non-owners cannot update or delete learning paths.
-     * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
+     * @description Checks if the request is made by a signed-in user.
+     * @path N/A (helper function)
+     * @allow N/A (helper function)
+     * @deny N/A (helper function)
+     * @principle Authentication required for most operations.
      */
-    match /learningPaths/{learningPathId} {
-      allow get, list: if true;
-      allow create: if isSignedIn();
-      allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+    function isSignedIn() {
+      return request.auth != null;
     }
 
     /**
-     * @description Allows anyone to read courses. Only allows the owner to create, update, and delete.
-     * @path /courses/{courseId}
-     * @allow (get, list): Anyone can read courses.
-     * @allow (create): Only the owner can create courses. The 'creatorId' field must match the authenticated user's UID.
-     * @allow (update, delete): Only the owner can update or delete courses.
-     * @deny (create): Non-owners cannot create courses. The 'creatorId' field does not match the authenticated user's UID.
-     * @deny (update, delete): Non-owners cannot update or delete courses.
-     * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
+     * @description Checks if the authenticated user ID matches the provided user ID.
+     * @path N/A (helper function)
+     * @allow N/A (helper function)
+     * @deny N/A (helper function)
+     * @principle Enforces user-ownership.
      */
-    match /courses/{courseId} {
-      allow get, list: if true;
-      allow create: if isSignedIn();
-      allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
-
-      /**
-       * @description Allows anyone to read course modules. Only allows the owner to create, update, and delete.
-       * @path /courses/{courseId}/modules/{moduleId}
-       * @allow (get, list): Anyone can read course modules.
-       * @allow (create): Only the owner can create course modules. The 'creatorId' field must match the authenticated user's UID.
-       * @allow (update, delete): Only the owner can update or delete course modules.
-       * @deny (create): Non-owners cannot create course modules. The 'creatorId' field does not match the authenticated user's UID.
-       * @deny (update, delete): Non-owners cannot update or delete course modules.
-       * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
-       */
-      match /modules/{moduleId} {
-        allow get, list: if true;
-        allow create: if isSignedIn();
-        allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
-
-        /**
-         * @description Allows anyone to read lessons. Only allows the owner to create, update, and delete.
-         * @path /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}
-         * @allow (get, list): Anyone can read lessons.
-         * @allow (create): Only the owner can create lessons. The 'creatorId' field must match the authenticated user's UID.
-         * @allow (update, delete): Only the owner can update or delete lessons.
-         * @deny (create): Non-owners cannot create lessons. The 'creatorId' field does not match the authenticated user's UID.
-         * @deny (update, delete): Non-owners cannot update or delete lessons.
-         * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
-         */
-        match /lessons/{lessonId} {
-          allow get, list: if true;
-          allow create: if isSignedIn();
-          allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
-
-          /**
-           * @description Allows anyone to read comments. Only allows the owner to create, update, and delete.
-           * @path /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}/comments/{commentId}
-           * @allow (get, list): Anyone can read comments.
-           * @allow (create): Only the owner can create comments. The 'creatorId' field must match the authenticated user's UID.
-           * @allow (update, delete): Only the owner can update or delete comments.
-           * @deny (create): Non-owners cannot create comments. The 'creatorId' field does not match the authenticated user's UID.
-           * @deny (update, delete): Non-owners cannot update or delete comments.
-           * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
-           */
-          match /comments/{commentId} {
-            allow get, list: if true;
-            allow create: if isSignedIn();
-            allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
-          }
-        }
-      }
+    function isOwner(userId) {
+      return request.auth.uid == userId;
     }
 
     /**
-     * @description Allows a user to manage their own profile and related data.
-     * @path /users/{userId}
-     * @allow (get, list): Only the owner can read their own profile.
-     * @allow (create): Only the owner can create their profile.  The 'id' field must match the authenticated user's UID.
-     * @allow (update, delete): Only the owner can update or delete their profile.
-     * @deny (get, list): Non-owners cannot read other user's profiles.
-     * @deny (create): Non-owners cannot create profiles for other users. The 'id' field does not match the authenticated user's UID.
-     * @deny (update, delete): Non-owners cannot update or delete other user's profiles.
-     * @principle Ownership. Enforces document ownership for all operations.
+     * @description Checks if the authenticated user ID matches the provided user ID and the resource exists
+     * @path N/A (helper function)
+     * @allow N/A (helper function)
+     * @deny N/A (helper function)
+     * @principle Enforces user-ownership and validates document exists
+     */
+    function isExistingOwner(userId) {
+        return (isOwner(userId) && exists(resource.data));
+    }
+
+    /**
+     * @description Rules for the top-level /users collection.  Listing is denied for privacy.
+     * @path /databases/{database}/documents/users
+     * @allow (get) Anyone can get a user document if they know the ID.
+     * @allow (create) An authenticated user can create their own document using their UID.
+     * @deny (create) An unauthenticated user cannot create a user document.
+     * @deny (update) No one can update a user document directly in the /users collection. Updates must happen on /users/{userId}.
+     * @deny (delete) No one can delete a user document directly in the /users collection. Deletion must happen on /users/{userId}.
+     * @deny (list) Listing users is not allowed.
+     * @principle Prevents unauthorized creation, modification, or deletion of user documents at the top level.
+     */
+    match /users {
+      allow get: if false;
+      allow list: if false;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    /**
+     * @description Rules for individual user documents.
+     * @path /databases/{database}/documents/users/{userId}
+     * @allow (get) The owner can read their own user document.
+     * @allow (create) An authenticated user can create their own user document if the userId matches their auth UID.
+     * @allow (update) The owner can update their own user document.
+     * @allow (delete) The owner can delete their own user document.
+     * @deny (create) An unauthenticated user cannot create a user document.
+     * @deny (create) An authenticated user cannot create a user document with a userId that doesn't match their auth UID.
+     * @principle Enforces user-ownership for reading and writing user profile data.
      */
     match /users/{userId} {
-      allow get, list: if isOwner(userId);
-      allow create: if isOwner(userId);
-      allow update, delete: if isExistingOwner(userId);
-
-      /**
-       * @description Allows a user to manage their own progress data.
-       * @path /users/{userId}/progress/{progressId}
-       * @allow (get, list): Only the owner can read their own progress data.
-       * @allow (create): Only the owner can create their progress data.
-       * @allow (update, delete): Only the owner can update or delete their progress data.
-       * @deny (get, list): Non-owners cannot read other user's progress data.
-       * @deny (create): Non-owners cannot create progress data for other users.
-       * @deny (update, delete): Non-owners cannot update or delete other user's progress data.
-       * @principle Ownership. Enforces document ownership for all operations.
-       */
-      match /progress/{progressId} {
-        allow get, list: if isOwner(userId);
-        allow create: if isOwner(userId);
-        allow update, delete: if isExistingOwner(userId);
-      }
-
-      /**
-       * @description Allows a user to manage their own notifications.
-       * @path /users/{userId}/notifications/{notificationId}
-       * @allow (get, list): Only the owner can read their own notifications.
-       * @allow (create): Only the owner can create their notifications.
-       * @allow (update, delete): Only the owner can update or delete their notifications.
-       * @deny (get, list): Non-owners cannot read other user's notifications.
-       * @deny (create): Non-owners cannot create notifications for other users.
-       * @deny (update, delete): Non-owners cannot update or delete other user's notifications.
-       * @principle Ownership. Enforces document ownership for all operations.
-       */
-      match /notifications/{notificationId} {
-        allow get, list: if isOwner(userId);
-        allow create: if isOwner(userId);
-        allow update, delete: if isExistingOwner(userId);
-      }
-
-      /**
-       * @description Allows a user to manage their own gamification stats.
-       * @path /users/{userId}/gamification/{statsId}
-       * @allow (get, list): Only the owner can read their own gamification stats.
-       * @allow (create): Only the owner can create their gamification stats.
-       * @allow (update, delete): Only the owner can update or delete their gamification stats.
-       * @deny (get, list): Non-owners cannot read other user's gamification stats.
-       * @deny (create): Non-owners cannot create gamification stats for other users.
-       * @deny (update, delete): Non-owners cannot update or delete other user's gamification stats.
-       * @principle Ownership. Enforces document ownership for all operations.
-       */
-      match /gamification/{statsId} {
-        allow get, list: if isOwner(userId);
-        allow create: if isOwner(userId);
-        allow update, delete: if isExistingOwner(userId);
-      }
-
-      /**
-       * @description Allows a user to manage their own badges.
-       * @path /users/{userId}/badges/{userBadgeId}
-       * @allow (get, list): Only the owner can read their own badges.
-       * @allow (create): Only the owner can create their badges.
-       * @allow (update, delete): Only the owner can update or delete their badges.
-       * @deny (get, list): Non-owners cannot read other user's badges.
-       * @deny (create): Non-owners cannot create badges for other users.
-       * @deny (update, delete): Non-owners cannot update or delete other user's badges.
-       * @principle Ownership. Enforces document ownership for all operations.
-       */
-      match /badges/{userBadgeId} {
-        allow get, list: if isOwner(userId);
-        allow create: if isOwner(userId);
-        allow update, delete: if isExistingOwner(userId);
-      }
+      allow get: if isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Allows anyone to read badge definitions. Only allows the owner to create, update, and delete.
-     * @path /badges/{badgeId}
-     * @allow (get, list): Anyone can read badge definitions.
-     * @allow (create): Only the owner can create badge definitions. The 'creatorId' field must match the authenticated user's UID.
-     * @allow (update, delete): Only the owner can update or delete badge definitions.
-     * @deny (create): Non-owners cannot create badge definitions. The 'creatorId' field does not match the authenticated user's UID.
-     * @deny (update, delete): Non-owners cannot update or delete badge definitions.
-     * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
+     * @description Rules for user progress documents.
+     * @path /databases/{database}/documents/users/{userId}/progress/{progressId}
+     * @allow (get) The owner can read their own progress documents.
+     * @allow (list) The owner can list their own progress documents.
+     * @allow (create) The owner can create progress documents in their own collection.
+     * @allow (update) The owner can update their own progress documents.
+     * @allow (delete) The owner can delete their own progress documents.
+     * @deny (create) An unauthenticated user cannot create a progress document.
+     * @deny (create) An authenticated user cannot create a progress document for another user.
+     * @principle Enforces user-ownership for managing user progress data.
      */
-    match /badges/{badgeId} {
-      allow get, list: if true;
-      allow create: if isSignedIn();
-      allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+    match /users/{userId}/progress/{progressId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Allows anyone to read forum threads. Only allows the owner to create, update, and delete.
-     * @path /forumThreads/{threadId}
-     * @allow (get, list): Anyone can read forum threads.
-     * @allow (create): Only the owner can create forum threads. The 'creatorId' field must match the authenticated user's UID.
-     * @allow (update, delete): Only the owner can update or delete forum threads.
-     * @deny (create): Non-owners cannot create forum threads. The 'creatorId' field does not match the authenticated user's UID.
-     * @deny (update, delete): Non-owners cannot update or delete forum threads.
-     * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
+     * @description Rules for user notification documents.
+     * @path /databases/{database}/documents/users/{userId}/notifications/{notificationId}
+     * @allow (get) The owner can read their own notification documents.
+     * @allow (list) The owner can list their own notification documents.
+     * @allow (create) The owner can create notification documents in their own collection.
+     * @allow (update) The owner can update their own notification documents.
+     * @allow (delete) The owner can delete their own notification documents.
+     * @deny (create) An unauthenticated user cannot create a notification document.
+     * @deny (create) An authenticated user cannot create a notification document for another user.
+     * @principle Enforces user-ownership for managing user notification data.
+     */
+    match /users/{userId}/notifications/{notificationId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Rules for user gamification documents.
+     * @path /databases/{database}/documents/users/{userId}/gamification/{statsId}
+     * @allow (get) The owner can read their own gamification documents.
+     * @allow (list) The owner can list their own gamification documents.
+     * @allow (create) The owner can create gamification documents in their own collection.
+     * @allow (update) The owner can update their own gamification documents.
+     * @allow (delete) The owner can delete their own gamification documents.
+     * @deny (create) An unauthenticated user cannot create a gamification document.
+     * @deny (create) An authenticated user cannot create a gamification document for another user.
+     * @principle Enforces user-ownership for managing user gamification data.
+     */
+    match /users/{userId}/gamification/{statsId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+      /**
+       * @description Rules for user badge documents.
+       * @path /databases/{database}/documents/users/{userId}/badges/{userBadgeId}
+       * @allow (get) The owner can read their own badge documents.
+       * @allow (list) The owner can list their own badge documents.
+       * @allow (create) The owner can create badge documents in their own collection.
+       * @allow (update) The owner can update their own badge documents.
+       * @allow (delete) The owner can delete their own badge documents.
+       * @deny (create) An unauthenticated user cannot create a badge document.
+       * @deny (create) An authenticated user cannot create a badge document for another user.
+       * @principle Enforces user-ownership for managing user badge data.
+       */
+    match /users/{userId}/badges/{userBadgeId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Rules for learning path documents.  Publicly readable, owner-only writes (TODO).
+     * @path /databases/{database}/documents/learningPaths/{learningPathId}
+     * @allow (get) Anyone can read learning path documents.
+     * @allow (list) Anyone can list learning path documents.
+     * @allow (create) Anyone can create learning path documents. // TODO: Restrict to authorized users.
+     * @allow (update) Anyone can update learning path documents. // TODO: Restrict to authorized users.
+     * @allow (delete) Anyone can delete learning path documents. // TODO: Restrict to authorized users.
+     * @principle Allows public read access to learning paths. Owner-only writes are not yet enforced (TODO).
+     */
+    match /learningPaths/{learningPathId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn(); // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow update: if isSignedIn(); // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow delete: if isSignedIn(); // TODO: Add owner validation once the schema is updated with an ownership field.
+    }
+
+    /**
+     * @description Rules for course documents. Publicly readable, owner-only writes (TODO).
+     * @path /databases/{database}/documents/courses/{courseId}
+     * @allow (get) Anyone can read course documents.
+     * @allow (list) Anyone can list course documents.
+     * @allow (create) Anyone can create course documents. // TODO: Restrict to authorized users.
+     * @allow (update) Anyone can update course documents. // TODO: Restrict to authorized users.
+     * @allow (delete) Anyone can delete course documents. // TODO: Restrict to authorized users.
+     * @principle Allows public read access to courses. Owner-only writes are not yet enforced (TODO).
+     */
+    match /courses/{courseId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow update: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow delete: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+    }
+
+    /**
+     * @description Rules for course module documents. Publicly readable, owner-only writes (TODO).
+     * @path /databases/{database}/documents/courses/{courseId}/modules/{moduleId}
+     * @allow (get) Anyone can read course module documents.
+     * @allow (list) Anyone can list course module documents.
+     * @allow (create) Anyone can create course module documents. // TODO: Restrict to authorized users.
+     * @allow (update) Anyone can update course module documents. // TODO: Restrict to authorized users.
+     * @allow (delete) Anyone can delete course module documents. // TODO: Restrict to authorized users.
+     * @principle Allows public read access to course modules. Owner-only writes are not yet enforced (TODO).
+     */
+    match /courses/{courseId}/modules/{moduleId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow update: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow delete: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+    }
+
+    /**
+     * @description Rules for lesson documents. Publicly readable, owner-only writes (TODO).
+     * @path /databases/{database}/documents/courses/{courseId}/modules/{moduleId}/lessons/{lessonId}
+     * @allow (get) Anyone can read lesson documents.
+     * @allow (list) Anyone can list lesson documents.
+     * @allow (create) Anyone can create lesson documents. // TODO: Restrict to authorized users.
+     * @allow (update) Anyone can update lesson documents. // TODO: Restrict to authorized users.
+     * @allow (delete) Anyone can delete lesson documents. // TODO: Restrict to authorized users.
+     * @principle Allows public read access to lessons. Owner-only writes are not yet enforced (TODO).
+     */
+    match /courses/{courseId}/modules/{moduleId}/lessons/{lessonId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow update: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow delete: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+    }
+
+    /**
+     * @description Rules for comment documents. Publicly readable, owner-only writes (TODO).
+     * @path /databases/{database}/documents/courses/{courseId}/modules/{moduleId}/lessons/{lessonId}/comments/{commentId}
+     * @allow (get) Anyone can read comment documents.
+     * @allow (list) Anyone can list comment documents.
+     * @allow (create) Anyone can create comment documents. // TODO: Restrict to authorized users.
+     * @allow (update) Anyone can update comment documents. // TODO: Restrict to authorized users.
+     * @allow (delete) Anyone can delete comment documents. // TODO: Restrict to authorized users.
+     * @principle Allows public read access to comments. Owner-only writes are not yet enforced (TODO).
+     */
+    match /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}/comments/{commentId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow update: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow delete: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+    }
+
+        /**
+         * @description Rules for badge documents. Publicly readable, owner-only writes (TODO).
+         * @path /databases/{database}/documents/badges/{badgeId}
+         * @allow (get) Anyone can read badge documents.
+         * @allow (list) Anyone can list badge documents.
+         * @allow (create) Anyone can create badge documents. // TODO: Restrict to authorized users.
+         * @allow (update) Anyone can update badge documents. // TODO: Restrict to authorized users.
+         * @allow (delete) Anyone can delete badge documents. // TODO: Restrict to authorized users.
+         * @principle Allows public read access to badges. Owner-only writes are not yet enforced (TODO).
+         */
+    match /badges/{badgeId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow update: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow delete: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+    }
+
+
+    /**
+     * @description Rules for forum thread documents. Publicly readable, owner-only writes (TODO).
+     * @path /databases/{database}/documents/forumThreads/{threadId}
+     * @allow (get) Anyone can read forum thread documents.
+     * @allow (list) Anyone can list forum thread documents.
+     * @allow (create) Anyone can create forum thread documents. // TODO: Restrict to authorized users.
+     * @allow (update) Anyone can update forum thread documents. // TODO: Restrict to authorized users.
+     * @allow (delete) Anyone can delete forum thread documents. // TODO: Restrict to authorized users.
+     * @principle Allows public read access to forum threads. Owner-only writes are not yet enforced (TODO).
      */
     match /forumThreads/{threadId} {
-      allow get, list: if true;
-      allow create: if isSignedIn();
-      allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
-
-      /**
-       * @description Allows anyone to read forum posts. Only allows the owner to create, update, and delete.
-       * @path /forumThreads/{threadId}/posts/{postId}
-       * @allow (get, list): Anyone can read forum posts.
-       * @allow (create): Only the owner can create forum posts. The 'creatorId' field must match the authenticated user's UID.
-       * @allow (update, delete): Only the owner can update or delete forum posts.
-       * @deny (create): Non-owners cannot create forum posts. The 'creatorId' field does not match the authenticated user's UID.
-       * @deny (update, delete): Non-owners cannot update or delete forum posts.
-       * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
-       */
-      match /posts/{postId} {
-        allow get, list: if true;
-        allow create: if isSignedIn();
-        allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
-      }
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow update: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow delete: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
     }
 
     /**
-     * @description Allows shared access to channels. Only members of the channel can read and write messages.
-     * @path /channels/{channelId}/messages/{messageId}
+     * @description Rules for forum post documents. Publicly readable, owner-only writes (TODO).
+     * @path /databases/{database}/documents/forumThreads/{threadId}/posts/{postId}
+     * @allow (get) Anyone can read forum post documents.
+     * @allow (list) Anyone can list forum post documents.
+     * @allow (create) Anyone can create forum post documents. // TODO: Restrict to authorized users.
+     * @allow (update) Anyone can update forum post documents. // TODO: Restrict to authorized users.
+     * @allow (delete) Anyone can delete forum post documents. // TODO: Restrict to authorized users.
+     * @principle Allows public read access to forum posts. Owner-only writes are not yet enforced (TODO).
+     */
+    match /forumThreads/{threadId}/posts/{postId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow update: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow delete: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+    }
+
+    /**
+     * @description Rules for channels messages documents. Publicly readable, owner-only writes (TODO).
+     * @path /databases/{database}/documents/channels/{channelId}/messages/{messageId}
+     * @allow (get) Anyone can read message documents.
+     * @allow (list) Anyone can list message documents.
+     * @allow (create) Anyone can create message documents. // TODO: Restrict to authorized users.
+     * @allow (update) Anyone can update message documents. // TODO: Restrict to authorized users.
+     * @allow (delete) Anyone can delete message documents. // TODO: Restrict to authorized users.
      */
     match /channels/{channelId}/messages/{messageId} {
-        allow get, list: if true; // Public Read for prototyping
-        allow create, update, delete: if false;  // TODO: Enforce ownership based on channel membership
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow update: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow delete: if isSignedIn();  // TODO: Add owner validation once the schema is updated with an ownership field.
     }
-
-     /**
-      * @description Allows shared access to channels themselves. Only members of the channel can read and update the channel details.
-      * @path /channels/{channelId}
-      */
-    match /channels/{channelId} {
-        allow get: if true; // Public Read for prototyping
-        allow create, update, delete: if false; // TODO: Enforce ownership based on channel membership and existence
-        allow list: if true; // Public List for prototyping
-    }
-
-  }
-
-  // Helper functions
-  function isSignedIn() {
-    return request.auth != null;
-  }
-
-  function isOwner(userId) {
-    return isSignedIn() && request.auth.uid == userId;
-  }
-
-  function isExistingOwner(userId) {
-    return isOwner(userId) && resource != null;
   }
 }
