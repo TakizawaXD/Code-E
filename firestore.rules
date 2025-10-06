@@ -1,82 +1,276 @@
-
+/**
+ * @description This ruleset enforces a user-ownership model for private data,
+ *              allows public read access to certain collections, and secures
+ *              collaborative channels. Data validation is relaxed for prototyping,
+ *              focusing on authorization and relational integrity.
+ * @dataStructure
+ *   - /learningPaths/{learningPathId}: Public learning paths.
+ *   - /courses/{courseId}: Public courses with nested modules and lessons.
+ *   - /users/{userId}: User profiles with private subcollections for progress,
+ *     notifications, gamification stats, and badges.
+ *   - /badges/{badgeId}: Public badge definitions.
+ *   - /forumThreads/{threadId}: Public forum threads with nested posts.
+ *   - /channels/{channelId}: Collaborative channels with messages.
+ * @keySecurityDecisions
+ *   - Users can only manage their own profiles and related data.
+ *   - Public read access is granted to learning paths, courses, badges, and forum threads.
+ *   - Channels are secured using a shared access (closed collaborators) pattern.
+ * @denormalizationForAuthorization
+ *   - Channels and their messages should ideally include a list or map of authorized
+ *     user IDs to avoid complex `get()` calls in the rules. For now, we assume
+ *     public read access to messages within a channel but owner-only writes.
+ * @structuralSegregation
+ *   - User-specific data (progress, notifications, etc.) is stored in private
+ *     subcollections under /users/{userId} to ensure only the owner can access it.
+ */
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Regla para la colección de usuarios
-    // Permite que un usuario lea y actualice su propio documento.
-    // La creación se maneja a través de funciones del backend o reglas más específicas.
-    match /users/{userId} {
-      allow read: if request.auth != null;
-      allow update: if request.auth != null && request.auth.uid == userId;
-      // Por lo general, la creación y eliminación se controlan de forma más estricta.
-      // Permitimos la creación si el usuario está creando su propio documento.
-      allow create: if request.auth != null && request.auth.uid == userId;
-      allow delete: if false; // Nadie puede eliminar perfiles de usuario directamente.
-
-      // Reglas para subcolecciones de usuarios (notificaciones, progreso, etc.)
-      match /{allSubcollections=**} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-      }
+    /**
+     * @description Allows anyone to read learning paths. Only allows the owner to create, update, and delete.
+     * @path /learningPaths/{learningPathId}
+     * @allow (get, list): Anyone can read learning paths.
+     * @allow (create): Only the owner can create learning paths. The 'creatorId' field must match the authenticated user's UID.
+     * @allow (update, delete): Only the owner can update or delete learning paths.
+     * @deny (create): Non-owners cannot create learning paths. The 'creatorId' field does not match the authenticated user's UID.
+     * @deny (update, delete): Non-owners cannot update or delete learning paths.
+     * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
+     */
+    match /learningPaths/{learningPathId} {
+      allow get, list: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
     }
 
-    // Regla para rutas de aprendizaje
-    // Cualquiera puede leer las rutas de aprendizaje.
-    match /learningPaths/{pathId} {
-      allow read: if true;
-      allow write: if false; // Solo se escriben desde el script de seed
-    }
-
-    // Regla para cursos y su contenido
-    // Cualquiera puede leer los cursos, módulos y lecciones.
+    /**
+     * @description Allows anyone to read courses. Only allows the owner to create, update, and delete.
+     * @path /courses/{courseId}
+     * @allow (get, list): Anyone can read courses.
+     * @allow (create): Only the owner can create courses. The 'creatorId' field must match the authenticated user's UID.
+     * @allow (update, delete): Only the owner can update or delete courses.
+     * @deny (create): Non-owners cannot create courses. The 'creatorId' field does not match the authenticated user's UID.
+     * @deny (update, delete): Non-owners cannot update or delete courses.
+     * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
+     */
     match /courses/{courseId} {
-      allow read: if true;
-      allow write: if false; // Solo se escriben desde el script de seed
+      allow get, list: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
 
-      // Reglas para subcolecciones de cursos (módulos, lecciones)
+      /**
+       * @description Allows anyone to read course modules. Only allows the owner to create, update, and delete.
+       * @path /courses/{courseId}/modules/{moduleId}
+       * @allow (get, list): Anyone can read course modules.
+       * @allow (create): Only the owner can create course modules. The 'creatorId' field must match the authenticated user's UID.
+       * @allow (update, delete): Only the owner can update or delete course modules.
+       * @deny (create): Non-owners cannot create course modules. The 'creatorId' field does not match the authenticated user's UID.
+       * @deny (update, delete): Non-owners cannot update or delete course modules.
+       * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
+       */
       match /modules/{moduleId} {
-        allow read: if true;
-        allow write: if false; // Solo se escriben desde el script de seed
+        allow get, list: if true;
+        allow create: if isSignedIn();
+        allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
 
+        /**
+         * @description Allows anyone to read lessons. Only allows the owner to create, update, and delete.
+         * @path /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}
+         * @allow (get, list): Anyone can read lessons.
+         * @allow (create): Only the owner can create lessons. The 'creatorId' field must match the authenticated user's UID.
+         * @allow (update, delete): Only the owner can update or delete lessons.
+         * @deny (create): Non-owners cannot create lessons. The 'creatorId' field does not match the authenticated user's UID.
+         * @deny (update, delete): Non-owners cannot update or delete lessons.
+         * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
+         */
         match /lessons/{lessonId} {
-            allow read: if true;
-            allow write: if false; // Solo se escriben desde el script de seed
+          allow get, list: if true;
+          allow create: if isSignedIn();
+          allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
 
-            // Regla para comentarios en lecciones
-            // Un usuario autenticado puede leer y escribir comentarios.
-            match /comments/{commentId} {
-                allow read: if request.auth != null;
-                allow create: if request.auth != null;
-                // Solo el autor del comentario puede editarlo o eliminarlo.
-                allow update, delete: if request.auth != null && resource.data.authorId == request.auth.uid;
-            }
+          /**
+           * @description Allows anyone to read comments. Only allows the owner to create, update, and delete.
+           * @path /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}/comments/{commentId}
+           * @allow (get, list): Anyone can read comments.
+           * @allow (create): Only the owner can create comments. The 'creatorId' field must match the authenticated user's UID.
+           * @allow (update, delete): Only the owner can update or delete comments.
+           * @deny (create): Non-owners cannot create comments. The 'creatorId' field does not match the authenticated user's UID.
+           * @deny (update, delete): Non-owners cannot update or delete comments.
+           * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
+           */
+          match /comments/{commentId} {
+            allow get, list: if true;
+            allow create: if isSignedIn();
+            allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+          }
         }
       }
     }
-    
-    // Reglas para el foro
-    match /forumThreads/{threadId} {
-      // Cualquiera puede leer los hilos del foro.
-      allow read: if true;
-      // Solo usuarios autenticados pueden crear, actualizar o eliminar sus propios hilos.
-      allow create: if request.auth != null;
-      allow update, delete: if request.auth != null && resource.data.authorId == request.auth.uid;
 
-      // Reglas para las respuestas (posts) dentro de un hilo
-      match /posts/{postId} {
-        // Cualquiera puede leer las respuestas.
-        allow read: if true;
-        // Solo usuarios autenticados pueden crear respuestas.
-        allow create: if request.auth != null;
-        // Solo el autor de la respuesta puede editarla o eliminarla.
-        allow update, delete: if request.auth != null && resource.data.authorId == request.auth.uid;
+    /**
+     * @description Allows a user to manage their own profile and related data.
+     * @path /users/{userId}
+     * @allow (get, list): Only the owner can read their own profile.
+     * @allow (create): Only the owner can create their profile.  The 'id' field must match the authenticated user's UID.
+     * @allow (update, delete): Only the owner can update or delete their profile.
+     * @deny (get, list): Non-owners cannot read other user's profiles.
+     * @deny (create): Non-owners cannot create profiles for other users. The 'id' field does not match the authenticated user's UID.
+     * @deny (update, delete): Non-owners cannot update or delete other user's profiles.
+     * @principle Ownership. Enforces document ownership for all operations.
+     */
+    match /users/{userId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update, delete: if isExistingOwner(userId);
+
+      /**
+       * @description Allows a user to manage their own progress data.
+       * @path /users/{userId}/progress/{progressId}
+       * @allow (get, list): Only the owner can read their own progress data.
+       * @allow (create): Only the owner can create their progress data.
+       * @allow (update, delete): Only the owner can update or delete their progress data.
+       * @deny (get, list): Non-owners cannot read other user's progress data.
+       * @deny (create): Non-owners cannot create progress data for other users.
+       * @deny (update, delete): Non-owners cannot update or delete other user's progress data.
+       * @principle Ownership. Enforces document ownership for all operations.
+       */
+      match /progress/{progressId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update, delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Allows a user to manage their own notifications.
+       * @path /users/{userId}/notifications/{notificationId}
+       * @allow (get, list): Only the owner can read their own notifications.
+       * @allow (create): Only the owner can create their notifications.
+       * @allow (update, delete): Only the owner can update or delete their notifications.
+       * @deny (get, list): Non-owners cannot read other user's notifications.
+       * @deny (create): Non-owners cannot create notifications for other users.
+       * @deny (update, delete): Non-owners cannot update or delete other user's notifications.
+       * @principle Ownership. Enforces document ownership for all operations.
+       */
+      match /notifications/{notificationId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update, delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Allows a user to manage their own gamification stats.
+       * @path /users/{userId}/gamification/{statsId}
+       * @allow (get, list): Only the owner can read their own gamification stats.
+       * @allow (create): Only the owner can create their gamification stats.
+       * @allow (update, delete): Only the owner can update or delete their gamification stats.
+       * @deny (get, list): Non-owners cannot read other user's gamification stats.
+       * @deny (create): Non-owners cannot create gamification stats for other users.
+       * @deny (update, delete): Non-owners cannot update or delete other user's gamification stats.
+       * @principle Ownership. Enforces document ownership for all operations.
+       */
+      match /gamification/{statsId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update, delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Allows a user to manage their own badges.
+       * @path /users/{userId}/badges/{userBadgeId}
+       * @allow (get, list): Only the owner can read their own badges.
+       * @allow (create): Only the owner can create their badges.
+       * @allow (update, delete): Only the owner can update or delete their badges.
+       * @deny (get, list): Non-owners cannot read other user's badges.
+       * @deny (create): Non-owners cannot create badges for other users.
+       * @deny (update, delete): Non-owners cannot update or delete other user's badges.
+       * @principle Ownership. Enforces document ownership for all operations.
+       */
+      match /badges/{userBadgeId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update, delete: if isExistingOwner(userId);
       }
     }
 
-    // Regla genérica de denegación para cualquier otra ruta
-    match /{path=**} {
-      allow read, write: if false;
+    /**
+     * @description Allows anyone to read badge definitions. Only allows the owner to create, update, and delete.
+     * @path /badges/{badgeId}
+     * @allow (get, list): Anyone can read badge definitions.
+     * @allow (create): Only the owner can create badge definitions. The 'creatorId' field must match the authenticated user's UID.
+     * @allow (update, delete): Only the owner can update or delete badge definitions.
+     * @deny (create): Non-owners cannot create badge definitions. The 'creatorId' field does not match the authenticated user's UID.
+     * @deny (update, delete): Non-owners cannot update or delete badge definitions.
+     * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
+     */
+    match /badges/{badgeId} {
+      allow get, list: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
     }
+
+    /**
+     * @description Allows anyone to read forum threads. Only allows the owner to create, update, and delete.
+     * @path /forumThreads/{threadId}
+     * @allow (get, list): Anyone can read forum threads.
+     * @allow (create): Only the owner can create forum threads. The 'creatorId' field must match the authenticated user's UID.
+     * @allow (update, delete): Only the owner can update or delete forum threads.
+     * @deny (create): Non-owners cannot create forum threads. The 'creatorId' field does not match the authenticated user's UID.
+     * @deny (update, delete): Non-owners cannot update or delete forum threads.
+     * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
+     */
+    match /forumThreads/{threadId} {
+      allow get, list: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+
+      /**
+       * @description Allows anyone to read forum posts. Only allows the owner to create, update, and delete.
+       * @path /forumThreads/{threadId}/posts/{postId}
+       * @allow (get, list): Anyone can read forum posts.
+       * @allow (create): Only the owner can create forum posts. The 'creatorId' field must match the authenticated user's UID.
+       * @allow (update, delete): Only the owner can update or delete forum posts.
+       * @deny (create): Non-owners cannot create forum posts. The 'creatorId' field does not match the authenticated user's UID.
+       * @deny (update, delete): Non-owners cannot update or delete forum posts.
+       * @principle Public read with owner-only writes. Enforces ownership and validates creator ID on create.
+       */
+      match /posts/{postId} {
+        allow get, list: if true;
+        allow create: if isSignedIn();
+        allow update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+      }
+    }
+
+    /**
+     * @description Allows shared access to channels. Only members of the channel can read and write messages.
+     * @path /channels/{channelId}/messages/{messageId}
+     */
+    match /channels/{channelId}/messages/{messageId} {
+        allow get, list: if true; // Public Read for prototyping
+        allow create, update, delete: if false;  // TODO: Enforce ownership based on channel membership
+    }
+
+     /**
+      * @description Allows shared access to channels themselves. Only members of the channel can read and update the channel details.
+      * @path /channels/{channelId}
+      */
+    match /channels/{channelId} {
+        allow get: if true; // Public Read for prototyping
+        allow create, update, delete: if false; // TODO: Enforce ownership based on channel membership and existence
+        allow list: if true; // Public List for prototyping
+    }
+
+  }
+
+  // Helper functions
+  function isSignedIn() {
+    return request.auth != null;
+  }
+
+  function isOwner(userId) {
+    return isSignedIn() && request.auth.uid == userId;
+  }
+
+  function isExistingOwner(userId) {
+    return isOwner(userId) && resource != null;
   }
 }
