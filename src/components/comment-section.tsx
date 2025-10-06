@@ -181,3 +181,4 @@ export function CommentSection({ lessonId }: CommentSectionProps) {
         </div>
     );
 }
+
