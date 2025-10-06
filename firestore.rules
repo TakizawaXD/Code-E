@@ -1,67 +1,60 @@
 /**
- * @file Firestore Security Rules for Kursor Platform
- *
- * Core Philosophy:
- * This ruleset enforces a user-ownership model for user profiles,
- * preventing unauthorized data access and modification. It does not enforce
- * strict data validation to allow for rapid prototyping.
- *
- * Data Structure:
- * User profiles are stored under the `/users/{userId}` path, with each
- * document representing a single user's public profile information.
+ * @file Firestore Security Rules
+ * @description This ruleset enforces a strict user-ownership model for user profiles.
+ * All data is stored under `/users/{userId}`, and each user can only read and write their own profile data.
  *
  * Key Security Decisions:
- * - Users can only read and write their own profile data.
- * - Listing all users is disallowed to protect user privacy.
- * - Data validation is minimal in the prototyping phase.
+ * - Users can only read and write their own profiles.
+ * - Users can only create their own profile if the authenticated user ID matches the userId.
+ * - User listing is disallowed for privacy.
+ * - No public data is stored in this configuration.
  *
+ * Data Structure:
+ * - /users/{userId} : UserProfile documents
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to user profile documents.
+     * @description Manages access control for user profile documents.
      * @path /users/{userId}
-     * @allow (create) User with ID 'user123' can create their profile.
-     * @allow (get) User with ID 'user123' can read their profile.
-     * @allow (update) User with ID 'user123' can update their profile.
-     * @allow (delete) User with ID 'user123' can delete their profile.
-     * @deny (create) User with ID 'user456' cannot create a profile with ID 'user123'.
-     * @deny (get) User with ID 'user456' cannot read user 'user123's profile.
-     * @deny (update) User with ID 'user456' cannot update user 'user123's profile.
-     * @deny (delete) User with ID 'user456' cannot delete user 'user123's profile.
-     * @principle Enforces user-ownership for profile data.
+     * @allow (create) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can create their own profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2 if the request.auth.uid matches the document id.
+     * @allow (get) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can read their own profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
+     * @allow (update) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can update their own profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
+     * @allow (delete) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can delete their own profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
+     * @deny (create) User 'someOtherUserId' cannot create a profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
+     * @deny (get) User 'someOtherUserId' cannot read profile /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
+     * @deny (update) User 'someOtherUserId' cannot update profile /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
+     * @deny (delete) User 'someOtherUserId' cannot delete profile /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
+     * @principle Enforces strict user-ownership for profile data.
      */
     match /users/{userId} {
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
-
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
       allow get: if isOwner(userId);
       allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isOwner(userId) && resource.data.id == userId;
-      allow delete: if isSignedIn() && isOwner(userId) && resource != null;
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
     }
 
-        /**
-     * @description Prevents all access to the /comunicacion collection.
-     * @path /comunicacion
-     * @allow N/A - No access allowed.
-     * @deny N/A - All access is denied.
-     * @principle Enforces complete denial of access to the /comunicacion collection.
+    /**
+     * @description Default deny for all other paths.
      */
-    match /comunicacion {
-      allow get: if false;
-      allow list: if false;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+    match /{path=**} {
+      allow read, write: if false;
     }
+  }
+
+  // Helper functions
+  function isSignedIn() {
+    return request.auth != null;
+  }
+
+  function isOwner(userId) {
+    return isSignedIn() && request.auth.uid == userId;
+  }
+
+  function isExistingOwner(userId) {
+    return isOwner(userId) && resource != null;
   }
 }
