@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useAuth } from "@/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { useAuth, initiateEmailSignIn } from "@/firebase";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -29,6 +28,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
+import { useUser } from "@/firebase";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Por favor, introduce un correo electrónico válido." }),
@@ -67,6 +68,7 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 export default function LoginPage() {
   const auth = useAuth();
   const router = useRouter();
+  const { user } = useUser();
   const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -76,21 +78,18 @@ export default function LoginPage() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
+  useEffect(() => {
+    if (user) {
       toast({
         title: "¡Éxito!",
         description: "Has iniciado sesión correctamente.",
       });
       router.push("/dashboard");
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Error de inicio de sesión",
-        description: error.message,
-      });
     }
+  }, [user, router, toast]);
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    initiateEmailSignIn(auth, values.email, values.password);
   }
 
   return (

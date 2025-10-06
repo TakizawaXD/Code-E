@@ -6,9 +6,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useAuth, useFirestore } from "@/firebase";
-import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
+import { useAuth, useFirestore, initiateEmailSignUp, useUser } from "@/firebase";
+import { sendEmailVerification, updateProfile } from "firebase/auth";
 import { doc, serverTimestamp } from "firebase/firestore";
+import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -76,6 +77,7 @@ export default function SignupPage() {
   const auth = useAuth();
   const firestore = useFirestore();
   const router = useRouter();
+  const { user } = useUser();
   const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -88,6 +90,34 @@ export default function SignupPage() {
     },
   });
 
+  useEffect(() => {
+    if (user) {
+        const { values } = form.getValues();
+        // Run side-effects after user is created
+        Promise.all([
+            updateProfile(user, { displayName: values.username }),
+            sendEmailVerification(user),
+            setDocumentNonBlocking(doc(firestore, "users", user.uid), {
+                name: values.fullName,
+                username: values.username,
+                email: values.email,
+                createdAt: serverTimestamp(),
+                points: 0,
+                description: "",
+                avatarUrl: "",
+                role: "student",
+            }, {})
+        ]);
+
+        toast({
+            title: "¡Cuenta creada!",
+            description: "Tu cuenta ha sido creada. Revisa tu correo para verificar tu cuenta.",
+        });
+
+        router.push("/dashboard");
+    }
+  }, [user, firestore, form, router, toast])
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!auth || !firestore) {
       toast({
@@ -97,46 +127,7 @@ export default function SignupPage() {
       });
       return;
     }
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        values.email,
-        values.password
-      );
-      const user = userCredential.user;
-
-      // Update Firebase Auth profile
-      await updateProfile(user, { displayName: values.username });
-
-      // Send verification email
-      await sendEmailVerification(user);
-
-      // Create user profile in Firestore
-      setDocumentNonBlocking(doc(firestore, "users", user.uid), {
-        name: values.fullName,
-        username: values.username,
-        email: values.email,
-        createdAt: serverTimestamp(),
-        points: 0,
-        description: "",
-        avatarUrl: "",
-        role: "student",
-      }, {});
-
-      toast({
-        title: "¡Cuenta creada!",
-        description: "Tu cuenta ha sido creada. Revisa tu correo para verificar tu cuenta.",
-      });
-
-      router.push("/dashboard");
-
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Error al crear la cuenta",
-        description: error.message,
-      });
-    }
+    initiateEmailSignUp(auth, values.email, values.password);
   }
 
 
@@ -246,3 +237,4 @@ export default function SignupPage() {
     </Card>
   );
 }
+
