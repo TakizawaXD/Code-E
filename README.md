@@ -1,121 +1,122 @@
-# Kursor: Plataforma de Aprendizaje en Línea
+# Kursor: Plataforma de Aprendizaje en Línea con Next.js y Firebase
 
-Kursor es una plataforma web moderna para el aprendizaje en línea, diseñada para ofrecer a los usuarios una experiencia educativa interactiva y comunitaria. Construida con Next.js para el frontend y un backend de Python (Flask), la aplicación permite a los usuarios explorar cursos, seguir rutas de aprendizaje y participar en foros de discusión.
+<p align="center">
+  <img src="https://picsum.photos/seed/kursor-logo/1200/630" alt="Kursor Hero Image" data-ai-hint="online learning platform" />
+</p>
+
+**Kursor** es una plataforma web moderna y completa para el aprendizaje en línea, construida con un stack tecnológico de vanguardia que incluye Next.js, TypeScript, Firebase, ShadCN UI y Tailwind CSS. El proyecto está diseñado para ofrecer una experiencia educativa interactiva, comunitaria y altamente escalable.
 
 ## 🎯 Propósito, Audiencia y Visión
 
-### ¿Por qué y para qué fue creado este proyecto?
+### ¿Por qué Kursor?
 
-El proyecto Kursor nació de la necesidad de crear una plataforma de e-learning que no solo se centre en el contenido, sino también en la **comunidad** y la **aplicación práctica**. A diferencia de otras plataformas donde el aprendizaje puede ser una experiencia solitaria, Kursor está diseñado para fomentar la interacción, la colaboración y el feedback entre estudiantes y profesionales. El objetivo principal es construir un ecosistema donde los usuarios puedan:
+Kursor fue creado para ser más que un simple repositorio de cursos. Es una plataforma viva que pone énfasis en la **comunidad**, la **interacción** y el **aprendizaje práctico**. A diferencia de las experiencias de e-learning solitarias, Kursor fomenta la colaboración y la comunicación entre estudiantes, creando un ecosistema de crecimiento continuo.
 
--   **Aprender haciendo:** A través de ejercicios prácticos, proyectos y cuestionarios.
--   **Crecer en comunidad:** Participando en foros, debates y colaborando con otros estudiantes.
--   **Validar sus habilidades:** Obteniendo certificados y construyendo un portafolio visible.
+### ¿A quién está dirigido?
 
-### ¿Cuál es el público de origen?
+*   **Estudiantes y Autodidactas:** Personas que buscan una base sólida en tecnología para iniciar o potenciar su carrera.
+*   **Profesionales en Transición (Reskilling):** Aquellos que desean cambiar de carrera e ingresar al mundo de la tecnología.
+*   **Desarrolladores y Tecnólogos (Upskilling):** Profesionales que necesitan actualizarse con nuevas herramientas y frameworks.
 
-Kursor está dirigido a un público amplio y diverso, unido por el deseo de aprender y crecer en el sector tecnológico:
+### Visión a Futuro
 
--   **Estudiantes y Recién Graduados:** Jóvenes que buscan una base sólida en desarrollo, diseño o ciencia de datos para iniciar su carrera profesional.
--   **Profesionales en Transición (Reskilling):** Personas que desean cambiar de carrera e ingresar al mundo de la tecnología.
--   **Desarrolladores y Tecnólogos (Upskilling):** Profesionales que ya trabajan en el sector pero necesitan actualizar sus habilidades o aprender nuevas tecnologías.
--   **Autodidactas y Entusiastas:** Cualquier persona con curiosidad y ganas de aprender a programar o a dominar nuevas herramientas digitales a su propio ritmo.
-
-### ¿Qué se tiene de expectativas de este proyecto?
-
-La visión a largo plazo para Kursor es convertirla en una plataforma de referencia en el aprendizaje tecnológico en español. Las expectativas de futuro incluyen:
-
--   **Integración de IA:** Incorporar herramientas de inteligencia artificial para ofrecer tutorías personalizadas y recomendaciones de aprendizaje.
--   **Gamificación Avanzada:** Desarrollar un sistema completo de puntos, insignias y tablas de clasificación para motivar a los estudiantes.
--   **Bolsa de Trabajo:** Crear un módulo donde las empresas puedan reclutar talento directamente desde la plataforma.
+La visión es convertir a Kursor en una plataforma de referencia para el aprendizaje tecnológico, incorporando IA para tutorías personalizadas, gamificación avanzada para motivar a los usuarios y una bolsa de trabajo integrada para conectar talento con oportunidades.
 
 ## ✨ Características Principales
 
--   **Autenticación de Usuarios:** Sistema de registro e inicio de sesión.
--   **Catálogo de Cursos:** Explora cursos organizados por categorías y rutas de aprendizaje.
--   **Progreso del Curso:** Sigue tu avance en cada curso y marca lecciones como completadas.
--   **Panel de Usuario:** Un dashboard personal para ver tus cursos y progreso.
--   **Comunidad y Foros:** Un espacio para que los usuarios inicien discusiones y colaboren.
--   **Diseño Responsivo:** Interfaz de usuario optimizada para escritorio y móviles.
+*   **Autenticación con Firebase:** Sistema de registro e inicio de sesión seguro con correo/contraseña y proveedores sociales (Google).
+*   **Catálogo de Cursos Dinámico:** Cursos organizados por escuelas y rutas de aprendizaje, cargados desde una base de datos Firestore.
+*   **Progreso del Usuario:** Seguimiento en tiempo real del avance en cada curso y lección.
+*   **Panel de Usuario (Dashboard):** Vista personalizada con cursos en progreso, estadísticas y puntos de gamificación.
+*   **Comunicación en Tiempo Real:** Un chat global para la comunidad y secciones de comentarios en cada lección, todo potenciado por Firestore.
+*   **Retos Semanales:** Desafíos de programación para poner a prueba las habilidades de los usuarios.
+*   **Guías Interactivas:** Secciones de contenido especializado, como la guía de preparación para entrevistas.
+*   **Interfaz Moderna y Responsiva:** UI construida con ShadCN y Tailwind CSS, optimizada para cualquier dispositivo.
+*   **Temas Personalizables:** Múltiples temas de colores y modo claro/oscuro para personalizar la experiencia del usuario.
 
 ---
 
 ## 🚀 Stack Tecnológico
 
--   **Framework Frontend:** [Next.js](https://nextjs.org/) (con App Router)
--   **Backend:** [Python](https://www.python.org/) con [Flask](https://flask.palletsprojects.com/)
--   **Base de Datos:** [MySQL](https://www.mysql.com/) (local)
--   **Lenguaje (Frontend):** [TypeScript](https://www.typescriptlang.org/)
--   **UI y Estilos:** [React](https://reactjs.org/), [Tailwind CSS](https://tailwindcss.com/), [ShadCN UI](https://ui.shadcn.com/)
--   **Iconos:** [Lucide React](https://lucide.dev/)
+*   **Framework Frontend:** [Next.js](https://nextjs.org/) (con App Router)
+*   **Lenguaje:** [TypeScript](https://www.typescriptlang.org/)
+*   **Backend y Base de Datos:** [Firebase](https://firebase.google.com/) (Firestore, Authentication)
+*   **UI y Estilos:** [React](httpss://react.dev/), [Tailwind CSS](https://tailwindcss.com/), [ShadCN UI](https://ui.shadcn.com/)
+*   **Iconos:** [Lucide React](https://lucide.dev/)
+*   **Gestión de Formularios:** [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/)
+*   **Manejo de Fechas:** [date-fns](https://date-fns.org/)
 
 ---
 
 ## 🏗️ Arquitectura de la Aplicación
 
-He aquí un diagrama de alto nivel que ilustra la arquitectura de Kursor:
+Kursor utiliza una arquitectura moderna basada en componentes de servidor y cliente de Next.js, con Firebase como backend serverless.
 
 ```
-+---------------------------+      +---------------------------+      +---------------------------+
-|      Cliente (Navegador)  |      |      Servidor (Next.js)   |      |      Servidor (Flask)     |
-|---------------------------|      |---------------------------|      |---------------------------|
-|                           |      |                           |      |                           |
-|   React (ShadCN UI)       | <--> |   Routing (App Router)    |      |    API Endpoints (REST)   |
-|   - Componentes           |      |   - Páginas (Server/Client) | <--> |   - /api/courses          |
-|   - Vistas (Cursos, Dash) |      |   - Server Actions        |      |   - /api/users            |
-|                           |      |                           |      |   - Lógica de negocio     |
-|                           |      |                           |      |                           |
-|   Tailwind CSS            |      |   Lógica de Presentación  |      |                           |
-|   - Estilos y Tema        |      |                           |      |                           |
-+---------------------------+      +---------------------------+      +---------------------------+
-                                                                             |
-       (Peticiones HTTP/API)                                                 | (Conector MySQL)
-                                                                             |
-                                                                    +--------------------+
-                                                                    |   Base de Datos    |
-                                                                    |      (MySQL)       |
-                                                                    +--------------------+
++---------------------------+      +-----------------------------------+      +-------------------------+
+|      Cliente (Navegador)  |      |      Servidor Next.js (Vercel)    |      |      Firebase (Google)  |
+|---------------------------|      |-----------------------------------|      |-------------------------|
+|                           |      |                                   |      |                         |
+|   React (ShadCN UI)       | <--> |   - Páginas (Server/Client Comp.) | <--> |   - Firestore (DB)      |
+|   - Vistas Interactivas   |      |   - Server Actions                |      |   - Authentication      |
+|   - Hooks de Firebase     |      |   - API Routes (si es necesario)  |      |   - Security Rules      |
+|   (useUser, useCollection)|      |                                   |      |                         |
+|                           |      +-----------------------------------+      +-------------------------+
+|   Tailwind CSS            |
+|                           |
++---------------------------+
+       (Suscripciones en tiempo real con WebSockets)
 ```
 
--   **Cliente (Navegador):** La interfaz de usuario construida con React, Next.js y ShadCN UI.
--   **Servidor (Next.js):** Gestiona el renderizado de páginas y se comunica con el backend de Flask a través de llamadas a su API REST.
--   **Servidor (Flask):** Provee una API REST que maneja toda la lógica de negocio, incluyendo la autenticación de usuarios y la interacción con la base de datos MySQL.
--   **Base de Datos (MySQL):** Almacena toda la información de la aplicación, como usuarios, cursos, progreso, etc.
+-   **Cliente (Navegador):** Construido con **React** y componentes **ShadCN UI**. Se comunica directamente con Firebase para obtener datos en tiempo real (`useCollection`, `useDoc`) y realizar acciones.
+-   **Servidor Next.js:** Sirve los componentes de servidor, maneja la lógica de las **Server Actions** para operaciones seguras (como otorgar puntos) y renderiza las páginas iniciales.
+-   **Firebase:** Actúa como el backend completo (BaaS):
+    -   **Firestore:** Base de datos NoSQL en tiempo real para almacenar toda la información (usuarios, cursos, comentarios, etc.).
+    -   **Authentication:** Gestiona el registro, inicio de sesión y la seguridad de las sesiones de usuario.
+    -   **Security Rules:** Definen la lógica de permisos para proteger los datos en Firestore.
 
 ---
 
-## 🗃️ Esquema de la Base de Datos (MySQL)
+## 🗃️ Modelo de Datos en Firestore
 
-A continuación se detalla la estructura de tablas y relaciones para la base de datos MySQL. Para ver el script SQL completo para la creación de estas tablas, consulta el archivo `docs/schema.sql`.
+La estructura de la base de datos en Firestore está diseñada para ser escalable y eficiente.
 
-![Diagrama de la Base de Datos](https://github.com/TakizawaXD/Code-E/blob/main/img/diagram-export-26-9-2025-9_22_24-a.-m..png?raw=true)
+*   `users/{userId}`: Almacena el perfil público de cada usuario (nombre, puntos, biografía, etc.).
+    *   Subcolección `enrolledCourses/{courseId}`: Registra los cursos en los que un usuario se ha inscrito.
+    *   Subcolección `progress/{courseId}/lessons/{lessonId}`: Guarda el progreso de cada lección completada por un usuario.
+*   `courses/{courseId}`: Contiene la información estática de cada curso.
+    *   Subcolección `modules/{moduleId}`: Almacena los módulos de un curso.
+        *   Subcolección `lessons/{lessonId}`: Contiene los detalles de cada lección.
+*   `lessons/{lessonId}/comments/{commentId}`: Almacena los comentarios de cada lección.
+*   `comunicacion/{messageId}`: Contiene los mensajes del chat global en tiempo real.
 
--   **`users`**: Almacena la información de los usuarios.
-    -   `id` (PK), `name`, `username`, `email`, `password_hash`, `created_at`
--   **`learning_paths`**: Agrupa los cursos en rutas de aprendizaje.
-    -   `id` (PK), `title`, `description`
--   **`courses`**: Contiene los detalles de cada curso.
-    -   `id` (PK), `title`, `description`, `instructor_name`, `path_id` (FK a `learning_paths`)
--   **`modules`**: Representa un módulo o sección dentro de un curso.
-    -   `id` (PK), `title`, `course_id` (FK a `courses`), `order`
--   **`lessons`**: Contiene el material de una lección individual.
-    -   `id` (PK), `title`, `content` (TEXT), `video_url`, `module_id` (FK a `modules`), `order`
--   **`progress`**: Rastrea el progreso de un usuario en un curso.
-    -   `id` (PK), `user_id` (FK a `users`), `course_id` (FK a `courses`), `completed_lessons` (JSON o tabla pivote), `status` ('in_progress', 'completed')
--   **`forum_threads`**: Modela una discusión en el foro.
-    -   `id` (PK), `title`, `content` (TEXT), `user_id` (FK a `users`), `created_at`
--   **`forum_posts`**: Representa una respuesta dentro de una discusión.
-    -   `id` (PK), `content` (TEXT), `thread_id` (FK a `forum_threads`), `user_id` (FK a `users`), `created_at`
+Este modelo permite consultas eficientes y seguras, donde los usuarios solo pueden acceder y modificar los datos permitidos por las **Firestore Security Rules**.
 
 ---
 
 ## 📁 Estructura de Carpetas
 
--   **`/src/app`**: Rutas principales de la aplicación (App Router de Next.js).
--   **`/src/components`**: Componentes de React reutilizables (UI, layout, etc.).
--   **`/src/lib`**: Lógica de cliente, tipos de TypeScript y datos estáticos.
--   **`/docs`**: Contiene documentación adicional, como el esquema SQL de la base de datos.
--   **`/backend`**: (Directorio sugerido) Contendría la aplicación Flask, modelos de datos y lógica de la API.
+La estructura del proyecto está organizada para mantener una clara separación de responsabilidades.
+
+-   **/src/app/**: Contiene las rutas de la aplicación usando el App Router de Next.js.
+    -   `/(main)`: Grupo de rutas para las páginas principales de la aplicación.
+    -   `/auth`: Grupo de rutas para las páginas de autenticación.
+    -   `layout.tsx`, `page.tsx`: Archivos de diseño y página para cada ruta.
+-   **/src/components/**: Componentes de React reutilizables.
+    -   `/ui`: Componentes de UI de ShadCN (Button, Card, etc.).
+    -   `/layout`: Componentes estructurales como el Header y la MainNav.
+-   **/src/firebase/**: Centraliza toda la configuración y la lógica de Firebase.
+    -   `config.ts`: Configuración del proyecto de Firebase.
+    -   `client-provider.tsx`: Proveedor que inicializa Firebase en el cliente.
+    -   `provider.tsx`: Contexto de React que distribuye las instancias de Firebase y el estado del usuario.
+    -   `use-collection.tsx`, `use-doc.tsx`: Hooks para la suscripción a datos de Firestore en tiempo real.
+-   **/src/lib/**: Lógica de cliente, tipos, y datos estáticos.
+    -   `data.ts`: Datos mock y estáticos de la aplicación.
+    -   `types.ts`: Definiciones de tipos de TypeScript para todo el proyecto.
+    -   `utils.ts`: Funciones de utilidad (ej. `cn` para clases de Tailwind).
+-   **/src/hooks/**: Hooks personalizados de React.
+-   **/docs/**: Documentación del proyecto.
+    -   `backend.json`: Define las entidades de datos y la estructura de Firestore.
 
 ---
 
@@ -125,41 +126,36 @@ A continuación se detalla la estructura de tablas y relaciones para la base de 
 
 -   Node.js (versión 18 o superior)
 -   `npm` o `pnpm`
--   Python (versión 3.8 o superior) y `pip`
--   Un servidor de MySQL local instalado y en ejecución
 
-### 2. Configuración del Frontend
+### 2. Configuración del Proyecto
 
 1.  **Clona el repositorio e instala dependencias:**
     ```bash
     git clone <URL_DEL_REPOSITORIO>
-    cd <NOMBRE_DEL_PROYECTO>
+    cd kursor-project
     npm install
     ```
-2.  **Inicia el servidor de desarrollo de Next.js:**
+
+2.  **Configuración de Firebase:**
+    -   Asegúrate de que el archivo `src/firebase/config.ts` contenga la configuración de tu propio proyecto de Firebase.
+    -   Ve a la consola de Firebase, y en la configuración de tu proyecto, activa **Firebase Authentication** (con proveedores de Email/Contraseña y Google) y **Firestore Database**.
+
+3.  **Reglas de Seguridad de Firestore:**
+    -   Copia el contenido del archivo `firestore.rules` de este proyecto.
+    -   En tu consola de Firebase, ve a `Firestore Database > Reglas` y pega el contenido. Publica los cambios.
+
+4.  **Inicia el servidor de desarrollo:**
     ```bash
     npm run dev
     ```
+    La aplicación estará disponible en `http://localhost:3000`.
 
-### 3. Configuración del Backend
+### 5. Sembrar Datos (Opcional)
 
-1.  **Navega a la carpeta del backend y crea un entorno virtual:**
-    ```bash
-    cd backend
-    python -m venv venv
-    source venv/bin/activate  # En Windows: venv\Scripts\activate
-    ```
-2.  **Instala las dependencias de Python:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-3.  **Configura la base de datos:**
-    -   Crea una base de datos en tu servidor MySQL.
-    -   Configura la cadena de conexión en un archivo `.env` dentro de la carpeta `backend`.
-    -   Ejecuta el script `docs/schema.sql` en tu cliente de MySQL para crear las tablas.
-4.  **Inicia el servidor de Flask:**
-    ```bash
-    flask run
-    ```
+El proyecto incluye un script para poblar tu base de datos de Firestore con datos de ejemplo (cursos, módulos, lecciones).
 
-Ahora, la aplicación Next.js debería poder comunicarse con tu API de Flask local.
+```bash
+npx tsx src/lib/seed.ts
+```
+
+**Nota:** Este script está diseñado para ejecutarse en un entorno de Node.js y puede requerir que te autentiques con las credenciales de administrador de Firebase si no lo ejecutas en un entorno configurado.
