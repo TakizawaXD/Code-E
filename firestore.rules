@@ -1,62 +1,90 @@
+/**
+ * @fileoverview Firestore Security Rules for Kursor platform.
+ *
+ * Core Philosophy:
+ * This ruleset prioritizes user data protection by enforcing strict ownership for user profiles.
+ * It also aims to provide secure read access to public data while controlling write access based on ownership.
+ *
+ * Data Structure:
+ * - User profiles are stored under `/users/{userId}`, with each user having a dedicated document.
+ * - Comments are stored as a subcollection under a lesson document.
+ *
+ * Key Security Decisions:
+ * - Users can only read and write their own profile data.
+ * - Listing all users is explicitly denied to prevent information harvesting.
+ *
+ * Denormalization for Authorization:
+ *  - The comments subcollection requires knowledge of which users are allowed to comment, which needs to be stored directly on the parent documents.
+ */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description This ruleset enforces a strict user-ownership model for user profiles.
-     * @dataStructure All user data is stored under the `/users/{userId}` path, with each document representing a user profile.
-     * @keySecurityDecisions Users can only read their own profile and only create their own profile.
-     *  Users cannot list all profiles. Updates are only permitted if the user is the owner and the correct userId is used.
-     * @denormalizationForAuthorization The `userId` is denormalized by being present in both the path and the document `id` field.
+     * @description Checks if the current user is signed in.
+     * @path N/A
+     * @allow N/A
+     * @deny N/A
+     * @principle Verifies user authentication.
      */
+    function isSignedIn() {
+      return request.auth != null;
+    }
 
     /**
-     * @description Manages access to individual user profile documents.
+     * @description Checks if the requested user ID matches the authenticated user's ID.
+     * @path N/A
+     * @allow N/A
+     * @deny N/A
+     * @principle Enforces data ownership based on user ID.
+     */
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    /**
+     * @description Combines ownership and existence check.
+     * @path N/A
+     * @allow N/A
+     * @deny N/A
+     * @principle Ensures document exists before destructive operations.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Defines security rules for user profiles.
      * @path /users/{userId}
-     * @allow (create) - Authenticated user 'user_abc' can create their profile document at /users/user_abc if the document's 'id' field matches their 'auth.uid'.
-     * @allow (get) - Authenticated user 'user_abc' can read their own profile at /users/user_abc.
-     * @allow (update) - Authenticated user 'user_abc' can update their own profile at /users/user_abc.
-     * @allow (delete) - Authenticated user 'user_abc' can delete their own profile at /users/user_abc.
-     * @deny (create) - Authenticated user 'user_abc' cannot create a profile document at /users/user_xyz (mismatched user IDs).
-     * @deny (get) - Authenticated user 'user_xyz' cannot read the profile at /users/user_abc.
-     * @deny (list) - No user can list all user profiles.
-     * @deny (update) - Authenticated user 'user_xyz' cannot update the profile at /users/user_abc.
-     * @deny (delete) - Authenticated user 'user_xyz' cannot delete the profile at /users/user_abc.
-     * @principle Enforces document ownership for all operations.  Validates relational integrity between the path and the document's internal 'id' field.
+     * @allow (create) User with UID 'user123' creates profile at /users/user123.
+     * @allow (get) User with UID 'user123' reads profile at /users/user123.
+     * @allow (update) User with UID 'user123' updates profile at /users/user123.
+     * @allow (delete) User with UID 'user123' deletes profile at /users/user123.
+     * @deny (create) User with UID 'user456' attempts to create profile at /users/user123.
+     * @deny (get) User with UID 'user456' attempts to read profile at /users/user123.
+     * @principle Enforces document ownership for user profiles.
      */
     match /users/{userId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
-
-      function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-      }
-
-      // Allow a user to create their own profile, enforcing that the userId in the path matches the user's auth ID.
-      allow create: if isSignedIn()
-                   && isOwner(userId)
-                   && request.resource.data.id == userId;
-
-      // Allow a user to read their own profile.
-      allow get: if isSignedIn()
-                  && isOwner(userId);
-
-      // Prevent listing of all users
+      allow get: if isOwner(userId);
       allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
 
-      // Allow a user to update their profile, enforcing ownership and ensuring the document exists. The user id cannot be changed.
-      allow update: if isSignedIn()
-                     && isExistingOwner(userId)
-                     && resource.data.id == request.resource.data.id;
-
-      // Allow a user to delete their profile, enforcing ownership and ensuring the document exists.
-      allow delete: if isSignedIn()
-                     && isExistingOwner(userId);
+    /**
+     * @description Defines security rules for comments under lessons.
+     * @path /lessons/{lessonId}/comments/{commentId}
+     * @allow (list) Any signed-in user can list comments.
+     * @deny (create) Not signed in user tries to create.
+     * @principle Allows read access to all users but restricts creation to autheticated users.
+     */
+    match /lessons/{lessonId}/comments/{commentId} {
+        allow get: if isSignedIn();
+        allow list: if isSignedIn();
+        allow create: if isSignedIn();
+        allow update: if false;
+        allow delete: if false;
     }
   }
 }
