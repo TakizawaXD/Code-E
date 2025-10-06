@@ -28,12 +28,10 @@ function UserStats() {
         return collection(firestore, `users/${user.uid}/enrolledCourses`);
     }, [user, firestore]);
     const { data: enrolledCourses, isLoading: isCoursesLoading } = useCollection(enrolledCoursesQuery);
-
-    const commentsQuery = useMemoFirebase(() => {
-        if (!user || !firestore) return null;
-        return query(collection(firestore, `comments`), where('userId', '==', user.uid));
-    }, [user, firestore]);
-    const { data: userComments, isLoading: isCommentsLoading } = useCollection<Comment>(commentsQuery);
+    
+    // Temporarily disable comments query to fix internal assertion error
+    const userComments: Comment[] = [];
+    const isCommentsLoading = false;
 
     const isLoading = isProfileLoading || isCoursesLoading || isCommentsLoading;
     
