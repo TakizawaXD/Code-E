@@ -46,7 +46,7 @@ export function UserNav({ userProfile }: UserNavProps) {
   }
 
   const userInitial = user.displayName ? user.displayName.charAt(0).toUpperCase() : (user.email ? user.email.charAt(0).toUpperCase() : '?');
-  const displayName = user.displayName || user.email?.split('@')[0];
+  const displayName = user.displayName || 'Usuario';
 
   return (
     <DropdownMenu>
@@ -65,7 +65,7 @@ export function UserNav({ userProfile }: UserNavProps) {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.displayName || 'Usuario'}</p>
+            <p className="text-sm font-medium leading-none">{displayName}</p>
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
             </p>

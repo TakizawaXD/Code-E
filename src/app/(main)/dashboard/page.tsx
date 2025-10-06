@@ -76,7 +76,7 @@ export default function DashboardPage() {
         );
     }
 
-    const displayName = user.displayName || user.email;
+    const displayName = user.displayName || "Usuario";
     const userInitial = displayName ? displayName.charAt(0).toUpperCase() : '?';
 
     return (
@@ -85,7 +85,7 @@ export default function DashboardPage() {
                 <div className="container py-6">
                     <header className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
                         <Avatar className="h-20 w-20 border-4 border-primary">
-                            {user.photoURL && <AvatarImage src={user.photoURL} alt={displayName || "User"} />}
+                            {user.photoURL && <AvatarImage src={user.photoURL} alt={displayName} />}
                             <AvatarFallback className="text-3xl">{userInitial}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
@@ -162,5 +162,3 @@ export default function DashboardPage() {
         </div>
     );
 }
-
-    

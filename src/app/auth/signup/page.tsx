@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useAuth, useFirestore, initiateEmailSignUp, useUser } from "@/firebase";
+import { useAuth, useFirestore, initiateEmailSignUp } from "@/firebase";
 import { sendEmailVerification, updateProfile } from "firebase/auth";
 import { doc, serverTimestamp } from "firebase/firestore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +32,9 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { Loader2 } from "lucide-react";
+
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres." }),
@@ -77,8 +80,9 @@ export default function SignupPage() {
   const auth = useAuth();
   const firestore = useFirestore();
   const router = useRouter();
-  const { user } = useUser();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -90,34 +94,6 @@ export default function SignupPage() {
     },
   });
 
-  useEffect(() => {
-    if (user) {
-        const { values } = form.getValues();
-        // Run side-effects after user is created
-        Promise.all([
-            updateProfile(user, { displayName: values.username }),
-            sendEmailVerification(user),
-            setDocumentNonBlocking(doc(firestore, "users", user.uid), {
-                name: values.fullName,
-                username: values.username,
-                email: values.email,
-                createdAt: serverTimestamp(),
-                points: 0,
-                description: "",
-                avatarUrl: "",
-                role: "student",
-            }, {})
-        ]);
-
-        toast({
-            title: "¡Cuenta creada!",
-            description: "Tu cuenta ha sido creada. Revisa tu correo para verificar tu cuenta.",
-        });
-
-        router.push("/dashboard");
-    }
-  }, [user, firestore, form, router, toast])
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!auth || !firestore) {
       toast({
@@ -127,7 +103,51 @@ export default function SignupPage() {
       });
       return;
     }
-    initiateEmailSignUp(auth, values.email, values.password);
+
+    setIsSubmitting(true);
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password
+      );
+      const user = userCredential.user;
+
+      // Now that user is created, update profile and create Firestore doc
+      await updateProfile(user, { displayName: values.username });
+      
+      const userDocRef = doc(firestore, "users", user.uid);
+      setDocumentNonBlocking(userDocRef, {
+          name: values.fullName,
+          username: values.username,
+          email: values.email,
+          createdAt: serverTimestamp(),
+          points: 0,
+          description: "",
+          avatarUrl: "",
+          role: "student",
+      }, {});
+
+      // Optionally send verification email
+      await sendEmailVerification(user);
+
+      toast({
+        title: "¡Cuenta creada!",
+        description: "Tu cuenta ha sido creada. Revisa tu correo para verificar tu cuenta.",
+      });
+
+      router.push("/dashboard");
+
+    } catch (error: any) {
+       toast({
+        variant: "destructive",
+        title: "Error al crear la cuenta",
+        description: error.message,
+      });
+    } finally {
+        setIsSubmitting(false);
+    }
   }
 
 
@@ -220,8 +240,9 @@ export default function SignupPage() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full mt-2" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? "Creando cuenta..." : "Crear Cuenta"}
+            <Button type="submit" className="w-full mt-2" disabled={isSubmitting}>
+              {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              {isSubmitting ? "Creando cuenta..." : "Crear Cuenta"}
               </Button>
           </form>
         </Form>
@@ -237,4 +258,3 @@ export default function SignupPage() {
     </Card>
   );
 }
-
