@@ -3,7 +3,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy, limit } from 'firebase/firestore';
+import { collection, query, orderBy, limit, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,8 +12,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Send, Loader2, MessageCircle } from 'lucide-react';
 import type { ChatMessage } from '@/lib/types';
-import { sendMessage } from './actions';
 import { useToast } from '@/hooks/use-toast';
+import { errorEmitter, FirestorePermissionError } from '@/firebase';
 
 function getInitials(name: string) {
     return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
@@ -47,27 +47,37 @@ export default function ComunicacionPage() {
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!user || !newMessage.trim()) return;
+        if (!user || !firestore || !newMessage.trim()) return;
 
         setIsSending(true);
 
-        const result = await sendMessage({
+        const messageData = {
             authorId: user.uid,
             authorName: user.displayName || "Anónimo",
             authorAvatarUrl: user.photoURL || "",
             content: newMessage,
-        });
+            createdAt: serverTimestamp(),
+        };
 
-        if (result.success) {
-            setNewMessage("");
-        } else {
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: result.error || 'No se pudo enviar tu mensaje.',
+        const chatRef = collection(firestore, 'comunicacion');
+        
+        addDoc(chatRef, messageData)
+            .then(() => {
+                setNewMessage("");
+            })
+            .catch((error) => {
+                errorEmitter.emit(
+                    'permission-error',
+                    new FirestorePermissionError({
+                        path: chatRef.path,
+                        operation: 'create',
+                        requestResourceData: messageData,
+                    })
+                );
+            })
+            .finally(() => {
+                setIsSending(false);
             });
-        }
-        setIsSending(false);
     };
 
     return (
