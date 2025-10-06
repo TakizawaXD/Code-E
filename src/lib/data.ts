@@ -1,5 +1,5 @@
 
-import type { Notification, LearningPath, Course, CourseModule, Lesson, School, WeeklyChallenge } from "@/lib/types";
+import type { Notification, LearningPath, Course, CourseModule, Lesson, School, WeeklyChallenge, TermuxGuide, TermuxProject } from "@/lib/types";
 import images from '@/app/lib/placeholder-images.json';
 import videos from '@/app/lib/placeholder-videos.json';
 
@@ -614,3 +614,85 @@ export const weeklyChallenges: WeeklyChallenge[] = [
         inspirationUrl: "https://github.com/example/ts-inventory-api"
     }
 ];
+
+// --- Termux Data ---
+export const termuxGuides: TermuxGuide[] = [
+    {
+        id: 'git',
+        title: 'Git y GitHub',
+        description: 'Aprende a versionar tu código y colaborar en proyectos usando Git desde Termux.',
+        steps: [
+            { title: 'Instalar Git', description: 'Instala el paquete de Git.', command: 'pkg install git' },
+            { title: 'Configurar tu identidad', description: 'Establece tu nombre de usuario y correo electrónico. Reemplaza los valores de ejemplo.', command: 'git config --global user.name "Tu Nombre"\ngit config --global user.email "tu@email.com"' },
+            { title: 'Clonar un repositorio', description: 'Trae un repositorio de GitHub a tu dispositivo.', command: 'git clone https://github.com/usuario/repositorio.git' },
+        ],
+    },
+    {
+        id: 'node',
+        title: 'Servidor con Node.js',
+        description: 'Monta un entorno de desarrollo completo para JavaScript y crea un servidor web.',
+        steps: [
+            { title: 'Instalar Node.js', description: 'Instala la última versión LTS de Node.js.', command: 'pkg install nodejs-lts' },
+            { title: 'Crear un proyecto', description: 'Inicia un nuevo proyecto de Node.js y crea un archivo de servidor.', command: 'npm init -y\ntouch server.js' },
+            { title: 'Instalar Express', description: 'Añade Express, un popular framework para servidores web.', command: 'npm install express' },
+        ],
+    },
+    {
+        id: 'python',
+        title: 'Scripts y Bots con Python',
+        description: 'Usa el poder de Python para automatizar tareas y crear bots interactivos.',
+        steps: [
+            { title: 'Instalar Python', description: 'Instala la versión más reciente de Python.', command: 'pkg install python' },
+            { title: 'Instalar PIP', description: 'Asegúrate de tener el gestor de paquetes de Python.', command: 'python -m ensurepip --upgrade' },
+            { title: 'Instalar una librería', description: 'Por ejemplo, instala la librería "requests" para hacer peticiones HTTP.', command: 'pip install requests' },
+        ],
+    },
+];
+
+export const termuxProjects: TermuxProject[] = [
+    {
+        id: 'project-node-server',
+        title: 'Servidor Web Básico',
+        description: 'Crea un servidor web simple con Node.js y Express que responda a peticiones en tu red local.',
+        icon: 'nodejs',
+        technologies: ['Node.js', 'Express', 'npm'],
+        steps: [
+            { title: 'Instalar Node.js', description: 'Asegúrate de tener Node.js instalado.', command: 'pkg install nodejs-lts' },
+            { title: 'Crear carpeta del proyecto', description: 'Crea un directorio para tu servidor y entra en él.', command: 'mkdir mi-servidor && cd mi-servidor' },
+            { title: 'Inicializar el proyecto', description: 'Crea un archivo package.json para gestionar las dependencias.', command: 'npm init -y' },
+            { title: 'Instalar Express', description: 'Añade el framework Express a tu proyecto.', command: 'npm install express' },
+            { title: 'Crear el archivo del servidor', description: 'Crea un archivo llamado server.js y añade el código para levantar el servidor.', command: 'touch server.js' },
+            { title: 'Editar el archivo', description: 'Usa un editor de texto como nano o vim para pegar el código del servidor en server.js.', command: 'nano server.js' },
+            { title: 'Ejecutar el servidor', description: 'Inicia tu servidor. Podrás acceder a él desde el navegador de tu teléfono en http://localhost:3000.', command: 'node server.js' },
+        ]
+    },
+    {
+        id: 'project-python-bot',
+        title: 'Bot de Telegram',
+        description: 'Programa un bot de Telegram simple en Python que responda a comandos básicos.',
+        icon: 'python',
+        technologies: ['Python', 'pip', 'python-telegram-bot'],
+        steps: [
+            { title: 'Instalar Python', description: 'Asegúrate de tener Python instalado.', command: 'pkg install python' },
+            { title: 'Instalar la librería del bot', description: 'Instala la librería necesaria para interactuar con la API de Telegram.', command: 'pip install python-telegram-bot' },
+            { title: 'Obtener un Token', description: 'Habla con el "BotFather" en Telegram para crear un nuevo bot y obtener tu token de API.' },
+            { title: 'Crear el script', description: 'Crea un archivo (ej. bot.py) y escribe el código para que tu bot responda a mensajes.', command: 'nano bot.py' },
+            { title: 'Ejecutar el bot', description: 'Inicia tu bot. Permanecerá activo escuchando mensajes.', command: 'python bot.py' },
+        ]
+    },
+    {
+        id: 'project-static-site',
+        title: 'Portfolio Estático',
+        description: 'Crea una página web simple para tu portfolio usando solo HTML y CSS y sírvela localmente.',
+        icon: 'static',
+        technologies: ['HTML', 'CSS', 'Python'],
+        steps: [
+            { title: 'Crear archivos', description: 'Crea los archivos básicos para tu sitio web.', command: 'touch index.html style.css' },
+            { title: 'Escribir el contenido', description: 'Usa nano o vim para escribir el HTML de tu portfolio en index.html y los estilos en style.css.' },
+            { title: 'Iniciar un servidor local', description: 'Python tiene un servidor web incorporado muy útil para servir archivos locales.', command: 'python -m http.server 8080' },
+            { title: 'Ver tu sitio', description: 'Abre el navegador en tu teléfono y ve a http://localhost:8080 para ver tu página.' },
+        ]
+    },
+];
+
+    

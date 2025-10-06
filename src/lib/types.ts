@@ -167,3 +167,30 @@ export type WeeklyChallenge = {
     technologies: string[];
     inspirationUrl: string;
 };
+
+// Termux Guide Types
+export type TermuxGuide = {
+    id: string;
+    title: string;
+    description: string;
+    steps: {
+        title: string;
+        description: string;
+        command: string;
+    }[];
+}
+
+export type TermuxProject = {
+    id: string;
+    title: string;
+    description: string;
+    icon: string;
+    technologies: string[];
+    steps: {
+        title: string;
+        description: string;
+        command?: string;
+    }[];
+}
+
+    
