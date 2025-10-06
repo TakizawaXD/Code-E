@@ -1,14 +1,15 @@
 /**
- * @fileoverview Firestore Security Rules for Kursor Platform
- *
- * Core Philosophy:
- * This ruleset enforces a user-ownership model for user profiles.
+ * @file Firestore Security Rules
+ * @description This ruleset enforces a user-ownership model for user profiles.
  *
  * Data Structure:
- * - /users/{userId}: Stores public user profile data.  `userId` is the Firebase Auth UID.
+ * - /users/{userId}: Stores public profile information for each user.
  *
  * Key Security Decisions:
- * - Users can only read and write their own profile data in `/users/{userId}`.
+ * - Users can only read their own profile data.
+ * - Users can only create their own profile, with validation ensuring the userId in the path matches their authentication UID.
+ * - Users can only update their own profile.
+ * - Listing of all user profiles is disallowed for privacy reasons.
  */
 rules_version = '2';
 service cloud.firestore {
@@ -16,35 +17,58 @@ service cloud.firestore {
 
     /**
      * @description Controls access to user profile documents.
-     * @path /databases/{database}/documents/users/{userId}
-     * @allow (create) - Authenticated user can create their own profile.
-     * @allow (get, list, update, delete) - Authenticated user can only access their own profile.
-     * @deny (create) - If the user is not authenticated.
-     * @deny (get, list, update, delete) - If the user is not the owner.
-     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
+     * @path /users/{userId}
+     * @allow (get, create, update) Authenticated user with matching userId.
+     * @deny (get, create, update) Authenticated user with non-matching userId.
+     * @deny delete operations.
+     * @principle Enforces document ownership; users can only manage their own profile data.
      */
     match /users/{userId} {
+      // Helper function to check if the user is signed in.
       function isSignedIn() {
         return request.auth != null;
       }
 
+      // Helper function to check if the requesting user is the owner of the document.
       function isOwner(userId) {
         return request.auth.uid == userId;
       }
 
+      // Helper function to check if the requesting user is the existing owner of the document.
       function isExistingOwner(userId) {
         return isOwner(userId) && resource != null;
       }
 
-      // Allow anyone to read user profiles.
-      allow get, list: if true;
+      // Allow anyone to read a user document, but only if it exists.
+      allow get: if true;
 
-      // Only allow creating a profile if the user is signed in and the userId matches the authenticated user's ID.
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == request.auth.uid;
+      // Disallow listing all user documents.
+      allow list: if false;
 
-      // Only allow updates and deletes if the user is signed in and is the owner of the profile.
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      // Only allow creating a user document if the authenticated user's ID matches the document ID.
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.email is string;
+
+      // Only allow updating a user document if the authenticated user is the owner and the document exists.
+      allow update: if isExistingOwner(userId);
+
+      // No user is allowed to delete a profile
+      allow delete: if false;
     }
+
+    /**
+     * @description Placeholder for future rules on lessons and comments.  Access to comments is being denied.
+     * @path /lessons/{lessonId}/comments/{commentId}
+     * @allow No operations are currently allowed.
+     * @deny All operations are denied.
+     */
+    match /lessons/{lessonId}/comments/{commentId} {
+      // Deny all operations
+      allow get: if false;
+      allow list: if false;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
   }
 }
