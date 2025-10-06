@@ -1,54 +1,67 @@
 /**
- * @fileoverview Firestore Security Rules for Kursor Platform
+ * @file Firestore Security Rules for Kursor Platform
  *
  * Core Philosophy:
- * This ruleset enforces a user-ownership model for user profiles. Each user can only create their own profile and no one else can modify it.
+ * This ruleset enforces a user-ownership model for user profiles,
+ * preventing unauthorized data access and modification. It does not enforce
+ * strict data validation to allow for rapid prototyping.
  *
  * Data Structure:
- * - /users/{userId}: Stores public profile data for each user.
+ * User profiles are stored under the `/users/{userId}` path, with each
+ * document representing a single user's public profile information.
  *
  * Key Security Decisions:
- * - Users can only create their profile if request.auth.uid matches the {userId}
- * - Users can only update their profile if request.auth.uid matches the {userId}
- * - Users can not list all users.
- * - No schema validation is performed in this prototype beyond ownership constraints.
+ * - Users can only read and write their own profile data.
+ * - Listing all users is disallowed to protect user privacy.
+ * - Data validation is minimal in the prototyping phase.
  *
- * Denormalization for Authorization:
- *  N/A - The /users/{userId} path inherently links the document to the user's UID, avoiding the need for denormalized owner fields.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Manages user profiles. Only the authenticated user can create, read, update or delete their own profile.
+     * @description Controls access to user profile documents.
      * @path /users/{userId}
-     * @allow (create) User with UID 'user_abc' creates a profile at /users/user_abc.
-     * @allow (get) User with UID 'user_abc' reads their profile at /users/user_abc.
-     * @allow (update) User with UID 'user_abc' updates their profile at /users/user_abc.
-     * @allow (delete) User with UID 'user_abc' deletes their profile at /users/user_abc.
-     * @deny (create) User with UID 'user_xyz' attempts to create a profile at /users/user_abc.
-     * @deny (update) User with UID 'user_xyz' attempts to update the profile at /users/user_abc.
-     * @deny (delete) User with UID 'user_xyz' attempts to delete the profile at /users/user_abc.
-     * @principle Enforces document ownership for writes.
+     * @allow (create) User with ID 'user123' can create their profile.
+     * @allow (get) User with ID 'user123' can read their profile.
+     * @allow (update) User with ID 'user123' can update their profile.
+     * @allow (delete) User with ID 'user123' can delete their profile.
+     * @deny (create) User with ID 'user456' cannot create a profile with ID 'user123'.
+     * @deny (get) User with ID 'user456' cannot read user 'user123's profile.
+     * @deny (update) User with ID 'user456' cannot update user 'user123's profile.
+     * @deny (delete) User with ID 'user456' cannot delete user 'user123's profile.
+     * @principle Enforces user-ownership for profile data.
      */
     match /users/{userId} {
-      // Helper function to check if the request is made by the owner.
       function isOwner(userId) {
         return request.auth.uid == userId;
       }
 
-      // Helper function to check if the request is made by an existing owner.
-      function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
+      function isSignedIn() {
+        return request.auth != null;
       }
 
-      allow get: if true;
+      allow get: if isOwner(userId);
       allow list: if false;
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isOwner(userId) && resource.data.id == userId;
+      allow delete: if isSignedIn() && isOwner(userId) && resource != null;
+    }
 
-      allow create: if isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+        /**
+     * @description Prevents all access to the /comunicacion collection.
+     * @path /comunicacion
+     * @allow N/A - No access allowed.
+     * @deny N/A - All access is denied.
+     * @principle Enforces complete denial of access to the /comunicacion collection.
+     */
+    match /comunicacion {
+      allow get: if false;
+      allow list: if false;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
   }
 }
