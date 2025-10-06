@@ -1,67 +1,67 @@
 /**
- * @fileoverview Firestore Security Rules for Kursor Platform
+ * @file Firestore Security Rules for Kursor Platform
  *
  * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for user profiles. Users can only
- * read and write their own profile data. Global listing of users is prohibited.
+ * This ruleset enforces a user-ownership model for user profiles,
+ * preventing unauthorized data access and modification. It does not enforce
+ * strict data validation to allow for rapid prototyping.
  *
  * Data Structure:
- * User profiles are stored under the `/users/{userId}` path, where `{userId}` matches
- * the authenticated user's UID.
+ * User profiles are stored under the `/users/{userId}` path, with each
+ * document representing a single user's public profile information.
  *
  * Key Security Decisions:
- * - User profiles are private and only accessible to the owning user.
- * - Global listing of users is denied to protect user privacy and prevent enumeration attacks.
- * - Only authenticated users can access the data.
+ * - Users can only read and write their own profile data.
+ * - Listing all users is disallowed to protect user privacy.
+ * - Data validation is minimal in the prototyping phase.
  *
- * Denormalization for Authorization:
- *  - The `userId` is embedded in the path `/users/{userId}` and must match the
- * authenticated user's UID for write operations. This avoids costly `get()` calls.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to individual user profiles.
+     * @description Controls access to user profile documents.
      * @path /users/{userId}
-     * @allow (get) Authenticated user can read their own profile.
-     *    Example: auth.uid = "user123", userId = "user123"
-     * @allow (create) Authenticated user can create their own profile.
-     *    Example: auth.uid = "user123", userId = "user123"
-     * @allow (update) Authenticated user can update their own profile.
-     *    Example: auth.uid = "user123", userId = "user123"
-     * @allow (delete) Authenticated user can delete their own profile.
-     *    Example: auth.uid = "user123", userId = "user123"
-     * @deny (get) Authenticated user cannot read another user's profile.
-     *    Example: auth.uid = "user456", userId = "user123"
-     * @deny (create) Authenticated user cannot create a profile with a mismatched ID.
-     *    Example: auth.uid = "user456", userId = "user123"
-     * @deny (update) Authenticated user cannot update another user's profile.
-     *    Example: auth.uid = "user456", userId = "user123"
-     * @deny (delete) Authenticated user cannot delete another user's profile.
-     *    Example: auth.uid = "user456", userId = "user123"
-     * @principle Enforces document ownership, preventing unauthorized access to user data.
+     * @allow (create) User with ID 'user123' can create their profile.
+     * @allow (get) User with ID 'user123' can read their profile.
+     * @allow (update) User with ID 'user123' can update their profile.
+     * @allow (delete) User with ID 'user123' can delete their profile.
+     * @deny (create) User with ID 'user456' cannot create a profile with ID 'user123'.
+     * @deny (get) User with ID 'user456' cannot read user 'user123's profile.
+     * @deny (update) User with ID 'user456' cannot update user 'user123's profile.
+     * @deny (delete) User with ID 'user456' cannot delete user 'user123's profile.
+     * @principle Enforces user-ownership for profile data.
      */
     match /users/{userId} {
-      allow get: if isSignedIn() && isOwner(userId);
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      allow get: if isOwner(userId);
       allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.email is string && request.resource.data.name is string && request.resource.data.username is string && request.auth.uid == userId;
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.email is string && request.resource.data.name is string && request.resource.data.username is string && request.auth.uid == userId;
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isOwner(userId) && resource.data.id == userId;
+      allow delete: if isSignedIn() && isOwner(userId) && resource != null;
     }
 
-    // Helper functions
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-
-    function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
+        /**
+     * @description Prevents all access to the /comunicacion collection.
+     * @path /comunicacion
+     * @allow N/A - No access allowed.
+     * @deny N/A - All access is denied.
+     * @principle Enforces complete denial of access to the /comunicacion collection.
+     */
+    match /comunicacion {
+      allow get: if false;
+      allow list: if false;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
   }
 }
