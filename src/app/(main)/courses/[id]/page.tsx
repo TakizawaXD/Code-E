@@ -18,7 +18,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { QuizComponent } from "@/components/quiz";
 import { Badge } from "@/components/ui/badge";
-import { CommentSection } from "@/components/comment-section";
 import { BottomBar } from "@/components/layout/bottom-bar";
 import { MobileCourseNav } from "@/components/layout/mobile-course-nav";
 import { awardPointsForLesson } from "./actions";
@@ -233,7 +232,11 @@ function CourseDetailContent() {
                     {currentLesson && (
                         <div className="space-y-6">
                             <h2 className="text-2xl font-bold">Comentarios</h2>
-                            <CommentSection courseId={course.id} moduleId={currentLesson.moduleId} lessonId={currentLesson.lessonId} />
+                            <Card>
+                                <CardContent className="p-6 text-center text-muted-foreground">
+                                    La sección de comentarios estará disponible próximamente.
+                                </CardContent>
+                            </Card>
                         </div>
                     )}
                 </>
@@ -279,3 +282,5 @@ export default function CourseDetailPage() {
     </Suspense>
   );
 }
+
+    
