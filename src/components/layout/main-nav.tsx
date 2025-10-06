@@ -20,7 +20,6 @@ import { Code, BrainCircuit, PenTool, Cloud, Users, Briefcase, BookText, Shield,
 const mainNavItems: NavItem[] = [
   { title: "Rutas", href: "/paths" },
   { title: "Mi Progreso", href: "/dashboard" },
-  { title: "Comunidad", href: "/community" },
   { title: "Guía de Entrevistas", href: "/guides" },
   { title: "Retos Semanales", href: "/challenges" },
   { title: "Programación sin PC", href: "/termux" },

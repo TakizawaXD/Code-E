@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "UserProfile": {
@@ -15,29 +16,6 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["name", "email", "username", "createdAt"]
-    },
-    "Channel": {
-      "title": "Channel",
-      "description": "Represents a real-time chat channel in the community.",
-      "type": "object",
-      "properties": {
-        "name": { "type": "string" },
-        "description": { "type": "string" }
-      },
-      "required": ["name"]
-    },
-    "Message": {
-      "title": "Message",
-      "description": "Represents a single message within a chat channel.",
-      "type": "object",
-      "properties": {
-        "content": { "type": "string" },
-        "authorId": { "type": "string" },
-        "authorName": { "type": "string" },
-        "authorAvatarUrl": { "type": "string", "format": "uri" },
-        "createdAt": { "type": "string", "format": "date-time" }
-      },
-      "required": ["content", "authorId", "authorName", "createdAt"]
     }
   },
   "auth": {
@@ -47,10 +25,6 @@
     "/users/{userId}": {
       "schema": { "$ref": "#/entities/UserProfile" },
       "description": "Stores public profiles for all users."
-    },
-    "/channels/{channelId}/messages/{messageId}": {
-      "schema": { "$ref": "#/entities/Message" },
-      "description": "Stores all messages for a specific chat channel. Messages are public to all authenticated users."
     }
   }
 }

@@ -128,9 +128,6 @@ export function Header() {
                     <Link href="/dashboard" className="block rounded-lg py-2 px-3 text-muted-foreground hover:bg-accent hover:text-foreground" onClick={handleMobileLinkClick}>
                       Mi Progreso
                     </Link>
-                    <Link href="/community" className="block rounded-lg py-2 px-3 text-muted-foreground hover:bg-accent hover:text-foreground" onClick={handleMobileLinkClick}>
-                      Comunidad
-                    </Link>
                     <Link href="/guides" className="block rounded-lg py-2 px-3 text-muted-foreground hover:bg-accent hover:text-foreground" onClick={handleMobileLinkClick}>
                       Guía de Entrevistas
                     </Link>
