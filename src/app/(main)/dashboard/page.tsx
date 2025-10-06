@@ -29,9 +29,15 @@ function UserStats() {
     }, [user, firestore]);
     const { data: enrolledCourses, isLoading: isCoursesLoading } = useCollection(enrolledCoursesQuery);
     
-    // Temporarily disable comments query to fix internal assertion error
-    const userComments: Comment[] = [];
-    const isCommentsLoading = false;
+    // This query will likely fail if there's no composite index. 
+    // We are temporarily disabling it to solve other permission issues first.
+    const userCommentsQuery = useMemoFirebase(() => {
+        if (!user || !firestore) return null;
+        // This is an expensive query and requires a composite index.
+        // Temporarily disabled. We will address this with a different pattern.
+        return null; // query(collection(firestore, `comments`), where('authorId', '==', user.uid));
+    }, [user, firestore]);
+    const { data: userComments, isLoading: isCommentsLoading } = useCollection<Comment>(userCommentsQuery);
 
     const isLoading = isProfileLoading || isCoursesLoading || isCommentsLoading;
     

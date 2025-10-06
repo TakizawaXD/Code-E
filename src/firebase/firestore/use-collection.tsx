@@ -109,7 +109,7 @@ export function useCollection<T = any>(
         setError(null);
         setIsLoading(false);
       },
-      async (error: FirestoreError) => {
+      (error: FirestoreError) => {
         const path = getTargetPath(memoizedTargetRefOrQuery);
 
         const contextualError = new FirestorePermissionError({
@@ -129,7 +129,7 @@ export function useCollection<T = any>(
     return () => unsubscribe();
   }, [memoizedTargetRefOrQuery]); // Re-run if the target query/reference changes.
   if(memoizedTargetRefOrQuery && !memoizedTargetRefOrQuery.__memo) {
-    throw new Error(memoizedTargetRefOrQuery + ' was not properly memoized using useMemoFirebase');
+    throw new Error('useCollection query was not properly memoized using useMemoFirebase. This will cause infinite render loops.');
   }
   return { data, isLoading, error };
 }
