@@ -30,6 +30,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { FirebaseError } from "firebase/app";
 import { Loader2 } from "lucide-react";
+import { sendPasswordResetEmail } from "firebase/auth";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Por favor, introduce un correo electrónico válido." }),
@@ -110,6 +111,28 @@ export default function LoginPage() {
     });
   }
 
+  async function handlePasswordReset() {
+    const email = form.getValues("email");
+    if (!email) {
+      form.setError("email", { type: "manual", message: "Por favor, introduce tu correo para restablecer la contraseña." });
+      return;
+    }
+    
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast({
+        title: "Correo enviado",
+        description: "Revisa tu bandeja de entrada para restablecer tu contraseña.",
+      });
+    } catch (error: any) {
+       toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No se pudo enviar el correo. Verifica que el email sea correcto.",
+      });
+    }
+  }
+
   return (
     <Card>
       <CardHeader className="text-center">
@@ -154,7 +177,12 @@ export default function LoginPage() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Contraseña</FormLabel>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Contraseña</FormLabel>
+                     <Button type="button" variant="link" size="sm" className="p-0 h-auto" onClick={handlePasswordReset}>
+                        ¿Olvidaste tu contraseña?
+                    </Button>
+                  </div>
                   <FormControl>
                     <Input type="password" {...field} />
                   </FormControl>
