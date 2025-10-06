@@ -117,7 +117,6 @@ function CoursesContent() {
         )
     ), []);
 
-    const allLearningPaths = useMemo(() => allSchools.flatMap(school => school.learningPaths), []);
     const uniqueLevels = useMemo(() => [...new Set(allCourses.map(c => c.level || 'básico'))], [allCourses]);
 
     const filteredCourses = useMemo(() => {
@@ -133,22 +132,6 @@ function CoursesContent() {
             return schoolMatch && levelMatch && searchMatch;
         });
     }, [allCourses, searchQuery, selectedSchools, selectedLevels]);
-
-    const coursesByPath = useMemo(() => {
-        const pathsMap: { [key: string]: LearningPath & { courses: Course[] } } = {};
-        
-        filteredCourses.forEach(course => {
-            const path = allLearningPaths.find(p => p.courses.some(pc => pc.id === course.id));
-            if (path) {
-                if (!pathsMap[path.id]) {
-                    pathsMap[path.id] = { ...path, courses: [] };
-                }
-                pathsMap[path.id].courses.push(course);
-            }
-        });
-
-        return Object.values(pathsMap).filter(path => path.courses.length > 0);
-    }, [filteredCourses, allLearningPaths]);
 
     const handleSchoolChange = (schoolId: string, checked: boolean) => {
         setSelectedSchools(prev =>
@@ -209,18 +192,18 @@ function CoursesContent() {
                         </Sheet>
                     </div>
                     <div className="space-y-12">
-                        {filteredCourses.length > 0 ? coursesByPath.map((path) => (
-                            <section key={path.id}>
+                        {filteredCourses.length > 0 ? (
+                             <section>
                                 <h2 className="text-2xl font-bold tracking-tight font-headline md:text-3xl border-b pb-2 mb-6">
-                                    {path.title}
+                                    Todos los Cursos
                                 </h2>
                                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                                    {path.courses.map((course) => (
+                                    {filteredCourses.map((course) => (
                                         <CourseCard key={course.id} course={course} />
                                     ))}
                                 </div>
                             </section>
-                        )) : (
+                        ) : (
                             <div className="text-center py-16">
                                 <Search className="mx-auto h-12 w-12 text-muted-foreground" />
                                 <h3 className="mt-4 text-lg font-semibold">No se encontraron cursos</h3>
