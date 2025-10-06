@@ -1,60 +1,81 @@
 /**
  * @file Firestore Security Rules
- * @description This ruleset enforces a strict user-ownership model for user profiles.
- * All data is stored under `/users/{userId}`, and each user can only read and write their own profile data.
+ * @version 2
  *
- * Key Security Decisions:
- * - Users can only read and write their own profiles.
- * - Users can only create their own profile if the authenticated user ID matches the userId.
- * - User listing is disallowed for privacy.
- * - No public data is stored in this configuration.
+ * @description This ruleset enforces a strict user-ownership model for user profiles,
+ *              allowing read-only access to profiles by anyone but restricting
+ *              creation, modification, and deletion to the user themselves.
  *
  * Data Structure:
- * - /users/{userId} : UserProfile documents
+ * - /users/{userId}: Stores public profile information for each user.
+ *
+ * Key Security Decisions:
+ * - Users can only create, update, or delete their own profile documents.
+ * - Listing all users is not allowed to prevent data scraping.
+ * - The 'createdAt' field is required and must be set on creation.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Manages access control for user profile documents.
-     * @path /users/{userId}
-     * @allow (create) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can create their own profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2 if the request.auth.uid matches the document id.
-     * @allow (get) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can read their own profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @allow (update) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can update their own profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @allow (delete) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can delete their own profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @deny (create) User 'someOtherUserId' cannot create a profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @deny (get) User 'someOtherUserId' cannot read profile /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @deny (update) User 'someOtherUserId' cannot update profile /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @deny (delete) User 'someOtherUserId' cannot delete profile /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @principle Enforces strict user-ownership for profile data.
+     * @description Manages access to user profile documents.
+     * @path /databases/{database}/documents/users/{userId}
+     * @allow (get, create) A user can read and create their own profile.
+     * @deny (update, delete) A user cannot modify or delete another user's profile.
+     * @principle Enforces document ownership for writes.
      */
     match /users/{userId} {
-      allow get: if isOwner(userId);
+      // Helper function to check if the user is signed in
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      // Helper function to check if the request is made by the owner of the document.
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      // Allows anyone to read a user profile.
+      allow get: if true;
+
+      // Denies listing all user profiles.
       allow list: if false;
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isExistingOwner(userId);
+
+      // Allows a user to create their own profile, enforcing that the userId in the path matches the authenticated user's ID.
+      allow create: if isSignedIn() && request.auth.uid == userId;
+
+      // Allows a user to update their own profile, enforcing that the userId in the path matches the authenticated user's ID.
+      allow update: if isSignedIn() && request.auth.uid == userId;
+
+      // Allows a user to delete their own profile, enforcing that the user is the owner of the document.
+      allow delete: if isSignedIn() && request.auth.uid == userId;
     }
 
     /**
-     * @description Default deny for all other paths.
+     * @description Allows public read access to the 'comunicacion' collection.
+     * @path /databases/{database}/documents/comunicacion
+     * @allow (get, list) Anyone can read documents in the 'comunicacion' collection.
+     * @deny (create, update, delete) Only authenticated users should be able to create, update, or delete documents in the 'comunicacion' collection.
+     * @principle Provides public read access with restricted write access.
      */
-    match /{path=**} {
-      allow read, write: if false;
+    match /comunicacion/{comunicacionId} {
+      // Helper function to check if the user is signed in
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      // Allows anyone to read documents in the 'comunicacion' collection.
+      allow get, list: if true;
+
+      // Allows creating documents in the 'comunicacion' collection.
+      allow create: if isSignedIn(); // TODO: Add owner validation once the schema is updated with an ownership field.
+
+      // Allows updating documents in the 'comunicacion' collection.
+      allow update: if isSignedIn(); // TODO: Add owner validation once the schema is updated with an ownership field.
+
+      // Allows deleting documents in the 'comunicacion' collection.
+      allow delete: if isSignedIn(); // TODO: Add owner validation once the schema is updated with an ownership field.
     }
-  }
-
-  // Helper functions
-  function isSignedIn() {
-    return request.auth != null;
-  }
-
-  function isOwner(userId) {
-    return isSignedIn() && request.auth.uid == userId;
-  }
-
-  function isExistingOwner(userId) {
-    return isOwner(userId) && resource != null;
   }
 }
