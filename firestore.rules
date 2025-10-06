@@ -1,70 +1,67 @@
 /**
- * @fileoverview Firestore Security Rules for Kursor Platform
+ * @file Firestore Security Rules for Kursor Platform
  *
  * Core Philosophy:
- * This ruleset enforces a user-ownership model for user profiles.
+ * This ruleset enforces a user-ownership model for user profiles,
+ * preventing unauthorized data access and modification. It does not enforce
+ * strict data validation to allow for rapid prototyping.
  *
  * Data Structure:
- * - /users/{userId}: Stores public user profiles.
+ * User profiles are stored under the `/users/{userId}` path, with each
+ * document representing a single user's public profile information.
  *
  * Key Security Decisions:
- * - Users can only read their own profile data.
- * - Users can only create their own profile.
- * - Users can update and delete their own profile data.
- * - Public listing of user profiles is disallowed.
+ * - Users can only read and write their own profile data.
+ * - Listing all users is disallowed to protect user privacy.
+ * - Data validation is minimal in the prototyping phase.
+ *
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Manages access to user profiles.
+     * @description Controls access to user profile documents.
      * @path /users/{userId}
-     * @allow (get) User with ID 'user123' can read their own profile.
-     *   - Auth: { uid: 'user123' }
-     * @allow (create) User with ID 'user456' can create their own profile.
-     *   - Auth: { uid: 'user456' }
-     *   - Request Data: { id: 'user456', name: 'John Doe', email: 'john.doe@example.com', username: 'johndoe', createdAt: '2024-01-01T00:00:00Z' }
-     * @allow (update) User with ID 'user789' can update their own profile.
-     *   - Auth: { uid: 'user789' }
-     *   - Existing Data: { id: 'user789', name: 'Jane Doe', email: 'jane.doe@example.com', username: 'janedoe', createdAt: '2024-01-01T00:00:00Z' }
-     *   - Request Data: { name: 'Jane Smith' }
-     * @allow (delete) User with ID 'userABC' can delete their own profile.
-     *   - Auth: { uid: 'userABC' }
-     *   - Existing Data: { id: 'userABC', name: 'Alice', email: 'alice@example.com', username: 'alice', createdAt: '2024-01-01T00:00:00Z' }
-     * @deny (get) User with ID 'user123' tries to read profile of 'user456'.
-     *   - Auth: { uid: 'user123' }
-     * @deny (create) User with ID 'user123' tries to create profile for 'user456'.
-     *   - Auth: { uid: 'user123' }
-     *   - Request Data: { id: 'user456', name: 'John Doe', email: 'john.doe@example.com', username: 'johndoe', createdAt: '2024-01-01T00:00:00Z' }
-     * @deny (update) User with ID 'user123' tries to update profile of 'user456'.
-     *   - Auth: { uid: 'user123' }
-     *   - Existing Data: { id: 'user456', name: 'Jane Doe', email: 'jane.doe@example.com', username: 'janedoe', createdAt: '2024-01-01T00:00:00Z' }
-     *   - Request Data: { name: 'Jane Smith' }
-     * @deny (delete) User with ID 'user123' tries to delete profile of 'user456'.
-     *   - Auth: { uid: 'user123' }
-     *   - Existing Data: { id: 'user456', name: 'Alice', email: 'alice@example.com', username: 'alice', createdAt: '2024-01-01T00:00:00Z' }
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) User with ID 'user123' can create their profile.
+     * @allow (get) User with ID 'user123' can read their profile.
+     * @allow (update) User with ID 'user123' can update their profile.
+     * @allow (delete) User with ID 'user123' can delete their profile.
+     * @deny (create) User with ID 'user456' cannot create a profile with ID 'user123'.
+     * @deny (get) User with ID 'user456' cannot read user 'user123's profile.
+     * @deny (update) User with ID 'user456' cannot update user 'user123's profile.
+     * @deny (delete) User with ID 'user456' cannot delete user 'user123's profile.
+     * @principle Enforces user-ownership for profile data.
      */
     match /users/{userId} {
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
       allow get: if isOwner(userId);
       allow list: if false;
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isExistingOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isOwner(userId) && resource.data.id == userId;
+      allow delete: if isSignedIn() && isOwner(userId) && resource != null;
     }
 
-    // Helper functions
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
-    function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
+        /**
+     * @description Prevents all access to the /comunicacion collection.
+     * @path /comunicacion
+     * @allow N/A - No access allowed.
+     * @deny N/A - All access is denied.
+     * @principle Enforces complete denial of access to the /comunicacion collection.
+     */
+    match /comunicacion {
+      allow get: if false;
+      allow list: if false;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
   }
 }
