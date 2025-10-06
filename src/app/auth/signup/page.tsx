@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useAuth, useFirestore, initiateEmailSignUp } from "@/firebase";
+import { useAuth, useFirestore } from "@/firebase";
 import { sendEmailVerification, updateProfile } from "firebase/auth";
 import { doc, serverTimestamp } from "firebase/firestore";
 import { useState } from "react";
@@ -51,6 +51,7 @@ import { useToast } from "@/hooks/use-toast";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { cn } from "@/lib/utils";
+import { es } from 'date-fns/locale';
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres." }),
@@ -283,7 +284,7 @@ export default function SignupPage() {
                               )}
                             >
                               {field.value ? (
-                                format(field.value, "PPP", { locale: require("date-fns/locale/es") })
+                                format(field.value, "PPP", { locale: es })
                               ) : (
                                 <span>Elige una fecha</span>
                               )}
