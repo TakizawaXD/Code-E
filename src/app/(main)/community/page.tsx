@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -14,73 +13,6 @@ import { es } from "date-fns/locale";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-
-function ForumList() {
-    const { user } = useUser();
-    const firestore = useFirestore();
-
-    const threadsQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
-        return query(collection(firestore, "forumThreads"), orderBy("lastPostAt", "desc"));
-    }, [firestore]);
-
-    const { data: threads, isLoading } = useCollection<ForumThread>(threadsQuery);
-    
-    return (
-        <div className="space-y-4 mt-6">
-            <div className="flex justify-end">
-                {user && (
-                    <Button asChild>
-                        <Link href="/community/new">
-                            <PlusCircle className="mr-2" />
-                            Iniciar Nueva Discusión
-                        </Link>
-                    </Button>
-                )}
-            </div>
-            {isLoading && <p className="text-center text-muted-foreground">Cargando discusiones...</p>}
-            
-            {!isLoading && threads?.length === 0 && (
-                <Card className="text-center py-10">
-                    <CardContent>
-                        <MessageSquare className="mx-auto h-12 w-12 text-muted-foreground" />
-                        <h3 className="mt-4 text-lg font-semibold">No hay discusiones todavía</h3>
-                        <p className="mt-2 text-sm text-muted-foreground">
-                            Sé el primero en iniciar una conversación.
-                        </p>
-                    </CardContent>
-                </Card>
-            )}
-
-            {threads?.map((thread) => (
-                <Card key={thread.id} className="hover:bg-accent">
-                    <CardContent className="p-4 flex items-start justify-between gap-2">
-                        <div className="flex items-start gap-3">
-                            <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
-                                <AvatarImage src={thread.authorAvatarUrl} alt={thread.authorName}/>
-                                <AvatarFallback>{thread.authorName.charAt(0).toUpperCase()}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <Link href={`/community/threads/${thread.id}`}>
-                                    <h3 className="font-semibold text-base sm:text-lg hover:underline line-clamp-2">{thread.title}</h3>
-                                </Link>
-                                <p className="text-xs sm:text-sm text-muted-foreground">
-                                    Iniciado por <span className="font-medium text-foreground">{thread.authorName}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div className="text-right flex-shrink-0 text-xs sm:text-sm">
-                            <p className="font-medium">{thread.postCount || 1} {thread.postCount === 1 ? "post" : "posts"}</p>
-                            <p className="text-muted-foreground">
-                                {thread.lastPostAt ? formatDistanceToNow(thread.lastPostAt.toDate(), { addSuffix: true, locale: es }) : 'N/A'}
-                            </p>
-                        </div>
-                    </CardContent>
-                </Card>
-            ))}
-        </div>
-    )
-}
 
 function LeaderboardTab() {
     const firestore = useFirestore();
@@ -198,17 +130,13 @@ export default function CommunityPage() {
                 </p>
             </header>
 
-            <Tabs defaultValue="forums" className="w-full">
-                 <TabsList className="grid w-full grid-cols-2 h-auto md:grid-cols-4 md:h-10">
-                    <TabsTrigger value="forums" className="py-2"><MessageSquare className="mr-2"/>Foros</TabsTrigger>
+            <Tabs defaultValue="channels" className="w-full">
+                 <TabsList className="grid w-full grid-cols-2 h-auto md:grid-cols-3 md:h-10">
                     <TabsTrigger value="channels" className="py-2"><Users className="mr-2"/>Canales</TabsTrigger>
                     <TabsTrigger value="leaderboard" className="py-2"><Trophy className="mr-2"/>Clasificación</TabsTrigger>
                     <TabsTrigger value="gallery" className="py-2"><GitMerge className="mr-2"/>Galería</TabsTrigger>
                 </TabsList>
-                <TabsContent value="forums">
-                    <ForumList />
-                </TabsContent>
-                 <TabsContent value="channels">
+                <TabsContent value="channels">
                    <ChatChannelsTab />
                 </TabsContent>
                 <TabsContent value="leaderboard">
