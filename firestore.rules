@@ -2,81 +2,84 @@
  * @fileoverview Firestore Security Rules for Kursor Platform
  *
  * Core Philosophy:
- * This ruleset enforces a user-ownership model for user profiles.
+ * This ruleset enforces a strict user-ownership model for most data, while allowing public read access to certain collections.
+ * Only authenticated users can read or write data.
  *
  * Data Structure:
- * - /users/{userId}: Stores public user profile data. Access is restricted to the owner for write operations. Read operations are public.
- * - /lessons/{lessonId}/comments:  All users can read comments. Authenticated users can create, update, and delete their own comments.
+ * - User profiles are stored under `/users/{userId}`.
+ * - Progress data is stored under `/users/{userId}/progress/{courseId}/lessons/{lessonId}`.
  *
  * Key Security Decisions:
- * - Users can only create their own profile.
- * - Users can update their profile.
- * - Users can not delete their profile.
- * - Listing user profiles is disallowed to prevent data scraping.
- * - Public read access is granted for lessons and their comments.
+ * - Listing users is disallowed to protect user privacy.
+ * - Public read access is granted for collections where it is safe.
  *
  * Denormalization for Authorization:
- * N/A - User ownership is based on the `userId` in the path.
- *
- * Structural Segregation:
- * N/A - No separation of public/private data.
+ * The current data model already nests private data under `/users/{userId}`, so no further denormalization is needed.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Defines if the user is signed in
-     */
-    function isSignedIn() {
-        return request.auth != null;
-    }
-
-    /**
-     * @description Defines if the user is the owner of the resource
-     */
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-
-    /**
-     * @description Defines if the user is the owner of the resource and the resource exists
-     */
-    function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
-    }
-
-    /**
-     * @description User profiles stored by user ID.
+     * @description Secure access to user profiles. Only the owner can read or write their profile.
      * @path /users/{userId}
-     * @allow (create) User with UID 'user123' can create their own profile document at /users/user123.
-     * @deny (create) User with UID 'user123' cannot create a profile document at /users/anotherUser.
-     * @allow (get) Any user can read any user profile.
-     * @deny (list) No one can list all user profiles.
-     * @principle Enforces user-ownership for writes. Public read access.
+     * @allow (get) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can read their own profile.
+     * @allow (create) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can create their own profile.
+     * @allow (update) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can update their own profile.
+     * @allow (delete) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can delete their own profile.
+     * @deny (get) User 'otherUserId' cannot read User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' profile.
+     * @deny (create) User 'otherUserId' cannot create User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' profile.
+     * @deny (update) User 'otherUserId' cannot update User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' profile.
+     * @deny (delete) User 'otherUserId' cannot delete User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' profile.
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId} {
-      allow get: if true;
-      allow list: if false;
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if false;
+      allow get: if isOwner(userId);
+      allow list: if false; // Do not allow listing users for privacy.
+      allow create: if isOwner(userId) && request.resource.data.email is string && request.resource.data.username is string && request.resource.data.name is string && request.resource.data.createdAt is string;
+      allow update: if isOwner(userId) && resource != null && resource.data.email == request.resource.data.email && resource.data.username == request.resource.data.username;
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Allows public read access to lessons and authenticated users to manage comments within lessons.
-     * @path /lessons/{lessonId}/comments/{commentId}
-     * @allow (get, list) Any user can read comments under any lesson.
-     * @allow (create) Authenticated user can create a comment.
-     * @allow (update, delete) Authenticated user can update or delete their own comment.
-     * @deny (update, delete) Authenticated user can not update or delete others comments.
-     * @principle Public read, owner-only writes for comments.
+     * @description Secure access to user lesson progress. Only the owner can read or write their progress.
+     * @path /users/{userId}/progress/{courseId}/lessons/{lessonId}
+     * @allow (get) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can read their own lesson progress.
+     * @allow (list) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can list their own lesson progress.
+     * @allow (create) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can create their own lesson progress.
+     * @allow (update) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can update their own lesson progress.
+     * @allow (delete) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can delete their own lesson progress.
+     * @deny (get) User 'otherUserId' cannot read User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' lesson progress.
+     * @deny (list) User 'otherUserId' cannot list User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' lesson progress.
+     * @deny (create) User 'otherUserId' cannot create User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' lesson progress.
+     * @deny (update) User 'otherUserId' cannot update User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' lesson progress.
+     * @deny (delete) User 'otherUserId' cannot delete User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' lesson progress.
+     * @principle Enforces document ownership for all operations within the progress subcollection.
      */
-    match /lessons/{lessonId}/comments/{commentId} {
-      allow get, list: if true;
-      allow create: if isSignedIn();
-      allow update: if isSignedIn() && request.auth.uid == resource.data.userId;
-      allow delete: if isSignedIn() && request.auth.uid == resource.data.userId && resource != null;
+    match /users/{userId}/progress/{courseId}/lessons/{lessonId} {
+      allow get: if isSignedIn() && isOwner(userId);
+      allow list: if isSignedIn() && isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isOwner(userId) && resource != null;
+      allow delete: if isSignedIn() && isExistingOwner(userId);
     }
+
+    // Generic deny rule for all other paths to enforce least privilege.
+    match /{path=**} {
+        allow read, write: if false;
+    }
+  }
+
+  // Helper Functions
+  function isSignedIn() {
+    return request.auth != null;
+  }
+
+  function isOwner(userId) {
+    return request.auth.uid == userId;
+  }
+
+  function isExistingOwner(userId) {
+    return isOwner(userId) && resource != null;
   }
 }
