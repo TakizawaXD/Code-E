@@ -460,10 +460,14 @@ const videoIdKeys = Object.keys(videos) as (keyof typeof videos)[];
 const generateDetailedLesson = (course: Course, module: CourseModule, lesson: Lesson, lessonIndex: number): Lesson => {
     const videoKey = videoIdKeys[(lesson.order - 1) % videoIdKeys.length];
     const videoId = videos[videoKey];
+    const difficultyOptions = ['Fácil', 'Intermedio', 'Avanzado'];
+    const difficulty = lesson.difficulty || difficultyOptions[(lesson.order - 1) % difficultyOptions.length];
+    
     return {
         ...lesson,
+        difficulty: difficulty as 'Fácil' | 'Medio' | 'Difícil',
         content: `<h3>Sobre esta lección</h3>
-<p>En esta sección del curso <strong>${course.title}</strong>, exploraremos el tema de "<em>${lesson.title}</em>". Este es un concepto fundamental para cualquier persona que aspire a dominar ${module.title}.</p>
+<p>En esta sección del curso <strong>${course.title}</strong>, exploraremos el tema de "<em>${lesson.title}</em>". Este es un concepto ${difficulty.toLowerCase()} para cualquier persona que aspire a dominar ${module.title}.</p>
 <p>A lo largo de esta lección, cubriremos los siguientes puntos clave:</p>
 <ul>
     <li>Principios básicos de ${lesson.title}.</li>
@@ -486,6 +490,54 @@ const generateDetailedLesson = (course: Course, module: CourseModule, lesson: Le
                     id: `${lesson.id}-q2`,
                     question: `¿Es "${lesson.title}" relevante para ${course.title}?`,
                     options: ['Sí, es crucial', 'No, no está relacionado', 'A veces', 'Solo para expertos'],
+                    correctAnswer: 0,
+                },
+                {
+                    id: `${lesson.id}-q3`,
+                    question: `¿En qué nivel de dificultad se clasifica esta lección?`,
+                    options: ['Fácil', 'Medio', 'Difícil', 'No tiene clasificación'],
+                    correctAnswer: difficultyOptions.indexOf(difficulty),
+                },
+                {
+                    id: `${lesson.id}-q4`,
+                    question: `El contenido de esta lección se enfoca principalmente en:`,
+                    options: ['Teoría pura', 'Ejemplos prácticos', 'Ambos, teoría y práctica', 'Historia del concepto'],
+                    correctAnswer: 2,
+                },
+                {
+                    id: `${lesson.id}-q5`,
+                    question: `¿Qué se recomienda hacer DESPUÉS de ver el video de la lección?`,
+                    options: ['Pasar a la siguiente lección inmediatamente', 'Realizar el cuestionario', 'Buscar información en otros sitios', 'Tomar un descanso largo'],
+                    correctAnswer: 1,
+                },
+                {
+                    id: `${lesson.id}-q6`,
+                    question: `¿Cuál de estos NO es un punto clave mencionado en la descripción de la lección?`,
+                    options: ['Principios básicos', 'Aplicaciones prácticas', 'Costos de implementación', 'Errores comunes'],
+                    correctAnswer: 2,
+                },
+                {
+                    id: `${lesson.id}-q7`,
+                    question: `El tema "${lesson.title}" es parte del módulo:`,
+                    options: [`${module.title}`, 'Un módulo introductorio general', 'Un módulo avanzado', 'No pertenece a ningún módulo'],
+                    correctAnswer: 0,
+                },
+                {
+                    id: `${lesson.id}-q8`,
+                    question: `¿Para quién es más útil esta lección, según la descripción?`,
+                    options: ['Solo para principiantes', 'Solo para gerentes de proyecto', 'Para quien aspire a dominar el tema del módulo', 'Solo para diseñadores'],
+                    correctAnswer: 2,
+                },
+                {
+                    id: `${lesson.id}-q9`,
+                    question: `¿Qué herramienta se sugiere usar si tienes preguntas sobre la lección?`,
+                    options: ['Correo electrónico', 'Soporte técnico', 'La sección de comentarios', 'Redes sociales'],
+                    correctAnswer: 2,
+                },
+                {
+                    id: `${lesson.id}-q10`,
+                    question: `El curso al que pertenece esta lección es:`,
+                    options: [`${course.title}`, 'Un curso sin nombre', 'Un seminario web', 'No es parte de un curso'],
                     correctAnswer: 0,
                 },
             ],
