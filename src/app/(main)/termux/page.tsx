@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Smartphone, AlertTriangle, Download, Terminal, GitBranch, Database, Code, Rocket, BookOpen, GitCommit, Bot, Server, FileText } from 'lucide-react';
+import { Smartphone, AlertTriangle, Download, Terminal, GitBranch, Database, Code, Rocket, BookOpen, GitCommit, Bot, Server, FileText, TextCursorInput, Tv, ArrowRightLeft, FileDown, Network, System, Book } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from '@/components/ui/button';
 import { termuxProjects, termuxGuides, type TermuxProject } from '@/lib/data';
@@ -163,6 +163,87 @@ function ProjectsTab() {
     );
 }
 
+function ToolsTab() {
+    const toolCategories = [
+        {
+            title: "Editores de Texto en Consola",
+            icon: <TextCursorInput className="w-6 h-6 text-primary"/>,
+            description: "Para editar código directamente en la terminal.",
+            tools: [
+                { name: "Nano", command: "pkg install nano", description: "Editor simple y fácil de usar, ideal para principiantes." },
+                { name: "Vim", command: "pkg install vim", description: "Editor modal potente y altamente configurable, para usuarios avanzados." },
+            ]
+        },
+        {
+            title: "Gestión de Sesiones",
+            icon: <Tv className="w-6 h-6 text-primary"/>,
+            description: "Mantén tus procesos corriendo incluso si cierras la app.",
+            tools: [
+                { name: "Tmux", command: "pkg install tmux", description: "Permite crear múltiples sesiones y paneles en una sola terminal. Esencial para el multitasking." },
+            ]
+        },
+        {
+            title: "Transferencia de Archivos",
+            icon: <FileDown className="w-6 h-6 text-primary"/>,
+            description: "Para descargar archivos o interactuar con APIs.",
+            tools: [
+                { name: "cURL", command: "pkg install curl", description: "Herramienta para transferir datos con URLs. Muy potente para peticiones HTTP." },
+                { name: "Wget", command: "pkg install wget", description: "Utilidad para descargar archivos de internet de forma no interactiva." },
+            ]
+        },
+        {
+            title: "Diagnóstico de Red",
+            icon: <Network className="w-6 h-6 text-primary"/>,
+            description: "Conéctate a servidores remotos y analiza tu red.",
+            tools: [
+                { name: "OpenSSH", command: "pkg install openssh", description: "Permite conectarte a otros servidores de forma segura a través de SSH." },
+                { name: "Nmap", command: "pkg install nmap", description: "Escáner de red para descubrir hosts y servicios en una red." },
+            ]
+        },
+        {
+            title: "Utilidades del Sistema",
+            icon: <System className="w-6 h-6 text-primary"/>,
+            description: "Para monitorear y entender mejor tu entorno.",
+            tools: [
+                { name: "htop", command: "pkg install htop", description: "Monitor de procesos interactivo que muestra el uso de CPU y memoria en tiempo real." },
+                { name: "tldr", command: "pkg install tldr", description: "Ofrece ejemplos prácticos y simplificados de cómo usar comandos de consola." },
+            ]
+        }
+    ];
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Herramientas y Comandos Útiles</CardTitle>
+                <CardDescription>Potencia tu flujo de trabajo en Termux con estas herramientas esenciales.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-8">
+                    {toolCategories.map(category => (
+                        <div key={category.title}>
+                            <div className="flex items-center gap-3 mb-4">
+                                {category.icon}
+                                <div>
+                                    <h3 className="text-xl font-semibold">{category.title}</h3>
+                                    <p className="text-muted-foreground">{category.description}</p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {category.tools.map(tool => (
+                                    <div key={tool.name} className="p-4 bg-muted/50 rounded-lg">
+                                        <h4 className="font-semibold text-foreground">{tool.name}</h4>
+                                        <p className="text-sm text-muted-foreground mb-2">{tool.description}</p>
+                                        <CodeBlock code={tool.command} />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
 
 export default function TermuxGuidePage() {
     return (
@@ -197,15 +278,7 @@ export default function TermuxGuidePage() {
                     <ProjectsTab />
                 </TabsContent>
                 <TabsContent value="tools" className="mt-8">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Herramientas y Comandos Útiles</CardTitle>
-                            <CardDescription>Potencia tu flujo de trabajo en Termux con estas herramientas.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                             <p className="text-muted-foreground text-center py-10">Contenido sobre herramientas y comandos útiles estará disponible próximamente.</p>
-                        </CardContent>
-                    </Card>
+                    <ToolsTab />
                 </TabsContent>
             </Tabs>
         </div>
