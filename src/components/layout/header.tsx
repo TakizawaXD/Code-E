@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Menu, Search, Smartphone } from "lucide-react";
+import { Bell, Menu, Search, Smartphone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -132,6 +132,10 @@ export function Header() {
                     </Link>
                     <Link href="/dashboard" className="block rounded-lg py-2 px-3 text-muted-foreground hover:bg-accent hover:text-foreground" onClick={handleMobileLinkClick}>
                       Mi Progreso
+                    </Link>
+                     <Link href="/comunicacion" className="flex items-center gap-2 rounded-lg py-2 px-3 text-muted-foreground hover:bg-accent hover:text-foreground" onClick={handleMobileLinkClick}>
+                      <MessageCircle className="h-4 w-4" />
+                      Comunicación
                     </Link>
                     <Link href="/guides" className="block rounded-lg py-2 px-3 text-muted-foreground hover:bg-accent hover:text-foreground" onClick={handleMobileLinkClick}>
                       Guía de Entrevistas

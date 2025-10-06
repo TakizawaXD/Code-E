@@ -115,6 +115,15 @@ export type Comment = {
     createdAt: Timestamp | FieldValue;
 };
 
+export type ChatMessage = {
+    id: string;
+    authorId: string;
+    authorName: string;
+    authorAvatarUrl?: string;
+    content: string;
+    createdAt: Timestamp | FieldValue;
+}
+
 // Gamification Types
 export type GamificationStats = {
   id: string; // Should match userId

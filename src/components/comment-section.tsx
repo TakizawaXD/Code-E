@@ -3,16 +3,28 @@
 
 import React, { useState } from 'react';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, orderBy, addDoc, serverTimestamp, doc, deleteDoc } from 'firebase/firestore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Send, Loader2 } from 'lucide-react';
+import { Send, Loader2, Trash2 } from 'lucide-react';
 import type { Comment } from '@/lib/types';
 import { errorEmitter, FirestorePermissionError } from '@/firebase';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 
 interface CommentSectionProps {
     lessonId: string;
@@ -64,6 +76,23 @@ export function CommentSection({ lessonId }: CommentSectionProps) {
             });
     };
 
+    const handleDeleteComment = async (commentId: string) => {
+        if (!firestore) return;
+        const commentRef = doc(firestore, 'lessons', lessonId, 'comments', commentId);
+        
+        try {
+            await deleteDoc(commentRef);
+        } catch (error) {
+             errorEmitter.emit(
+                'permission-error',
+                new FirestorePermissionError({
+                    path: commentRef.path,
+                    operation: 'delete',
+                })
+            );
+        }
+    }
+
     const getInitials = (name: string) => {
         return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
     };
@@ -112,11 +141,36 @@ export function CommentSection({ lessonId }: CommentSectionProps) {
                                 <AvatarFallback>{getInitials(comment.authorName)}</AvatarFallback>
                             </Avatar>
                             <div className="w-full">
-                                <div className="flex items-center gap-2">
-                                    <p className="font-semibold">{comment.authorName}</p>
-                                    <p className="text-xs text-muted-foreground">
-                                        {comment.createdAt ? formatDistanceToNow((comment.createdAt as any).toDate(), { addSuffix: true, locale: es }) : ''}
-                                    </p>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <p className="font-semibold">{comment.authorName}</p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {comment.createdAt ? formatDistanceToNow((comment.createdAt as any).toDate(), { addSuffix: true, locale: es }) : ''}
+                                        </p>
+                                    </div>
+                                    {user && user.uid === comment.authorId && (
+                                         <AlertDialog>
+                                            <AlertDialogTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                                    <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                                                </Button>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    Esta acción no se puede deshacer. Tu comentario será eliminado permanentemente.
+                                                </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                                <AlertDialogAction onClick={() => handleDeleteComment(comment.id)}>
+                                                    Eliminar
+                                                </AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
+                                    )}
                                 </div>
                                 <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap">{comment.content}</p>
                             </div>
