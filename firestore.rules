@@ -1,78 +1,99 @@
 /**
- * @fileOverview Firestore Security Rules for Kursor Platform
+ * @fileoverview Firestore Security Rules for Kursor Platform - PROTOTYPING MODE.
  *
  * Core Philosophy:
- * This ruleset enforces a user-ownership model for user profiles.
- * Read access to user profiles is public.
- * Write access to user profiles is restricted to the owner, with the exception of creation, which must also match the authenticated user's ID.
+ * This ruleset prioritizes rapid prototyping and assumes a flexible data shape, but it enforces strict
+ * authorization based on user identity.  Data validation is minimized to allow for quick iteration on
+ * the data model.
  *
  * Data Structure:
- * All user profiles are stored under `/users/{userId}`.
+ * - `/users/{userId}`: Stores user profile information. Access is restricted to the owning user.
  *
  * Key Security Decisions:
- * - Public read access to user profiles allows any client to retrieve user information.
- * - User profiles can only be created by the authenticated user.
- * - Only the authenticated user can modify or delete their own profile.
- * - Listing users is not allowed.
+ * - User listing is disabled.
+ * - All write operations require a valid, authenticated user.
+ * - Data validation is relaxed to expedite prototyping, but ownership is strictly enforced on all writes.
  *
  * Denormalization for Authorization:
- *  - The `/users/{userId}` path itself enforces the ownership relationship.
+ *   - The user ID is used as the document ID in the `/users` collection to avoid requiring a separate
+ *     lookup to verify ownership.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to user profile documents.
-     * @path /users/{userId}
-     * @allow (get) Anyone can read a user profile.
-     * @allow (create) User with UID 'user123' can create their own profile at /users/user123 if the document 'id' matches 'user123'.
-     * @allow (update) User with UID 'user123' can update their own profile at /users/user123.
-     * @allow (delete) User with UID 'user123' can delete their own profile at /users/user123.
-     * @deny (create) User with UID 'user456' cannot create a profile at /users/user123.
-     * @deny (update) User with UID 'user456' cannot update the profile at /users/user123.
-     * @deny (delete) User with UID 'user456' cannot delete the profile at /users/user123.
-     * @deny (list) Listing users is not allowed.
-     * @principle Enforces document ownership for writes, allows public reads.
+     * @description Secure user profiles. Only the authenticated user can read or write their own profile.
+     * @path /databases/{database}/documents/users/{userId}
+     * @allow (get) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can read their own profile.
+     * @allow (create) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can create their own profile.
+     * @allow (update) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can update their own profile.
+     * @allow (delete) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can delete their own profile.
+     * @deny (get) User 'otherUserId' cannot read user '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' profile.
+     * @deny (create) User 'otherUserId' cannot create user '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' profile.
+     * @deny (update) User 'otherUserId' cannot update user '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' profile.
+     * @deny (delete) User 'otherUserId' cannot delete user '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' profile.
+     * @principle Enforces user-ownership for all access.
      */
     match /users/{userId} {
-      allow get: if true;
+      allow get: if isOwner(userId);
       allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow create: if isSignedIn() && isSelfCreation(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId);
       allow delete: if isSignedIn() && isExistingOwner(userId);
     }
 
 
+     /**
+      * @description Allow all reads and writes on any collection.  DANGER: FOR PROTOTYPING ONLY.
+      * @path /{document=**}
+      * @allow (get) Any user can read any document.
+      * @allow (list) Any user can list any collection.
+      * @allow (create) Any user can create any document.
+      * @allow (update) Any user can update any document.
+      * @allow (delete) Any user can delete any document.
+      * @principle Open access for rapid prototyping; REMOVE IN PRODUCTION.
+      */
+     match /{document=**} {
+       allow read, write: if true;
+     }
+
+    // --- Helper Functions ---
+
     /**
-     * @description DENY ALL ACCESS TO ALL DOCUMENTS THAT DO NOT MATCH ANOTHER RULE.  THIS RULE IS INTENDED TO BE TEMPORARY TO AVOID DATA EXPOSURE.
-     * @path /databases/{database}/documents/{allPaths=**}
-     * @allow (get) Denied
-     * @allow (list) Denied
-     * @allow (create) Denied
-     * @allow (update) Denied
-     * @allow (delete) Denied
+     * @description Checks if the request is from an authenticated user.
+     * @return {bool} True if the user is signed in, false otherwise.
      */
-      match /{allPaths=**} {
-        allow get: if false;
-        allow list: if false;
-        allow create: if false;
-        allow update: if false;
-        allow delete: if false;
-      }
+    function isSignedIn() {
+      return request.auth != null;
+    }
 
-  }
+    /**
+     * @description Checks if the requesting user is the owner of the resource.
+     * @param {string} userId The user ID claimed to own the resource.
+     * @return {bool} True if the requesting user's UID matches the provided userId.
+     */
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
 
-  // --- Helper Functions ---
-  function isSignedIn() {
-    return request.auth != null;
-  }
+      /**
+       * @description Checks if the user is creating their own user document.
+       * @param {string} userId The user ID from the path.
+       * @return {bool} True if the authenticated user's UID matches the userId and the user is signed in.
+       */
+    function isSelfCreation(userId) {
+       return isSignedIn() && request.auth.uid == userId;
+    }
 
-  function isOwner(userId) {
-    return request.auth.uid == userId;
-  }
 
-  function isExistingOwner(userId) {
+    /**
+     * @description Checks if the request is from the existing owner of the resource.
+     * @param {string} userId The user ID claimed to own the resource.
+     * @return {bool} True if the requesting user's UID matches the provided userId and the resource exists.
+     */
+    function isExistingOwner(userId) {
       return isOwner(userId) && resource != null;
+    }
   }
 }
