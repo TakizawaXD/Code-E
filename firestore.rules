@@ -1,65 +1,78 @@
 /**
- * @file Firestore Security Rules
- * @description This ruleset enforces a user-ownership model for most data, with public read access to user profiles.
+ * @fileOverview Firestore Security Rules for Kursor Platform
+ *
+ * Core Philosophy:
+ * This ruleset enforces a user-ownership model for user profiles.
+ * Read access to user profiles is public.
+ * Write access to user profiles is restricted to the owner, with the exception of creation, which must also match the authenticated user's ID.
  *
  * Data Structure:
- * - /users/{userId}: Stores public user profile data.
- * - /users/{userId}/progress/{courseId}/lessons/{lessonId}: Stores lesson progress data, accessible only by the user.
+ * All user profiles are stored under `/users/{userId}`.
  *
  * Key Security Decisions:
- * - Public user profile data with owner-only write access.
- * - Strict user-ownership for all subcollections under /users/{userId}.
- * - No user listing is allowed to protect privacy.
- * - All write operations must be authenticated.
+ * - Public read access to user profiles allows any client to retrieve user information.
+ * - User profiles can only be created by the authenticated user.
+ * - Only the authenticated user can modify or delete their own profile.
+ * - Listing users is not allowed.
+ *
+ * Denormalization for Authorization:
+ *  - The `/users/{userId}` path itself enforces the ownership relationship.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Allows read access to all user documents. Authenticated user required for creating, updating, or deleting a user.
+     * @description Controls access to user profile documents.
      * @path /users/{userId}
-     * @allow (get, list) - Any user can read any profile.
-     * @allow (create) - Any authenticated user can create their own profile.
-     * @allow (update, delete) - Only the user can update or delete their profile.
-     * @deny (create) - If the user is not authenticated.
-     * @deny (update, delete) - If the user is not the owner.
-     * @principle Public read, owner-only write for user profiles.
+     * @allow (get) Anyone can read a user profile.
+     * @allow (create) User with UID 'user123' can create their own profile at /users/user123 if the document 'id' matches 'user123'.
+     * @allow (update) User with UID 'user123' can update their own profile at /users/user123.
+     * @allow (delete) User with UID 'user123' can delete their own profile at /users/user123.
+     * @deny (create) User with UID 'user456' cannot create a profile at /users/user123.
+     * @deny (update) User with UID 'user456' cannot update the profile at /users/user123.
+     * @deny (delete) User with UID 'user456' cannot delete the profile at /users/user123.
+     * @deny (list) Listing users is not allowed.
+     * @principle Enforces document ownership for writes, allows public reads.
      */
     match /users/{userId} {
       allow get: if true;
-      allow list: if true;
-      allow create: if isSignedIn() && request.auth.uid == userId;
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+      allow list: if false;
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isSignedIn() && isExistingOwner(userId);
     }
+
 
     /**
-     * @description Allows read access to lesson progress for an authenticated user. Authenticated user required for creating, updating, or deleting lesson progress data.
-     * @path /users/{userId}/progress/{courseId}/lessons/{lessonId}
-     * @allow (get, list) - Only the user can read their own lesson progress.
-     * @allow (create, update, delete) - Only the user can create, update, or delete their own lesson progress.
-     * @deny (get, list, create, update, delete) - If the user is not the owner.
-     * @principle Strict user-ownership for lesson progress data.
+     * @description DENY ALL ACCESS TO ALL DOCUMENTS THAT DO NOT MATCH ANOTHER RULE.  THIS RULE IS INTENDED TO BE TEMPORARY TO AVOID DATA EXPOSURE.
+     * @path /databases/{database}/documents/{allPaths=**}
+     * @allow (get) Denied
+     * @allow (list) Denied
+     * @allow (create) Denied
+     * @allow (update) Denied
+     * @allow (delete) Denied
      */
-    match /users/{userId}/progress/{courseId}/lessons/{lessonId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
-    }
+      match /{allPaths=**} {
+        allow get: if false;
+        allow list: if false;
+        allow create: if false;
+        allow update: if false;
+        allow delete: if false;
+      }
 
-    function isSignedIn() {
-      return request.auth != null;
-    }
+  }
 
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
+  // --- Helper Functions ---
+  function isSignedIn() {
+    return request.auth != null;
+  }
 
-    function isExistingOwner(userId) {
-        return isSignedIn() && isOwner(userId) && resource != null;
-    }
+  function isOwner(userId) {
+    return request.auth.uid == userId;
+  }
+
+  function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
   }
 }
