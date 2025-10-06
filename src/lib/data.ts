@@ -604,6 +604,25 @@ export const weeklyChallenges: WeeklyChallenge[] = [
         inspirationUrl: "https://github.com/example/password-generator-cli",
         difficulty: "Fácil"
     },
+    {
+        language: "Java",
+        iconKey: "java",
+        title: "Calculadora de Propinas",
+        description: "Crea una aplicación de consola que calcule la propina y el total a pagar de una cuenta. El usuario debe poder ingresar el monto de la factura y el porcentaje de propina.",
+        technologies: ["Java", "Scanner"],
+        inspirationUrl: "https://github.com/example/java-tip-calculator",
+        difficulty: "Fácil"
+    },
+     {
+        language: "PHP",
+        iconKey: "php",
+        title: "Formulario de Contacto Simple",
+        description: "Crea una página con un formulario de contacto (nombre, email, mensaje) que, al enviarse, valide los datos y los envíe a un correo electrónico específico usando la función `mail()` de PHP.",
+        technologies: ["HTML", "PHP", "CSS"],
+        inspirationUrl: "https://github.com/example/php-contact-form",
+        difficulty: "Fácil"
+    },
+
     // --- Mediano ---
     {
         language: "JavaScript/TypeScript",
@@ -623,6 +642,24 @@ export const weeklyChallenges: WeeklyChallenge[] = [
         inspirationUrl: "https://github.com/example/python-url-shortener",
         difficulty: "Mediano"
     },
+    {
+        language: "Go",
+        iconKey: "go",
+        title: "CLI de Conversión de Moneda",
+        description: "Desarrolla una herramienta de línea de comandos que se conecte a una API de tipo de cambio gratuita y convierta una cantidad de una moneda a otra. Ejemplo: `currency-converter 100 USD EUR`.",
+        technologies: ["Go", "net/http", "flag"],
+        inspirationUrl: "https://github.com/example/go-currency-cli",
+        difficulty: "Mediano"
+    },
+    {
+        language: "Rust",
+        iconKey: "rust",
+        title: "Analizador de Archivos Log",
+        description: "Crea una herramienta CLI que lea un archivo de log, cuente la ocurrencia de errores (líneas que contengan 'ERROR'), y genere un resumen. El programa debe ser eficiente en el manejo de archivos grandes.",
+        technologies: ["Rust", "std::fs", "clap"],
+        inspirationUrl: "https://github.com/example/rust-log-analyzer",
+        difficulty: "Mediano"
+    },
     // --- Complicado ---
     {
         language: "JavaScript/TypeScript",
@@ -640,6 +677,24 @@ export const weeklyChallenges: WeeklyChallenge[] = [
         description: "Desarrolla un script que monitoree el precio de un producto en un sitio de e-commerce. El script debe extraer el precio, guardarlo en una base de datos o CSV junto con la fecha, y enviar una notificación por correo electrónico si el precio baja de un umbral definido por el usuario.",
         technologies: ["Python", "BeautifulSoup", "Requests", "Pandas", "smtplib"],
         inspirationUrl: "https://github.com/example/price-scraper",
+        difficulty: "Complicado"
+    },
+    {
+        language: "Java",
+        iconKey: "java",
+        title: "API REST para una Biblioteca",
+        description: "Diseña y construye una API REST con Spring Boot para gestionar una colección de libros. Debe incluir endpoints para CRUD de libros, autores y un sistema para prestar y devolver libros, actualizando su disponibilidad.",
+        technologies: ["Spring Boot", "Spring Data JPA", "H2/PostgreSQL", "Maven"],
+        inspirationUrl: "https://github.com/example/java-library-api",
+        difficulty: "Complicado"
+    },
+     {
+        language: "C#",
+        iconKey: "csharp",
+        title: "Juego de Snake en la Consola",
+        description: "Implementa el clásico juego de Snake en una aplicación de consola .NET. Controla la serpiente con las flechas del teclado, hazla crecer al comer 'comida' y termina el juego si choca contra sí misma o los bordes.",
+        technologies: [".NET", "C#", "System.Console"],
+        inspirationUrl: "https://github.com/example/csharp-console-snake",
         difficulty: "Complicado"
     },
     // --- Experto ---
