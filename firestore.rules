@@ -1,76 +1,69 @@
 /**
- * @fileoverview Firestore Security Rules for Kursor Platform
+ * @fileOverview Firestore Security Rules for Kursor Platform
  *
  * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for most data, while allowing public read access to certain collections.
- * Only authenticated users can read or write data.
+ * This ruleset enforces a user-ownership model for user profiles.
+ * Read access to user profiles is public.
+ * Write access to user profiles is restricted to the owner, with the exception of creation, which must also match the authenticated user's ID.
  *
  * Data Structure:
- * - User profiles are stored under `/users/{userId}`.
- * - Progress data is stored under `/users/{userId}/progress/{courseId}/lessons/{lessonId}`.
+ * All user profiles are stored under `/users/{userId}`.
  *
  * Key Security Decisions:
- * - Listing users is disallowed to protect user privacy.
- * - Public read access is granted for collections where it is safe.
+ * - Public read access to user profiles allows any client to retrieve user information.
+ * - User profiles can only be created by the authenticated user.
+ * - Only the authenticated user can modify or delete their own profile.
+ * - Listing users is not allowed.
  *
  * Denormalization for Authorization:
- * The current data model already nests private data under `/users/{userId}`, so no further denormalization is needed.
+ *  - The `/users/{userId}` path itself enforces the ownership relationship.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Secure access to user profiles. Only the owner can read or write their profile.
+     * @description Controls access to user profile documents.
      * @path /users/{userId}
-     * @allow (get) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can read their own profile.
-     * @allow (create) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can create their own profile.
-     * @allow (update) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can update their own profile.
-     * @allow (delete) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can delete their own profile.
-     * @deny (get) User 'otherUserId' cannot read User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' profile.
-     * @deny (create) User 'otherUserId' cannot create User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' profile.
-     * @deny (update) User 'otherUserId' cannot update User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' profile.
-     * @deny (delete) User 'otherUserId' cannot delete User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' profile.
-     * @principle Enforces document ownership for all operations.
+     * @allow (get) Anyone can read a user profile.
+     * @allow (create) User with UID 'user123' can create their own profile at /users/user123 if the document 'id' matches 'user123'.
+     * @allow (update) User with UID 'user123' can update their own profile at /users/user123.
+     * @allow (delete) User with UID 'user123' can delete their own profile at /users/user123.
+     * @deny (create) User with UID 'user456' cannot create a profile at /users/user123.
+     * @deny (update) User with UID 'user456' cannot update the profile at /users/user123.
+     * @deny (delete) User with UID 'user456' cannot delete the profile at /users/user123.
+     * @deny (list) Listing users is not allowed.
+     * @principle Enforces document ownership for writes, allows public reads.
      */
     match /users/{userId} {
-      allow get: if isOwner(userId);
-      allow list: if false; // Do not allow listing users for privacy.
-      allow create: if isOwner(userId) && request.resource.data.email is string && request.resource.data.username is string && request.resource.data.name is string && request.resource.data.createdAt is string;
-      allow update: if isOwner(userId) && resource != null && resource.data.email == request.resource.data.email && resource.data.username == request.resource.data.username;
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description Secure access to user lesson progress. Only the owner can read or write their progress.
-     * @path /users/{userId}/progress/{courseId}/lessons/{lessonId}
-     * @allow (get) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can read their own lesson progress.
-     * @allow (list) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can list their own lesson progress.
-     * @allow (create) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can create their own lesson progress.
-     * @allow (update) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can update their own lesson progress.
-     * @allow (delete) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can delete their own lesson progress.
-     * @deny (get) User 'otherUserId' cannot read User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' lesson progress.
-     * @deny (list) User 'otherUserId' cannot list User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' lesson progress.
-     * @deny (create) User 'otherUserId' cannot create User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' lesson progress.
-     * @deny (update) User 'otherUserId' cannot update User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' lesson progress.
-     * @deny (delete) User 'otherUserId' cannot delete User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' lesson progress.
-     * @principle Enforces document ownership for all operations within the progress subcollection.
-     */
-    match /users/{userId}/progress/{courseId}/lessons/{lessonId} {
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isOwner(userId) && resource != null;
+      allow get: if true;
+      allow list: if false;
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.id == resource.data.id;
       allow delete: if isSignedIn() && isExistingOwner(userId);
     }
 
-    // Generic deny rule for all other paths to enforce least privilege.
-    match /{path=**} {
-        allow read, write: if false;
-    }
+
+    /**
+     * @description DENY ALL ACCESS TO ALL DOCUMENTS THAT DO NOT MATCH ANOTHER RULE.  THIS RULE IS INTENDED TO BE TEMPORARY TO AVOID DATA EXPOSURE.
+     * @path /databases/{database}/documents/{allPaths=**}
+     * @allow (get) Denied
+     * @allow (list) Denied
+     * @allow (create) Denied
+     * @allow (update) Denied
+     * @allow (delete) Denied
+     */
+      match /{allPaths=**} {
+        allow get: if false;
+        allow list: if false;
+        allow create: if false;
+        allow update: if false;
+        allow delete: if false;
+      }
+
   }
 
-  // Helper Functions
+  // --- Helper Functions ---
   function isSignedIn() {
     return request.auth != null;
   }
@@ -80,6 +73,6 @@ service cloud.firestore {
   }
 
   function isExistingOwner(userId) {
-    return isOwner(userId) && resource != null;
+      return isOwner(userId) && resource != null;
   }
 }
