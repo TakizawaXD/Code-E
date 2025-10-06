@@ -83,6 +83,8 @@ export type UserProfile = {
   avatarUrl?: string;
   description?: string;
   role?: 'student' | 'instructor' | 'admin';
+  country?: string;
+  birthDate?: Date;
 };
 
 export type Notification = {

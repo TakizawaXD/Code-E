@@ -9,9 +9,12 @@ import * as z from "zod";
 import { useAuth, useFirestore, initiateEmailSignUp } from "@/firebase";
 import { sendEmailVerification, updateProfile } from "firebase/auth";
 import { doc, serverTimestamp } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Card,
   CardContent,
@@ -25,26 +28,47 @@ import { Separator } from "@/components/ui/separator";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { Loader2 } from "lucide-react";
-
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "El nombre debe tener al menos 2 caracteres." }),
   username: z.string().min(3, { message: "El nombre de usuario debe tener al menos 3 caracteres." }).regex(/^[a-z0-9_.]+$/, { message: "Solo letras minúsculas, números, puntos y guiones bajos."}),
   email: z.string().email({ message: "Por favor, introduce un correo electrónico válido." }),
   password: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres." }),
-  confirmPassword: z.string()
-}).refine(data => data.password === data.confirmPassword, {
-    message: "Las contraseñas no coinciden.",
-    path: ["confirmPassword"],
+  country: z.string({ required_error: "Por favor, selecciona tu país." }),
+  birthDate: z.date({ required_error: "Tu fecha de nacimiento es requerida." }),
+  terms: z.boolean().refine(value => value === true, {
+    message: "Debes aceptar los términos y condiciones.",
+  }),
+}).refine(data => {
+    const today = new Date();
+    const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    return data.birthDate <= eighteenYearsAgo;
+}, {
+    message: "Debes ser mayor de 18 años para registrarte.",
+    path: ["birthDate"],
 });
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -90,7 +114,7 @@ export default function SignupPage() {
       username: "",
       email: "",
       password: "",
-      confirmPassword: "",
+      terms: false,
     },
   });
 
@@ -114,7 +138,6 @@ export default function SignupPage() {
       );
       const user = userCredential.user;
 
-      // Now that user is created, update profile and create Firestore doc
       await updateProfile(user, { displayName: values.username });
       
       const userDocRef = doc(firestore, "users", user.uid);
@@ -127,9 +150,10 @@ export default function SignupPage() {
           description: "",
           avatarUrl: "",
           role: "student",
+          country: values.country,
+          birthDate: values.birthDate,
       }, {});
 
-      // Optionally send verification email
       await sendEmailVerification(user);
 
       toast({
@@ -154,9 +178,9 @@ export default function SignupPage() {
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Crear Cuenta</CardTitle>
+        <CardTitle className="text-2xl">Crear una Cuenta</CardTitle>
         <CardDescription>
-          Elige tu método preferido para crear una cuenta
+          Completa tu información para unirte a la comunidad
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6">
@@ -170,7 +194,7 @@ export default function SignupPage() {
                 <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">O continuar con</span>
+                <span className="bg-background px-2 text-muted-foreground">O continuar con tu email</span>
             </div>
         </div>
          <Form {...form}>
@@ -214,6 +238,76 @@ export default function SignupPage() {
                 </FormItem>
               )}
             />
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>País</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecciona tu país" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="mx">México</SelectItem>
+                        <SelectItem value="co">Colombia</SelectItem>
+                        <SelectItem value="ar">Argentina</SelectItem>
+                        <SelectItem value="es">España</SelectItem>
+                        <SelectItem value="pe">Perú</SelectItem>
+                        <SelectItem value="cl">Chile</SelectItem>
+                        <SelectItem value="us">Estados Unidos</SelectItem>
+                        <SelectItem value="other">Otro</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                  control={form.control}
+                  name="birthDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Fecha de Nacimiento</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Elige una fecha</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+            </div>
             <FormField
               control={form.control}
               name="password"
@@ -227,16 +321,30 @@ export default function SignupPage() {
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
-              name="confirmPassword"
+              name="terms"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirmar Contraseña</FormLabel>
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
                   </FormControl>
-                  <FormMessage />
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>
+                      Acepto los términos y condiciones
+                    </FormLabel>
+                    <FormDescription>
+                       Al registrarte, aceptas nuestros{" "}
+                      <Link href="/terms" className="text-primary hover:underline" target="_blank">
+                        Términos de Servicio
+                      </Link>
+                      .
+                    </FormDescription>
+                     <FormMessage />
+                  </div>
                 </FormItem>
               )}
             />
@@ -258,3 +366,5 @@ export default function SignupPage() {
     </Card>
   );
 }
+
+    
