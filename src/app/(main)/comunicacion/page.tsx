@@ -3,17 +3,29 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy, limit, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, orderBy, limit, addDoc, serverTimestamp, doc, deleteDoc } from 'firebase/firestore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Send, Loader2, MessageCircle } from 'lucide-react';
+import { Send, Loader2, MessageCircle, Trash2 } from 'lucide-react';
 import type { ChatMessage } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { errorEmitter, FirestorePermissionError } from '@/firebase';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 
 function getInitials(name: string) {
     return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
@@ -80,6 +92,22 @@ export default function ComunicacionPage() {
             });
     };
 
+    const handleDeleteMessage = async (messageId: string) => {
+        if (!firestore) return;
+        const messageRef = doc(firestore, 'comunicacion', messageId);
+        
+        deleteDoc(messageRef)
+            .catch((error) => {
+                errorEmitter.emit(
+                    'permission-error',
+                    new FirestorePermissionError({
+                        path: messageRef.path,
+                        operation: 'delete',
+                    })
+                );
+            });
+    }
+
     return (
         <div className="container py-8 md:py-12">
             <header className="mb-8 md:mb-12 text-center">
@@ -100,7 +128,7 @@ export default function ComunicacionPage() {
                     {areMessagesLoading && <div className="flex justify-center items-center h-full"><Loader2 className="w-8 h-8 animate-spin" /></div>}
                     
                     {!areMessagesLoading && sortedMessages.map((msg) => (
-                        <div key={msg.id} className="flex gap-3 items-start">
+                        <div key={msg.id} className="flex gap-3 items-start group">
                             <Avatar className="h-10 w-10">
                                 <AvatarImage src={msg.authorAvatarUrl} alt={msg.authorName} />
                                 <AvatarFallback>{getInitials(msg.authorName)}</AvatarFallback>
@@ -112,7 +140,32 @@ export default function ComunicacionPage() {
                                         {msg.createdAt ? formatDistanceToNow((msg.createdAt as any).toDate(), { addSuffix: true, locale: es }) : ''}
                                     </p>
                                 </div>
-                                <p className="mt-1 text-sm text-foreground bg-muted p-3 rounded-lg inline-block">{msg.content}</p>
+                                <div className="flex items-center gap-2">
+                                    <p className="mt-1 text-sm text-foreground bg-muted p-3 rounded-lg inline-block">{msg.content}</p>
+                                    {user && user.uid === msg.authorId && (
+                                         <AlertDialog>
+                                            <AlertDialogTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                                                </Button>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    Esta acción no se puede deshacer. Tu mensaje será eliminado permanentemente.
+                                                </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                                <AlertDialogAction onClick={() => handleDeleteMessage(msg.id)}>
+                                                    Eliminar
+                                                </AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     ))}
