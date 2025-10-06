@@ -80,17 +80,16 @@ export function CommentSection({ lessonId }: CommentSectionProps) {
         if (!firestore) return;
         const commentRef = doc(firestore, 'lessons', lessonId, 'comments', commentId);
         
-        try {
-            await deleteDoc(commentRef);
-        } catch (error) {
-             errorEmitter.emit(
-                'permission-error',
-                new FirestorePermissionError({
-                    path: commentRef.path,
-                    operation: 'delete',
-                })
-            );
-        }
+        deleteDoc(commentRef)
+            .catch((error) => {
+                errorEmitter.emit(
+                    'permission-error',
+                    new FirestorePermissionError({
+                        path: commentRef.path,
+                        operation: 'delete',
+                    })
+                );
+            });
     }
 
     const getInitials = (name: string) => {
