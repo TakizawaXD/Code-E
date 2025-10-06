@@ -23,10 +23,11 @@ export default function ChannelPage() {
     const channelName = params.channelName as string;
 
     const messagesQuery = useMemoFirebase(() => {
-        if (!firestore || !channelName) return null;
+        // Wait until both firestore and the user are available
+        if (!firestore || !channelName || !user) return null;
         const messagesRef = collection(firestore, "channels", channelName, "messages");
         return query(messagesRef, orderBy("createdAt", "asc"), limit(100));
-    }, [firestore, channelName]);
+    }, [firestore, channelName, user]); // Add user as a dependency
 
     const { data: messages, isLoading: areMessagesLoading } = useCollection<Message>(messagesQuery);
     
@@ -38,10 +39,11 @@ export default function ChannelPage() {
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!user || !newMessage.trim() || !messagesQuery) return;
+        if (!user || !newMessage.trim() || !firestore) return;
 
         setIsSubmitting(true);
         try {
+            const messagesRef = collection(firestore, 'channels', channelName, 'messages');
             const messageData = {
                 content: newMessage.trim(),
                 authorId: user.uid,
@@ -51,7 +53,7 @@ export default function ChannelPage() {
             };
             
             // Non-blocking write
-            addDocumentNonBlocking(messagesQuery.converter ? messagesQuery.withConverter(null) : collection(firestore, 'channels', channelName, 'messages'), messageData);
+            addDocumentNonBlocking(messagesRef, messageData);
             
             setNewMessage("");
         } catch (error) {
