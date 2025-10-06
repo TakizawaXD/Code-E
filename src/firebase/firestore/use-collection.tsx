@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -36,6 +37,30 @@ export interface InternalQuery extends Query<DocumentData> {
     }
   }
 }
+
+/**
+ * Gets the path of a Firestore query or collection.
+ * This is a workaround to access the internal path property of a query.
+ * @param {CollectionReference<DocumentData> | Query<DocumentData>} target - The Firestore target.
+ * @returns {string} The path of the collection or query.
+ */
+function getTargetPath(target: CollectionReference<DocumentData> | Query<DocumentData>): string {
+  if (target.type === 'collection') {
+    return (target as CollectionReference).path;
+  }
+  
+  // For queries, we need to access an internal property.
+  // This is not standard API and might break in future Firebase versions.
+  // The type casting is to satisfy TypeScript.
+  const internalQuery = target as unknown as InternalQuery;
+  if (internalQuery._query?.path?.canonicalString) {
+    return internalQuery._query.path.canonicalString();
+  }
+  
+  // Fallback if the internal structure changes.
+  return (target as CollectionReference).path || "unknown_path";
+}
+
 
 /**
  * React hook to subscribe to a Firestore collection or query in real-time.
@@ -85,10 +110,7 @@ export function useCollection<T = any>(
         setIsLoading(false);
       },
       async (error: FirestoreError) => {
-        const path: string =
-          memoizedTargetRefOrQuery.type === 'collection'
-            ? (memoizedTargetRefOrQuery as CollectionReference).path
-            : (memoizedTargetRefOrQuery as unknown as InternalQuery)._query.path.canonicalString()
+        const path = getTargetPath(memoizedTargetRefOrQuery);
 
         const contextualError = new FirestorePermissionError({
           operation: 'list',
