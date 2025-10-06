@@ -3,67 +3,71 @@
  * @description This ruleset enforces a strict user-ownership model for user profiles.
  *
  * Data Structure:
- * - `/users/{userId}`: Stores public user profiles. Each user can only read and write their own profile.
+ * - /users/{userId}: Stores public user profile data. Each user can only read and write their own profile.
  *
  * Key Security Decisions:
- * - Users can only manage their own profile data.
- * - Data structure adheres to a owner-centric security model.
- *
- * Denormalization for Authorization:
- * - User profiles are stored under `/users/{userId}`, and the rules enforce that the `userId` in the path must match the authenticated user's UID. This avoids needing to store the UID within the profile data itself.
+ * - Users can only access their own profiles. Listing all users is disallowed.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to user profiles. Each user can only read and write their own profile.
-     * @path /databases/{database}/documents/users/{userId}
-     * @allow (create) - User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can create their profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2 if request.auth.uid == userId
-     * @allow (get) - User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can read their profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @allow (update) - User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can update their profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @allow (delete) - User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can delete their profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @deny (create) - User 'someOtherUserId' cannot create a profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @deny (get) - User 'someOtherUserId' cannot read the profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @deny (update) - User 'someOtherUserId' cannot update the profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @deny (delete) - User 'someOtherUserId' cannot delete the profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @principle Enforces user-ownership; only the authenticated user can manage their own profile.
+     * @description Defines if a user is signed in.
      */
-    match /users/{userId} {
-      allow get: if true;
-      allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isExistingOwner(userId);
-      allow delete: if isSignedIn() && isExistingOwner(userId);
-    }
-
-    /**
-     * @description  Placeholder for comments. Public read is allowed
-     * @path /databases/{database}/documents/comments
-     * @allow (list) Authenticated User can list all the comments
-     * @allow (get) Authenticated User can get all the comments
-     * @deny (create) Any operation is denied
-     * @deny (update) Any operation is denied
-     * @deny (delete) Any operation is denied
-     *
-     */
-    match /comments/{document} {
-        allow get, list: if true;
-        allow create: if false;
-        allow update: if false;
-        allow delete: if false;
-    }
-
     function isSignedIn() {
       return request.auth != null;
     }
 
+    /**
+     * @description Defines if the current user is the owner of the resource.
+     */
     function isOwner(userId) {
       return request.auth.uid == userId;
     }
 
+    /**
+     * @description Checks if the current user is the owner of the existing resource.
+     */
     function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
+      return isOwner(userId) && resource.data != null;
+    }
+
+    /**
+     * @description User profiles are stored under /users/{userId}.
+     * @path /users/{userId}
+     * @allow (get) Signed-in user with matching {userId} can retrieve their profile.
+     * @allow (create) Signed-in user with matching {userId} can create their profile.
+     * @allow (update) Signed-in user with matching {userId} can update their profile.
+     * @allow (delete) Signed-in user with matching {userId} can delete their profile.
+     * @deny (get) Signed-in user tries to read another user's profile.
+     * @deny (list) Any user attempts to list all user profiles (listing is not allowed).
+     * @deny (create) Signed-in user tries to create a profile with a mismatched {userId}.
+     * @deny (update) Signed-in user tries to update another user's profile.
+     * @deny (delete) Signed-in user tries to delete another user's profile.
+     * @principle Enforces document ownership for writes.
+     * @principle Restricts access to a user's own data tree.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+
+      allow create: if isOwner(userId) && isSignedIn();
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Comments are stored under /comments.
+     * @path /comments
+     * @allow (list) Any user can list the comments
+     */
+    match /comments/{commentId} {
+        allow list: if true;
+        allow get: if true;
+        allow create: if isSignedIn();
+        allow update: if false;
+        allow delete: if false;
     }
   }
 }

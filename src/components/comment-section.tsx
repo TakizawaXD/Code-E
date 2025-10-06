@@ -28,13 +28,11 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
 
     const commentsRef = useMemoFirebase(() => {
         if (!firestore) return null;
-        // Global comments collection
         return collection(firestore, 'comments');
     }, [firestore]);
 
     const lessonCommentsQuery = useMemoFirebase(() => {
         if (!commentsRef) return null;
-        // Query for comments specific to this lesson
         return query(
             commentsRef, 
             where("courseId", "==", courseId), 
