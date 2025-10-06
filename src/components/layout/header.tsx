@@ -40,16 +40,21 @@ export function Header() {
   }, [user, firestore]);
   const { data: userProfile } = useDoc<UserProfile>(userProfileRef);
 
-  const notificationsQuery = useMemoFirebase(() => {
-    if (!user || !firestore) return null;
-    return query(collection(firestore, `users/${user.uid}/notifications`), orderBy("date", "desc"));
-  }, [firestore, user]);
+  // TODO: TEMPORARILY DISABLED NOTIFICATIONS DUE TO PERSISTENT PERMISSIONS ERROR
+  // const notificationsQuery = useMemoFirebase(() => {
+  //   if (!user || !firestore) return null;
+  //   return query(collection(firestore, `users/${user.uid}/notifications`), orderBy("date", "desc"));
+  // }, [firestore, user]);
 
-  const { data: notifications, isLoading: isLoadingNotifications } = useCollection<Notification>(notificationsQuery);
+  // const { data: notifications, isLoading: isLoadingNotifications } = useCollection<Notification>(notificationsQuery);
   
-  const hasUnread = useMemo(() => {
-      return notifications?.some(n => !n.read);
-  }, [notifications]);
+  // const hasUnread = useMemo(() => {
+  //     return notifications?.some(n => !n.read);
+  // }, [notifications]);
+
+  const notifications: Notification[] = [];
+  const isLoadingNotifications = false;
+  const hasUnread = false;
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && searchQuery.trim()) {
