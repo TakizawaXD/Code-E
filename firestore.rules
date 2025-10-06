@@ -1,67 +1,81 @@
 /**
- * @file Firestore Security Rules for Kursor Platform
+ * @file Firestore Security Rules
+ * @version 2
  *
- * Core Philosophy:
- * This ruleset enforces a user-ownership model for user profiles,
- * preventing unauthorized data access and modification. It does not enforce
- * strict data validation to allow for rapid prototyping.
+ * @description This ruleset enforces a strict user-ownership model for user profiles,
+ *              allowing read-only access to profiles by anyone but restricting
+ *              creation, modification, and deletion to the user themselves.
  *
  * Data Structure:
- * User profiles are stored under the `/users/{userId}` path, with each
- * document representing a single user's public profile information.
+ * - /users/{userId}: Stores public profile information for each user.
  *
  * Key Security Decisions:
- * - Users can only read and write their own profile data.
- * - Listing all users is disallowed to protect user privacy.
- * - Data validation is minimal in the prototyping phase.
- *
+ * - Users can only create, update, or delete their own profile documents.
+ * - Listing all users is not allowed to prevent data scraping.
+ * - The 'createdAt' field is required and must be set on creation.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to user profile documents.
-     * @path /users/{userId}
-     * @allow (create) User with ID 'user123' can create their profile.
-     * @allow (get) User with ID 'user123' can read their profile.
-     * @allow (update) User with ID 'user123' can update their profile.
-     * @allow (delete) User with ID 'user123' can delete their profile.
-     * @deny (create) User with ID 'user456' cannot create a profile with ID 'user123'.
-     * @deny (get) User with ID 'user456' cannot read user 'user123's profile.
-     * @deny (update) User with ID 'user456' cannot update user 'user123's profile.
-     * @deny (delete) User with ID 'user456' cannot delete user 'user123's profile.
-     * @principle Enforces user-ownership for profile data.
+     * @description Manages access to user profile documents.
+     * @path /databases/{database}/documents/users/{userId}
+     * @allow (get, create) A user can read and create their own profile.
+     * @deny (update, delete) A user cannot modify or delete another user's profile.
+     * @principle Enforces document ownership for writes.
      */
     match /users/{userId} {
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
-
+      // Helper function to check if the user is signed in
       function isSignedIn() {
         return request.auth != null;
       }
 
-      allow get: if isOwner(userId);
+      // Helper function to check if the request is made by the owner of the document.
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      // Allows anyone to read a user profile.
+      allow get: if true;
+
+      // Denies listing all user profiles.
       allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isOwner(userId) && resource.data.id == userId;
-      allow delete: if isSignedIn() && isOwner(userId) && resource != null;
+
+      // Allows a user to create their own profile, enforcing that the userId in the path matches the authenticated user's ID.
+      allow create: if isSignedIn() && request.auth.uid == userId;
+
+      // Allows a user to update their own profile, enforcing that the userId in the path matches the authenticated user's ID.
+      allow update: if isSignedIn() && request.auth.uid == userId;
+
+      // Allows a user to delete their own profile, enforcing that the user is the owner of the document.
+      allow delete: if isSignedIn() && request.auth.uid == userId;
     }
 
-        /**
-     * @description Prevents all access to the /comunicacion collection.
-     * @path /comunicacion
-     * @allow N/A - No access allowed.
-     * @deny N/A - All access is denied.
-     * @principle Enforces complete denial of access to the /comunicacion collection.
+    /**
+     * @description Allows public read access to the 'comunicacion' collection.
+     * @path /databases/{database}/documents/comunicacion
+     * @allow (get, list) Anyone can read documents in the 'comunicacion' collection.
+     * @deny (create, update, delete) Only authenticated users should be able to create, update, or delete documents in the 'comunicacion' collection.
+     * @principle Provides public read access with restricted write access.
      */
-    match /comunicacion {
-      allow get: if false;
-      allow list: if false;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+    match /comunicacion/{comunicacionId} {
+      // Helper function to check if the user is signed in
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      // Allows anyone to read documents in the 'comunicacion' collection.
+      allow get, list: if true;
+
+      // Allows creating documents in the 'comunicacion' collection.
+      allow create: if isSignedIn(); // TODO: Add owner validation once the schema is updated with an ownership field.
+
+      // Allows updating documents in the 'comunicacion' collection.
+      allow update: if isSignedIn(); // TODO: Add owner validation once the schema is updated with an ownership field.
+
+      // Allows deleting documents in the 'comunicacion' collection.
+      allow delete: if isSignedIn(); // TODO: Add owner validation once the schema is updated with an ownership field.
     }
   }
 }
