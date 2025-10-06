@@ -283,7 +283,7 @@ export default function SignupPage() {
                               )}
                             >
                               {field.value ? (
-                                format(field.value, "PPP")
+                                format(field.value, "PPP", { locale: require("date-fns/locale/es") })
                               ) : (
                                 <span>Elige una fecha</span>
                               )}
@@ -294,6 +294,9 @@ export default function SignupPage() {
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
                             mode="single"
+                            captionLayout="dropdown-buttons"
+                            fromYear={1920}
+                            toYear={new Date().getFullYear()}
                             selected={field.value}
                             onSelect={field.onChange}
                             disabled={(date) =>
@@ -366,5 +369,3 @@ export default function SignupPage() {
     </Card>
   );
 }
-
-    
