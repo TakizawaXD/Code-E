@@ -1,11 +1,12 @@
+
 "use client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useAuth, initiateEmailSignIn } from "@/firebase";
+import { useAuth, initiateEmailSignIn, useUser } from "@/firebase";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,20 +17,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect } from "react";
-import { useUser } from "@/firebase";
+import { useEffect, useState } from "react";
+import { FirebaseError } from "firebase/app";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Por favor, introduce un correo electrónico válido." }),
@@ -70,6 +70,8 @@ export default function LoginPage() {
   const router = useRouter();
   const { user } = useUser();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -89,7 +91,23 @@ export default function LoginPage() {
   }, [user, router, toast]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    initiateEmailSignIn(auth, values.email, values.password);
+    setIsSubmitting(true);
+    initiateEmailSignIn(auth, values.email, values.password, (error) => {
+        setIsSubmitting(false);
+        if (error instanceof FirebaseError && error.code === 'auth/invalid-credential') {
+            toast({
+                variant: "destructive",
+                title: "Error de autenticación",
+                description: "Credenciales inválidas. Por favor, revisa tu email y contraseña.",
+            });
+        } else {
+             toast({
+                variant: "destructive",
+                title: "Error de autenticación",
+                description: "Ocurrió un error inesperado. Por favor, inténtalo de nuevo.",
+            });
+        }
+    });
   }
 
   return (
@@ -144,7 +162,10 @@ export default function LoginPage() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full mt-2">Iniciar Sesión</Button>
+            <Button type="submit" className="w-full mt-2" disabled={isSubmitting}>
+              {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+            </Button>
           </form>
         </Form>
       </CardContent>
