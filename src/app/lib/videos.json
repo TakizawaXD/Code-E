@@ -1,0 +1,32 @@
+{
+  "JavaScript_TypeScript": [
+    {
+      "title": "Learn TypeScript – Full Tutorial",
+      "url": "https://www.youtube.com/watch?v=30LWjhZzg50"
+    },
+    {
+      "title": "TypeScript Full Course for Beginners | Complete All-in-One Tutorial",
+      "url": "https://www.youtube.com/watch?v=gieEQFIfgYc"
+    },
+    {
+      "title": "TypeScript Classes Tutorial | TS for Beginners Lesson",
+      "url": "https://www.youtube.com/watch?v=zQondDhCXDI"
+    }
+  ],
+  "Python": [
+    {
+      "title": "How To Learn How To Code - Python, C++, C#, Java, Ruby ...",
+      "url": "https://www.youtube.com/watch?v=ZiMLGxJLXzo"
+    }
+  ],
+  "Multi_Languages": [
+    {
+      "title": "10 Programming Languages in ONLY 15 minutes!",
+      "url": "https://www.youtube.com/watch?v=7bE2mI4ePeU"
+    },
+    {
+      "title": "Hello World in 15 Programming Languages",
+      "url": "https://www.youtube.com/watch?v=tRUsXTbixIE"
+    }
+  ]
+}
