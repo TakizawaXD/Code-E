@@ -2,25 +2,26 @@
 "use client";
 
 import { useUser, useFirestore, useCollection, useMemoFirebase, addDocumentNonBlocking } from "@/firebase";
-import { collection, query, orderBy, serverTimestamp } from "firebase/firestore";
+import { collection, query, orderBy, serverTimestamp, limit } from "firebase/firestore";
 import type { Comment as Message } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Hash, Loader2, Send } from "lucide-react";
 import { ChatMessage } from "@/components/chat-message";
+import { useParams } from "next/navigation";
 
-export default function ChannelPage({ params }: { params: { channelName: string } }) {
+export default function ChannelPage() {
+    const params = useParams();
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
     const [newMessage, setNewMessage] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-    const channelName = params.channelName;
+    const channelName = params.channelName as string;
 
     const messagesRef = useMemoFirebase(() => {
         if (!firestore) return null;
