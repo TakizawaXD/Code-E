@@ -23,19 +23,7 @@ function UserStats() {
     }, [user, firestore]);
     const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userProfileRef);
     
-    const enrolledCoursesQuery = useMemoFirebase(() => {
-        if (!user || !firestore) return null;
-        return collection(firestore, `users/${user.uid}/enrolledCourses`);
-    }, [user, firestore]);
-    const { data: enrolledCourses, isLoading: isCoursesLoading } = useCollection(enrolledCoursesQuery);
-
-    const userCommentsQuery = useMemoFirebase(() => {
-        if (!user || !firestore) return null;
-        return query(collection(firestore, `comments`), where("authorId", "==", user.uid));
-    }, [user, firestore]);
-    const { data: userComments, isLoading: isCommentsLoading } = useCollection<Comment>(userCommentsQuery);
-    
-    if (isProfileLoading || isCoursesLoading || isCommentsLoading) {
+    if (isProfileLoading) {
       return (
         <Card className="grid grid-cols-3 gap-4 p-6">
           <div className="text-center"><Loader2 className="animate-spin mx-auto"/></div>
@@ -44,6 +32,10 @@ function UserStats() {
         </Card>
       )
     }
+
+    // TEMPORARY: Using static data to avoid permission errors
+    const enrolledCoursesCount = 0; 
+    const userCommentsCount = 0;
 
     return (
         <Card className="grid grid-cols-3 divide-x">
@@ -54,12 +46,12 @@ function UserStats() {
           </div>
            <div className="p-6 text-center">
             <BookOpen className="mx-auto h-8 w-8 text-blue-500 mb-2"/>
-            <p className="text-2xl font-bold">{enrolledCourses?.length ?? 0}</p>
+            <p className="text-2xl font-bold">{enrolledCoursesCount}</p>
             <p className="text-xs text-muted-foreground uppercase">Cursos</p>
           </div>
            <div className="p-6 text-center">
             <MessageSquare className="mx-auto h-8 w-8 text-green-500 mb-2"/>
-            <p className="text-2xl font-bold">{userComments?.length ?? 0}</p>
+            <p className="text-2xl font-bold">{userCommentsCount}</p>
             <p className="text-xs text-muted-foreground uppercase">Comentarios</p>
           </div>
         </Card>
