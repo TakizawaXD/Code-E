@@ -4,10 +4,12 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Smartphone, AlertTriangle, Download, Terminal, GitBranch, Database, Code, Rocket, BookOpen, GitCommit, Bot, Server, FileText, TextCursorInput, Tv, ArrowRightLeft, FileDown, Network, System, Book } from 'lucide-react';
+import { Smartphone, AlertTriangle, Download, Terminal, GitBranch, Database, Code, Rocket, BookOpen, GitCommit, Bot, Server, FileText, TextCursorInput, Tv, ArrowRightLeft, FileDown, Network, Wrench, Book, Package, HardDrive, Gem, Waypoints } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from '@/components/ui/button';
 import { termuxProjects, termuxGuides, type TermuxProject } from '@/lib/data';
+import { FaJava, FaPhp, FaRust } from 'react-icons/fa';
+import { SiGo, SiLua, SiKotlin, SiPerl } from 'react-icons/si';
 
 function CodeBlock({ code }: { code: string }) {
     return (
@@ -44,6 +46,46 @@ function RequirementsTab() {
             </CardContent>
         </Card>
     );
+}
+
+function LanguagesTab() {
+     const languages = [
+        { name: "Python", icon: <Bot className="w-6 h-6 text-primary"/>, description: "Ideal para scripting, backend y ciencia de datos.", command: "pkg install python" },
+        { name: "Node.js (JavaScript)", icon: <Server className="w-6 h-6 text-primary"/>, description: "Para desarrollo web moderno, tanto frontend como backend.", command: "pkg install nodejs-lts" },
+        { name: "Git", icon: <GitCommit className="w-6 h-6 text-primary"/>, description: "Sistema de control de versiones esencial para todo desarrollador.", command: "pkg install git" },
+        { name: "Go", icon: <SiGo className="w-6 h-6 text-primary"/>, description: "Lenguaje de Google, rápido y compilado, ideal para CLI y backend.", command: "pkg install golang" },
+        { name: "Rust", icon: <FaRust className="w-6 h-6 text-primary"/>, description: "Enfocado en seguridad y rendimiento para programación de sistemas.", command: "pkg install rust" },
+        { name: "C/C++", icon: <Code className="w-6 h-6 text-primary"/>, description: "Compilador Clang para lenguajes de bajo nivel.", command: "pkg install clang" },
+        { name: "PHP", icon: <FaPhp className="w-6 h-6 text-primary"/>, description: "Un pilar del desarrollo web del lado del servidor.", command: "pkg install php" },
+        { name: "Ruby", icon: <Gem className="w-6 h-6 text-primary"/>, description: "Famoso por su sintaxis elegante y el framework Rails.", command: "pkg install ruby" },
+        { name: "Java", icon: <FaJava className="w-6 h-6 text-primary"/>, description: "Entorno de desarrollo de Java (OpenJDK 17).", command: "pkg install openjdk-17" },
+        { name: "Kotlin", icon: <SiKotlin className="w-6 h-6 text-primary"/>, description: "Compilador para el lenguaje moderno de la JVM.", command: "pkg install kotlin" },
+        { name: "Perl", icon: <SiPerl className="w-6 h-6 text-primary"/>, description: "Lenguaje potente para procesamiento de texto y scripting.", command: "pkg install perl" },
+        { name: "Lua", icon: <SiLua className="w-6 h-6 text-primary"/>, description: "Lenguaje de script ligero y embebible.", command: "pkg install lua" }
+    ];
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Un Universo de Lenguajes</CardTitle>
+                <CardDescription>Termux te da acceso a un vasto ecosistema de lenguajes de programación. Aquí tienes algunos de los más populares y cómo instalarlos.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {languages.map(lang => (
+                        <div key={lang.name} className="p-4 bg-muted/50 rounded-lg flex flex-col">
+                            <div className="flex items-center gap-3 mb-2">
+                                {lang.icon}
+                                <h3 className="font-semibold text-lg text-foreground">{lang.name}</h3>
+                            </div>
+                            <p className="text-sm text-muted-foreground flex-grow">{lang.description}</p>
+                            <CodeBlock code={lang.command} />
+                        </div>
+                    ))}
+                 </div>
+            </CardContent>
+        </Card>
+    )
 }
 
 function GuidesTab() {
@@ -202,7 +244,7 @@ function ToolsTab() {
         },
         {
             title: "Utilidades del Sistema",
-            icon: <System className="w-6 h-6 text-primary"/>,
+            icon: <Wrench className="w-6 h-6 text-primary"/>,
             description: "Para monitorear y entender mejor tu entorno.",
             tools: [
                 { name: "htop", command: "pkg install htop", description: "Monitor de procesos interactivo que muestra el uso de CPU y memoria en tiempo real." },
@@ -261,15 +303,19 @@ export default function TermuxGuidePage() {
             </header>
 
              <Tabs defaultValue="projects" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 h-auto md:grid-cols-4 md:h-10">
+                 <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-5 h-auto">
                     <TabsTrigger value="requirements" className="py-2"><AlertTriangle className="mr-2"/>Requisitos</TabsTrigger>
-                    <TabsTrigger value="guides" className="py-2"><BookOpen className="mr-2"/>Guías Esenciales</TabsTrigger>
-                    <TabsTrigger value="projects" className="py-2"><Rocket className="mr-2"/>Proyectos Móviles</TabsTrigger>
+                    <TabsTrigger value="languages" className="py-2"><Package className="mr-2"/>Lenguajes</TabsTrigger>
+                    <TabsTrigger value="guides" className="py-2"><BookOpen className="mr-2"/>Guías</TabsTrigger>
+                    <TabsTrigger value="projects" className="py-2"><Rocket className="mr-2"/>Proyectos</TabsTrigger>
                     <TabsTrigger value="tools" className="py-2"><Terminal className="mr-2"/>Herramientas</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="requirements" className="mt-8">
                    <RequirementsTab />
+                </TabsContent>
+                 <TabsContent value="languages" className="mt-8">
+                    <LanguagesTab />
                 </TabsContent>
                 <TabsContent value="guides" className="mt-8">
                    <GuidesTab />
