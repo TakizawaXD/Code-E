@@ -113,6 +113,9 @@ export type Comment = {
     authorAvatarUrl?: string;
     content: string;
     createdAt: Timestamp | FieldValue;
+    courseId: string;
+    moduleId: string;
+    lessonId: string;
 };
 
 // Gamification Types

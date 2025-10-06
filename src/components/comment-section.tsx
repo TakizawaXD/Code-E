@@ -27,16 +27,24 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const commentsRef = useMemoFirebase(() => {
-        if (!firestore || !courseId || !moduleId || !lessonId) return null;
-        return collection(firestore, 'courses', courseId, 'modules', moduleId, 'lessons', lessonId, 'comments');
-    }, [firestore, courseId, moduleId, lessonId]);
+        if (!firestore) return null;
+        // Global comments collection
+        return collection(firestore, 'comments');
+    }, [firestore]);
 
-    const commentsQuery = useMemoFirebase(() => {
+    const lessonCommentsQuery = useMemoFirebase(() => {
         if (!commentsRef) return null;
-        return query(commentsRef, orderBy('createdAt', 'desc'));
-    }, [commentsRef]);
+        // Query for comments specific to this lesson
+        return query(
+            commentsRef, 
+            where("courseId", "==", courseId), 
+            where("moduleId", "==", moduleId), 
+            where("lessonId", "==", lessonId), 
+            orderBy('createdAt', 'desc')
+        );
+    }, [commentsRef, courseId, moduleId, lessonId]);
     
-    const { data: comments, isLoading } = useCollection<Comment>(commentsQuery);
+    const { data: comments, isLoading } = useCollection<Comment>(lessonCommentsQuery);
 
     const handleAddComment = async () => {
         if (!user || !newComment.trim() || !commentsRef) return;
@@ -49,6 +57,9 @@ export function CommentSection({ courseId, moduleId, lessonId }: CommentSectionP
                 authorAvatarUrl: user.photoURL || "",
                 content: newComment.trim(),
                 createdAt: serverTimestamp(),
+                courseId,
+                moduleId,
+                lessonId,
             };
             await addDoc(commentsRef, commentData);
             setNewComment("");

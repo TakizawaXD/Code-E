@@ -5,7 +5,7 @@ import { useUser, useFirestore, useDoc, useMemoFirebase, useCollection } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2, Edit, BookOpen, GraduationCap, Trophy, HelpCircle, MessageSquare } from "lucide-react";
-import type { UserProfile, Course } from "@/lib/types";
+import type { UserProfile, Course, Comment } from "@/lib/types";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { collection, query, where, doc } from "firebase/firestore";
@@ -22,8 +22,20 @@ function UserStats() {
         return doc(firestore, "users", user.uid);
     }, [user, firestore]);
     const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userProfileRef);
+    
+    const enrolledCoursesQuery = useMemoFirebase(() => {
+        if (!user || !firestore) return null;
+        return collection(firestore, `users/${user.uid}/enrolledCourses`);
+    }, [user, firestore]);
+    const { data: enrolledCourses, isLoading: isCoursesLoading } = useCollection(enrolledCoursesQuery);
 
-    if (isProfileLoading) {
+    const userCommentsQuery = useMemoFirebase(() => {
+        if (!user || !firestore) return null;
+        return query(collection(firestore, `comments`), where("authorId", "==", user.uid));
+    }, [user, firestore]);
+    const { data: userComments, isLoading: isCommentsLoading } = useCollection<Comment>(userCommentsQuery);
+    
+    if (isProfileLoading || isCoursesLoading || isCommentsLoading) {
       return (
         <Card className="grid grid-cols-3 gap-4 p-6">
           <div className="text-center"><Loader2 className="animate-spin mx-auto"/></div>
@@ -42,12 +54,12 @@ function UserStats() {
           </div>
            <div className="p-6 text-center">
             <BookOpen className="mx-auto h-8 w-8 text-blue-500 mb-2"/>
-            <p className="text-2xl font-bold">4</p>
+            <p className="text-2xl font-bold">{enrolledCourses?.length ?? 0}</p>
             <p className="text-xs text-muted-foreground uppercase">Cursos</p>
           </div>
            <div className="p-6 text-center">
             <MessageSquare className="mx-auto h-8 w-8 text-green-500 mb-2"/>
-            <p className="text-2xl font-bold">12</p>
+            <p className="text-2xl font-bold">{userComments?.length ?? 0}</p>
             <p className="text-xs text-muted-foreground uppercase">Comentarios</p>
           </div>
         </Card>

@@ -4,9 +4,10 @@
 import { notFound, useSearchParams, useRouter, useParams } from "next/navigation";
 import React, { useState, useMemo, useEffect, Suspense } from "react";
 import Image from "next/image";
-import { useUser } from "@/firebase";
+import { useUser, useFirestore } from "@/firebase";
 import { courses as allCourses } from "@/lib/data";
 import type { Course, Lesson, CourseModule } from "@/lib/types";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -53,6 +54,7 @@ function CourseDetailContent() {
     const params = useParams();
     const searchParams = useSearchParams();
     const { user } = useUser();
+    const firestore = useFirestore();
 
     const courseId = params.id as string;
 
@@ -75,20 +77,37 @@ function CourseDetailContent() {
         return { lesson: foundLesson, module: foundModule };
     }, [course, currentLesson]);
     
-    // Set initial lesson based on URL or first available lesson
+    // Set initial lesson and mark course as started
     useEffect(() => {
         const moduleId = searchParams.get("module");
         const lessonId = searchParams.get("lesson");
 
+        let initialModuleId: string | null = null;
+        let initialLessonId: string | null = null;
+
         if (moduleId && lessonId) {
-            setCurrentLesson({ moduleId, lessonId });
+            initialModuleId = moduleId;
+            initialLessonId = lessonId;
         } else if (course && course.modules.length > 0 && course.modules[0].lessons.length > 0) {
             const firstModule = course.modules[0];
             const firstLesson = firstModule.lessons[0];
+            initialModuleId = firstModule.id;
+            initialLessonId = firstLesson.id;
             handleSetLesson(firstModule.id, firstLesson.id, 'replace');
         }
+
+        if (user && firestore && courseId && initialModuleId && initialLessonId) {
+            // Mark course as enrolled/started for the user
+            const enrolledCourseRef = doc(firestore, 'users', user.uid, 'enrolledCourses', courseId);
+            setDoc(enrolledCourseRef, { 
+                courseId: courseId,
+                startedAt: serverTimestamp(),
+                title: course?.title,
+                imageUrl: course?.imageUrl,
+            }, { merge: true });
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParams, course]);
+    }, [searchParams, course, user, firestore]);
 
 
     // Mock progress state
