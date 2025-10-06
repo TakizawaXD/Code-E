@@ -1,78 +1,82 @@
 /**
- * @fileOverview Firestore Security Rules for Kursor Platform
+ * @fileoverview Firestore Security Rules for Kursor Platform
  *
  * Core Philosophy:
  * This ruleset enforces a user-ownership model for user profiles.
- * Read access to user profiles is public.
- * Write access to user profiles is restricted to the owner, with the exception of creation, which must also match the authenticated user's ID.
  *
  * Data Structure:
- * All user profiles are stored under `/users/{userId}`.
+ * - /users/{userId}: Stores public user profile data. Access is restricted to the owner for write operations. Read operations are public.
+ * - /lessons/{lessonId}/comments:  All users can read comments. Authenticated users can create, update, and delete their own comments.
  *
  * Key Security Decisions:
- * - Public read access to user profiles allows any client to retrieve user information.
- * - User profiles can only be created by the authenticated user.
- * - Only the authenticated user can modify or delete their own profile.
- * - Listing users is not allowed.
+ * - Users can only create their own profile.
+ * - Users can update their profile.
+ * - Users can not delete their profile.
+ * - Listing user profiles is disallowed to prevent data scraping.
+ * - Public read access is granted for lessons and their comments.
  *
  * Denormalization for Authorization:
- *  - The `/users/{userId}` path itself enforces the ownership relationship.
+ * N/A - User ownership is based on the `userId` in the path.
+ *
+ * Structural Segregation:
+ * N/A - No separation of public/private data.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to user profile documents.
+     * @description Defines if the user is signed in
+     */
+    function isSignedIn() {
+        return request.auth != null;
+    }
+
+    /**
+     * @description Defines if the user is the owner of the resource
+     */
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    /**
+     * @description Defines if the user is the owner of the resource and the resource exists
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description User profiles stored by user ID.
      * @path /users/{userId}
-     * @allow (get) Anyone can read a user profile.
-     * @allow (create) User with UID 'user123' can create their own profile at /users/user123 if the document 'id' matches 'user123'.
-     * @allow (update) User with UID 'user123' can update their own profile at /users/user123.
-     * @allow (delete) User with UID 'user123' can delete their own profile at /users/user123.
-     * @deny (create) User with UID 'user456' cannot create a profile at /users/user123.
-     * @deny (update) User with UID 'user456' cannot update the profile at /users/user123.
-     * @deny (delete) User with UID 'user456' cannot delete the profile at /users/user123.
-     * @deny (list) Listing users is not allowed.
-     * @principle Enforces document ownership for writes, allows public reads.
+     * @allow (create) User with UID 'user123' can create their own profile document at /users/user123.
+     * @deny (create) User with UID 'user123' cannot create a profile document at /users/anotherUser.
+     * @allow (get) Any user can read any user profile.
+     * @deny (list) No one can list all user profiles.
+     * @principle Enforces user-ownership for writes. Public read access.
      */
     match /users/{userId} {
       allow get: if true;
       allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if false;
     }
 
-
     /**
-     * @description DENY ALL ACCESS TO ALL DOCUMENTS THAT DO NOT MATCH ANOTHER RULE.  THIS RULE IS INTENDED TO BE TEMPORARY TO AVOID DATA EXPOSURE.
-     * @path /databases/{database}/documents/{allPaths=**}
-     * @allow (get) Denied
-     * @allow (list) Denied
-     * @allow (create) Denied
-     * @allow (update) Denied
-     * @allow (delete) Denied
+     * @description Allows public read access to lessons and authenticated users to manage comments within lessons.
+     * @path /lessons/{lessonId}/comments/{commentId}
+     * @allow (get, list) Any user can read comments under any lesson.
+     * @allow (create) Authenticated user can create a comment.
+     * @allow (update, delete) Authenticated user can update or delete their own comment.
+     * @deny (update, delete) Authenticated user can not update or delete others comments.
+     * @principle Public read, owner-only writes for comments.
      */
-      match /{allPaths=**} {
-        allow get: if false;
-        allow list: if false;
-        allow create: if false;
-        allow update: if false;
-        allow delete: if false;
-      }
-
-  }
-
-  // --- Helper Functions ---
-  function isSignedIn() {
-    return request.auth != null;
-  }
-
-  function isOwner(userId) {
-    return request.auth.uid == userId;
-  }
-
-  function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
+    match /lessons/{lessonId}/comments/{commentId} {
+      allow get, list: if true;
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow delete: if isSignedIn() && request.auth.uid == resource.data.userId && resource != null;
+    }
   }
 }
