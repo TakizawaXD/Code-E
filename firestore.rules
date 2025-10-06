@@ -1,48 +1,70 @@
 /**
  * @file Firestore Security Rules
- * @description This ruleset enforces a strict user-ownership model for user profiles. Only authenticated users can create their profiles, and only the owner can read or modify their own profile.
- *
- * Data Structure:
- * - All user profiles are stored under `/users/{userId}`.
+ * @description This ruleset enforces a user-ownership model for user profiles.
+ * All data is nested under /users/{userId}. Only the authenticated user can read/write their own profile.
  *
  * Key Security Decisions:
- * - User profiles are only accessible to the owner. Listing user documents is disallowed to protect user privacy.
+ * - Users can only access their own user profile data.
+ * - Listing of all users is disallowed to protect user privacy.
+ * - Only authenticated users can create, update, or delete data.
+ *
+ * Denormalization for Authorization:
+ * - The `userId` is used in the path `/users/{userId}` and is validated against the `request.auth.uid` to ensure ownership.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Protects user profiles, ensuring only the owner can read and write.
+     * @description Secure user profiles. Only the authenticated user can read/write their own profile.
      * @path /users/{userId}
-     * @allow (create) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can create their profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @allow (get) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can read their profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @allow (update) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can update their profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @allow (delete) User '5sHhhuRPF5aoAzJIfmYpVlHW8vB2' can delete their profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @deny (create) User 'attackerId' cannot create a profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @deny (get) User 'attackerId' cannot read the profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @deny (update) User 'attackerId' cannot update the profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @deny (delete) User 'attackerId' cannot delete the profile at /users/5sHhhuRPF5aoAzJIfmYpVlHW8vB2.
-     * @principle Enforces document ownership for all operations.
+     * @allow (get, update, delete) if the user is signed in and owns the profile.
+     * @allow (create) if the user is signed in and the userId matches the authenticated user's UID.
+     * @deny (list) Listing all users is not allowed.
+     * @deny (get, update, delete) if the user is not signed in or does not own the profile.
+     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
      */
     match /users/{userId} {
+      // Helper function to check if the user is signed in
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      // Helper function to check if the user is the owner of the profile
+      function isOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId;
+      }
+
+      // Helper function to check if the user is the existing owner of the profile
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      // Allow read access to the user's own profile
       allow get: if isOwner(userId);
+
+      // Prevent listing all users
       allow list: if false;
+
+      // Allow creating a profile if the user is signed in and the userId matches the authenticated user's UID
       allow create: if isOwner(userId) && request.resource.data.id == userId;
+
+      // Allow updating a profile if the user is signed in and owns the profile
       allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+
+      // Allow deleting a profile if the user is signed in and owns the profile
       allow delete: if isExistingOwner(userId);
     }
-
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
-    function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
+    /**
+     * @description  TODO:  Missing  Rules match
+     * @path lessons/sql-mysql-m1-l1/comments
+     * @allow (get, list) if true
+     * @allow (create, update, delete) if false
+     * @principle TODO: Missing rules and missing ownership field on the document
+     */
+    match /lessons/{lessonId}/comments/{commentId}{
+        allow get, list: if true;
+        allow create, update, delete: if false;
     }
   }
 }
