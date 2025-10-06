@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy, addDoc } from 'firebase/firestore';
+import { collection, query, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,7 +12,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Send, Loader2 } from 'lucide-react';
 import type { Comment } from '@/lib/types';
-import { addComment as addCommentAction } from '../app/(main)/courses/[id]/actions';
+import { errorEmitter, FirestorePermissionError } from '@/firebase';
 
 interface CommentSectionProps {
     lessonId: string;
@@ -32,7 +32,7 @@ export function CommentSection({ lessonId }: CommentSectionProps) {
     const { data: comments, isLoading: areCommentsLoading } = useCollection<Comment>(commentsQuery);
 
     const handlePostComment = async () => {
-        if (!user || !newComment.trim()) return;
+        if (!user || !firestore || !newComment.trim()) return;
 
         setIsPosting(true);
         const commentData = {
@@ -40,12 +40,28 @@ export function CommentSection({ lessonId }: CommentSectionProps) {
             authorName: user.displayName || "Anónimo",
             authorAvatarUrl: user.photoURL || "",
             content: newComment,
+            createdAt: serverTimestamp(),
         };
 
-        await addCommentAction(lessonId, commentData);
+        const commentsRef = collection(firestore, 'lessons', lessonId, 'comments');
         
-        setNewComment("");
-        setIsPosting(false);
+        addDoc(commentsRef, commentData)
+            .then(() => {
+                setNewComment("");
+            })
+            .catch((error) => {
+                errorEmitter.emit(
+                    'permission-error',
+                    new FirestorePermissionError({
+                        path: commentsRef.path,
+                        operation: 'create',
+                        requestResourceData: commentData,
+                    })
+                );
+            })
+            .finally(() => {
+                setIsPosting(false);
+            });
     };
 
     const getInitials = (name: string) => {

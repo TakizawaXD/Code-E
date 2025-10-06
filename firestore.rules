@@ -1,70 +1,62 @@
-/**
- * @file Firestore Security Rules
- * @description This ruleset enforces a user-ownership model for user profiles.
- * All data is nested under /users/{userId}. Only the authenticated user can read/write their own profile.
- *
- * Key Security Decisions:
- * - Users can only access their own user profile data.
- * - Listing of all users is disallowed to protect user privacy.
- * - Only authenticated users can create, update, or delete data.
- *
- * Denormalization for Authorization:
- * - The `userId` is used in the path `/users/{userId}` and is validated against the `request.auth.uid` to ensure ownership.
- */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Secure user profiles. Only the authenticated user can read/write their own profile.
+     * @description This ruleset enforces a strict user-ownership model for user profiles.
+     * @dataStructure All user data is stored under the `/users/{userId}` path, with each document representing a user profile.
+     * @keySecurityDecisions Users can only read their own profile and only create their own profile.
+     *  Users cannot list all profiles. Updates are only permitted if the user is the owner and the correct userId is used.
+     * @denormalizationForAuthorization The `userId` is denormalized by being present in both the path and the document `id` field.
+     */
+
+    /**
+     * @description Manages access to individual user profile documents.
      * @path /users/{userId}
-     * @allow (get, update, delete) if the user is signed in and owns the profile.
-     * @allow (create) if the user is signed in and the userId matches the authenticated user's UID.
-     * @deny (list) Listing all users is not allowed.
-     * @deny (get, update, delete) if the user is not signed in or does not own the profile.
-     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
+     * @allow (create) - Authenticated user 'user_abc' can create their profile document at /users/user_abc if the document's 'id' field matches their 'auth.uid'.
+     * @allow (get) - Authenticated user 'user_abc' can read their own profile at /users/user_abc.
+     * @allow (update) - Authenticated user 'user_abc' can update their own profile at /users/user_abc.
+     * @allow (delete) - Authenticated user 'user_abc' can delete their own profile at /users/user_abc.
+     * @deny (create) - Authenticated user 'user_abc' cannot create a profile document at /users/user_xyz (mismatched user IDs).
+     * @deny (get) - Authenticated user 'user_xyz' cannot read the profile at /users/user_abc.
+     * @deny (list) - No user can list all user profiles.
+     * @deny (update) - Authenticated user 'user_xyz' cannot update the profile at /users/user_abc.
+     * @deny (delete) - Authenticated user 'user_xyz' cannot delete the profile at /users/user_abc.
+     * @principle Enforces document ownership for all operations.  Validates relational integrity between the path and the document's internal 'id' field.
      */
     match /users/{userId} {
-      // Helper function to check if the user is signed in
       function isSignedIn() {
         return request.auth != null;
       }
 
-      // Helper function to check if the user is the owner of the profile
       function isOwner(userId) {
-        return isSignedIn() && request.auth.uid == userId;
+        return request.auth.uid == userId;
       }
 
-      // Helper function to check if the user is the existing owner of the profile
       function isExistingOwner(userId) {
         return isOwner(userId) && resource != null;
       }
 
-      // Allow read access to the user's own profile
-      allow get: if isOwner(userId);
+      // Allow a user to create their own profile, enforcing that the userId in the path matches the user's auth ID.
+      allow create: if isSignedIn()
+                   && isOwner(userId)
+                   && request.resource.data.id == userId;
 
-      // Prevent listing all users
+      // Allow a user to read their own profile.
+      allow get: if isSignedIn()
+                  && isOwner(userId);
+
+      // Prevent listing of all users
       allow list: if false;
 
-      // Allow creating a profile if the user is signed in and the userId matches the authenticated user's UID
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      // Allow a user to update their profile, enforcing ownership and ensuring the document exists. The user id cannot be changed.
+      allow update: if isSignedIn()
+                     && isExistingOwner(userId)
+                     && resource.data.id == request.resource.data.id;
 
-      // Allow updating a profile if the user is signed in and owns the profile
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-
-      // Allow deleting a profile if the user is signed in and owns the profile
-      allow delete: if isExistingOwner(userId);
-    }
-    /**
-     * @description  TODO:  Missing  Rules match
-     * @path lessons/sql-mysql-m1-l1/comments
-     * @allow (get, list) if true
-     * @allow (create, update, delete) if false
-     * @principle TODO: Missing rules and missing ownership field on the document
-     */
-    match /lessons/{lessonId}/comments/{commentId}{
-        allow get, list: if true;
-        allow create, update, delete: if false;
+      // Allow a user to delete their profile, enforcing ownership and ensuring the document exists.
+      allow delete: if isSignedIn()
+                     && isExistingOwner(userId);
     }
   }
 }
