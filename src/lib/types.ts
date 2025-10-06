@@ -113,9 +113,6 @@ export type Comment = {
     authorAvatarUrl?: string;
     content: string;
     createdAt: Timestamp | FieldValue;
-    courseId: string;
-    moduleId: string;
-    lessonId: string;
 };
 
 // Gamification Types
@@ -149,6 +146,7 @@ export type WeeklyChallenge = {
     description: string;
     technologies: string[];
     inspirationUrl: string;
+    difficulty: 'Fácil' | 'Mediano' | 'Complicado' | 'Experto';
 };
 
 // Termux Guide Types

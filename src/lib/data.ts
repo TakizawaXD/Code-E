@@ -585,13 +585,72 @@ export const learningPaths: Omit<LearningPath, 'courses'>[] = allLearningPathsLi
 
 // --- Weekly Challenges Data ---
 export const weeklyChallenges: WeeklyChallenge[] = [
+    // --- Fácil ---
+    {
+        language: "JavaScript/TypeScript",
+        iconKey: "javascript",
+        title: "Aplicación del Clima",
+        description: "Crea una aplicación web simple que obtenga la ubicación del usuario (o permita buscar una ciudad) y muestre el clima actual utilizando una API gratuita como OpenWeatherMap. La interfaz debe ser limpia y mostrar la temperatura, el estado del tiempo (ej. 'Nublado') y un ícono representativo.",
+        technologies: ["HTML", "CSS", "JavaScript", "Fetch API"],
+        inspirationUrl: "https://github.com/example/weather-app-simple",
+        difficulty: "Fácil"
+    },
+    {
+        language: "Python",
+        iconKey: "python",
+        title: "Generador de Contraseñas",
+        description: "Desarrolla una herramienta de línea de comandos (CLI) que genere contraseñas seguras y aleatorias. El usuario debe poder especificar la longitud y si desea incluir mayúsculas, números o símbolos.",
+        technologies: ["Python", "argparse", "random", "string"],
+        inspirationUrl: "https://github.com/example/password-generator-cli",
+        difficulty: "Fácil"
+    },
+    // --- Mediano ---
+    {
+        language: "JavaScript/TypeScript",
+        iconKey: "javascript",
+        title: "Lista de Tareas (To-Do) con LocalStorage",
+        description: "Construye una aplicación de lista de tareas que permita a los usuarios añadir, eliminar y marcar tareas como completadas. Los datos deben persistir entre sesiones guardándose en el LocalStorage del navegador.",
+        technologies: ["React", "Vite", "CSS Modules", "LocalStorage"],
+        inspirationUrl: "https://github.com/example/react-todo-localstorage",
+        difficulty: "Mediano"
+    },
+    {
+        language: "Python",
+        iconKey: "python",
+        title: "Acortador de URLs",
+        description: "Crea una API REST con Flask o FastAPI que tome una URL larga y devuelva una URL corta y única. Al visitar la URL corta, debe redirigir al usuario a la URL original. Utiliza una base de datos simple como SQLite para almacenar los mapeos.",
+        technologies: ["Flask/FastAPI", "SQLite", "SQLAlchemy", "pydantic"],
+        inspirationUrl: "https://github.com/example/python-url-shortener",
+        difficulty: "Mediano"
+    },
+    // --- Complicado ---
+    {
+        language: "JavaScript/TypeScript",
+        iconKey: "javascript",
+        title: "Editor de Markdown en Tiempo Real",
+        description: "Crea una aplicación web con dos paneles. En uno, el usuario escribe en formato Markdown. En el otro, se renderiza la vista previa en HTML en tiempo real. Debe soportar la sintaxis básica de Markdown (encabezados, negritas, listas, etc.).",
+        technologies: ["Next.js", "TypeScript", "Tailwind CSS", "marked/react-markdown"],
+        inspirationUrl: "https://github.com/example/markdown-editor",
+        difficulty: "Complicado"
+    },
+     {
+        language: "Python",
+        iconKey: "python",
+        title: "Web Scraper de Precios",
+        description: "Desarrolla un script que monitoree el precio de un producto en un sitio de e-commerce. El script debe extraer el precio, guardarlo en una base de datos o CSV junto con la fecha, y enviar una notificación por correo electrónico si el precio baja de un umbral definido por el usuario.",
+        technologies: ["Python", "BeautifulSoup", "Requests", "Pandas", "smtplib"],
+        inspirationUrl: "https://github.com/example/price-scraper",
+        difficulty: "Complicado"
+    },
+    // --- Experto ---
     {
         language: "JavaScript/TypeScript",
         iconKey: "javascript",
         title: "Clon de Trello en Tiempo Real",
         description: "Construye un tablero Kanban funcional similar a Trello. Los usuarios deben poder crear tableros, listas y tarjetas. Las tarjetas deben ser arrastrables (drag-and-drop) entre listas, y todos los cambios deben reflejarse en tiempo real para todos los usuarios conectados.",
         technologies: ["React", "Next.js", "Tailwind CSS", "Prisma", "PostgreSQL", "Socket.IO", "React-dnd"],
-        inspirationUrl: "https://github.com/example/trello-clone"
+        inspirationUrl: "https://github.com/example/trello-clone",
+        difficulty: "Experto"
     },
     {
         language: "Python",
@@ -599,7 +658,8 @@ export const weeklyChallenges: WeeklyChallenge[] = [
         title: "Plataforma de Trading de Criptomonedas (Simulada)",
         description: "Crea una aplicación web que simule el trading de criptomonedas. Conéctate a una API pública (ej. CoinGecko) para obtener precios en tiempo real. Los usuarios deben poder registrarse, recibir un saldo virtual y 'comprar/vender' criptos. Incluye gráficos históricos de precios y un panel de portafolio.",
         technologies: ["Django", "Django REST Framework", "Celery", "Redis", "Chart.js", "PostgreSQL"],
-        inspirationUrl: "https://github.com/example/crypto-trader"
+        inspirationUrl: "https://github.com/example/crypto-trader",
+        difficulty: "Experto"
     },
     {
         language: "Java",
@@ -607,7 +667,8 @@ export const weeklyChallenges: WeeklyChallenge[] = [
         title: "Sistema de Reservas de Vuelos",
         description: "Desarrolla un sistema backend robusto para una aerolínea. Debe gestionar vuelos, asientos, precios dinámicos, reservas y perfiles de usuario. Implementa una API REST completa y segura con manejo de transacciones para garantizar la integridad de los datos.",
         technologies: ["Spring Boot", "Spring Security", "JPA/Hibernate", "PostgreSQL", "Maven/Gradle", "JUnit 5"],
-        inspirationUrl: "https://github.com/example/flight-booking-system"
+        inspirationUrl: "https://github.com/example/flight-booking-system",
+        difficulty: "Experto"
     },
     {
         language: "Go",
@@ -615,7 +676,8 @@ export const weeklyChallenges: WeeklyChallenge[] = [
         title: "Proxy Inverso y Balanceador de Carga",
         description: "Crea una aplicación de alto rendimiento en Go que actúe como un proxy inverso y un balanceador de carga. Debe poder distribuir el tráfico entrante entre múltiples servidores backend utilizando diferentes algoritmos (ej. Round Robin, Least Connections).",
         technologies: ["Go (net/http)", "Goroutines", "Channels", "Docker"],
-        inspirationUrl: "https://github.com/example/go-load-balancer"
+        inspirationUrl: "https://github.com/example/go-load-balancer",
+        difficulty: "Experto"
     },
     {
         language: "Rust",
@@ -623,7 +685,8 @@ export const weeklyChallenges: WeeklyChallenge[] = [
         title: "Implementación de una Blockchain Simple",
         description: "Construye una pequeña blockchain desde cero. Debe incluir la creación de bloques, el minado con prueba de trabajo (Proof of Work), la validación de la cadena y una API simple para interactuar con ella. Enfócate en la seguridad y la concurrencia que ofrece Rust.",
         technologies: ["Rust", "Tokio", "Serde", "SHA-256", "Actix-web/Axum"],
-        inspirationUrl: "https://github.com/example/rust-blockchain"
+        inspirationUrl: "https://github.com/example/rust-blockchain",
+        difficulty: "Experto"
     },
     {
         language: "PHP",
@@ -631,7 +694,8 @@ export const weeklyChallenges: WeeklyChallenge[] = [
         title: "Plataforma E-commerce Multi-vendedor (Marketplace)",
         description: "Crea un marketplace completo donde múltiples vendedores puedan registrarse, publicar sus productos y gestionar sus ventas. La plataforma debe manejar carritos de compra, pasarelas de pago (simuladas), perfiles de vendedor y reseñas de productos.",
         technologies: ["Laravel", "MySQL/PostgreSQL", "Livewire/Vue.js", "Stripe API (Sandbox)", "PHPUnit"],
-        inspirationUrl: "https://github.com/example/php-marketplace"
+        inspirationUrl: "https://github.com/example/php-marketplace",
+        difficulty: "Experto"
     },
     {
         language: "C#",
@@ -639,7 +703,8 @@ export const weeklyChallenges: WeeklyChallenge[] = [
         title: "Motor de Videojuego 2D Básico",
         description: "Utilizando .NET y una librería gráfica como MonoGame o Stride, crea un motor de juego 2D básico. Debe incluir un bucle de juego, renderizado de sprites, manejo de entrada, detección de colisiones simples y un sistema de entidades y componentes.",
         technologies: [".NET", "MonoGame/Stride", "C#", "Entity-Component-System (ECS)"],
-        inspirationUrl: "https://github.com/example/csharp-game-engine"
+        inspirationUrl: "https://github.com/example/csharp-game-engine",
+        difficulty: "Experto"
     },
     {
         language: "Swift",
@@ -647,7 +712,8 @@ export const weeklyChallenges: WeeklyChallenge[] = [
         title: "Clon de Apple Music para iOS",
         description: "Desarrolla una aplicación para iOS que replique las funcionalidades principales de Apple Music. Incluye una biblioteca de canciones (local o desde una API), listas de reproducción, un reproductor de audio con controles y una interfaz de usuario pulida que siga las guías de diseño de Apple.",
         technologies: ["SwiftUI", "Combine", "AVFoundation", "Core Data/SwiftData"],
-        inspirationUrl: "https://github.com/example/swift-music-app"
+        inspirationUrl: "https://github.com/example/swift-music-app",
+        difficulty: "Experto"
     },
     {
         language: "Kotlin",
@@ -655,7 +721,8 @@ export const weeklyChallenges: WeeklyChallenge[] = [
         title: "Aplicación de Fitness y Seguimiento de Ejercicios",
         description: "Crea una aplicación para Android que permita a los usuarios registrar sus entrenamientos, seguir su progreso a lo largo del tiempo y visualizar estadísticas. Utiliza los componentes de Jetpack, Coroutines para operaciones asíncronas y almacena los datos localmente con Room.",
         technologies: ["Kotlin", "Jetpack Compose", "Coroutines", "Room", "Material Design 3"],
-        inspirationUrl: "https://github.com/example/kotlin-fitness-app"
+        inspirationUrl: "https://github.com/example/kotlin-fitness-app",
+        difficulty: "Experto"
     },
     {
         language: "TypeScript (Backend)",
@@ -663,7 +730,8 @@ export const weeklyChallenges: WeeklyChallenge[] = [
         title: "API para un Sistema de Gestión de Inventarios",
         description: "Diseña y construye una API robusta y bien tipada para gestionar el inventario de un almacén. Debe incluir manejo de productos, proveedores, niveles de stock, órdenes de compra y alertas de stock bajo. Utiliza un framework como NestJS o AdonisJS para una arquitectura sólida.",
         technologies: ["TypeScript", "NestJS/AdonisJS", "TypeORM/Prisma", "PostgreSQL", "JWT", "Jest"],
-        inspirationUrl: "https://github.com/example/ts-inventory-api"
+        inspirationUrl: "https://github.com/example/ts-inventory-api",
+        difficulty: "Experto"
     }
 ];
 
