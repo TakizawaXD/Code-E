@@ -27,13 +27,13 @@ export async function submitChallengeAction(
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     await resend.emails.send({
-      from: 'Code-E Platform <onboarding@resend.dev>', // This must be a verified domain in Resend. 'onboarding@resend.dev' is for testing.
+      from: 'Kursor Platform <onboarding@resend.dev>', // This must be a verified domain in Resend. 'onboarding@resend.dev' is for testing.
       to: recipientEmail,
       subject: `Nueva Entrega de Reto: ${validatedData.challengeTitle}`,
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
           <h2>¡Nueva entrega del Reto Semanal!</h2>
-          <p>Un usuario ha completado un reto en la plataforma Code-E.</p>
+          <p>Un usuario ha completado un reto en la plataforma Kursor.</p>
           <h3>Detalles de la Entrega:</h3>
           <ul>
             <li><strong>Reto:</strong> ${validatedData.challengeTitle}</li>
@@ -42,7 +42,7 @@ export async function submitChallengeAction(
           </ul>
           <p>Por favor, revisa el repositorio para evaluar el proyecto.</p>
           <hr>
-          <p style="font-size: 0.8em; color: #777;">Este es un correo automático generado por la plataforma Code-E.</p>
+          <p style="font-size: 0.8em; color: #777;">Este es un correo automático generado por la plataforma Kursor.</p>
         </div>
       `,
     });

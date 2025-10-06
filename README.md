@@ -1,12 +1,12 @@
-# Code-E: Plataforma de Aprendizaje en Línea
+# Kursor: Plataforma de Aprendizaje en Línea
 
-Code-E es una plataforma web moderna para el aprendizaje en línea, diseñada para ofrecer a los usuarios una experiencia educativa interactiva y comunitaria. Construida con Next.js para el frontend y un backend de Python (Flask), la aplicación permite a los usuarios explorar cursos, seguir rutas de aprendizaje y participar en foros de discusión.
+Kursor es una plataforma web moderna para el aprendizaje en línea, diseñada para ofrecer a los usuarios una experiencia educativa interactiva y comunitaria. Construida con Next.js para el frontend y un backend de Python (Flask), la aplicación permite a los usuarios explorar cursos, seguir rutas de aprendizaje y participar en foros de discusión.
 
 ## 🎯 Propósito, Audiencia y Visión
 
 ### ¿Por qué y para qué fue creado este proyecto?
 
-El proyecto Code-E nació de la necesidad de crear una plataforma de e-learning que no solo se centre en el contenido, sino también en la **comunidad** y la **aplicación práctica**. A diferencia de otras plataformas donde el aprendizaje puede ser una experiencia solitaria, Code-E está diseñado para fomentar la interacción, la colaboración y el feedback entre estudiantes y profesionales. El objetivo principal es construir un ecosistema donde los usuarios puedan:
+El proyecto Kursor nació de la necesidad de crear una plataforma de e-learning que no solo se centre en el contenido, sino también en la **comunidad** y la **aplicación práctica**. A diferencia de otras plataformas donde el aprendizaje puede ser una experiencia solitaria, Kursor está diseñado para fomentar la interacción, la colaboración y el feedback entre estudiantes y profesionales. El objetivo principal es construir un ecosistema donde los usuarios puedan:
 
 -   **Aprender haciendo:** A través de ejercicios prácticos, proyectos y cuestionarios.
 -   **Crecer en comunidad:** Participando en foros, debates y colaborando con otros estudiantes.
@@ -14,7 +14,7 @@ El proyecto Code-E nació de la necesidad de crear una plataforma de e-learning 
 
 ### ¿Cuál es el público de origen?
 
-Code-E está dirigido a un público amplio y diverso, unido por el deseo de aprender y crecer en el sector tecnológico:
+Kursor está dirigido a un público amplio y diverso, unido por el deseo de aprender y crecer en el sector tecnológico:
 
 -   **Estudiantes y Recién Graduados:** Jóvenes que buscan una base sólida en desarrollo, diseño o ciencia de datos para iniciar su carrera profesional.
 -   **Profesionales en Transición (Reskilling):** Personas que desean cambiar de carrera e ingresar al mundo de la tecnología.
@@ -23,7 +23,7 @@ Code-E está dirigido a un público amplio y diverso, unido por el deseo de apre
 
 ### ¿Qué se tiene de expectativas de este proyecto?
 
-La visión a largo plazo para Code-E es convertirla en una plataforma de referencia en el aprendizaje tecnológico en español. Las expectativas de futuro incluyen:
+La visión a largo plazo para Kursor es convertirla en una plataforma de referencia en el aprendizaje tecnológico en español. Las expectativas de futuro incluyen:
 
 -   **Integración de IA:** Incorporar herramientas de inteligencia artificial para ofrecer tutorías personalizadas y recomendaciones de aprendizaje.
 -   **Gamificación Avanzada:** Desarrollar un sistema completo de puntos, insignias y tablas de clasificación para motivar a los estudiantes.
@@ -53,7 +53,7 @@ La visión a largo plazo para Code-E es convertirla en una plataforma de referen
 
 ## 🏗️ Arquitectura de la Aplicación
 
-He aquí un diagrama de alto nivel que ilustra la arquitectura de Code-E:
+He aquí un diagrama de alto nivel que ilustra la arquitectura de Kursor:
 
 ```
 +---------------------------+      +---------------------------+      +---------------------------+

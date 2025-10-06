@@ -40,7 +40,7 @@ export function CourseCard({ course, className, progress }: CourseCardProps) {
     if (Array.isArray(course.instructor) && course.instructor.length > 1) {
       return "Varios Profesores";
     }
-    return "Code-E BOT";
+    return "Kursor BOT";
   };
 
   return (

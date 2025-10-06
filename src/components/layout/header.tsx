@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MainNav } from "@/components/layout/main-nav";
 import { UserNav } from "@/components/layout/user-nav";
-import { CodeELogo } from "@/components/icons";
+import { KursorLogo } from "@/components/icons";
 import { useFirebase, useUser, useCollection, useFirestore, useMemoFirebase, useDoc } from "@/firebase";
 import type { Notification, UserProfile } from "@/lib/types";
 import { formatDistanceToNow } from "date-fns";
@@ -88,7 +88,7 @@ export function Header() {
         {/* Desktop Navigation */}
         <div className="hidden flex-1 items-center space-x-4 sm:flex md:space-x-6">
           <Link href="/" className="flex items-center space-x-2">
-            <CodeELogo className="h-6 w-auto" />
+            <KursorLogo className="h-6 w-auto" />
           </Link>
           <MainNav />
         </div>
@@ -107,7 +107,7 @@ export function Header() {
                   <SheetHeader className="p-4">
                     <SheetTitle>
                        <Link href="/" onClick={handleMobileLinkClick} className="flex items-center space-x-2">
-                        <CodeELogo className="h-6 w-auto" />
+                        <KursorLogo className="h-6 w-auto" />
                       </Link>
                     </SheetTitle>
                   </SheetHeader>
@@ -187,7 +187,7 @@ export function Header() {
               </SheetContent>
             </Sheet>
              <Link href="/" className="flex items-center space-x-2">
-                <CodeELogo className="h-6 w-auto" />
+                <KursorLogo className="h-6 w-auto" />
             </Link>
         </div>
 

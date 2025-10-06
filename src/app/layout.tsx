@@ -10,7 +10,7 @@ import { FirebaseClientProvider } from "@/firebase/client-provider";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Code-E",
+  title: "Kursor",
   description: "Plataforma de aprendizaje en línea para desarrolladores.",
 };
 

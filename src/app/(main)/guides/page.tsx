@@ -31,7 +31,7 @@ import { Label } from '@/components/ui/label';
 // --- DATA (Could be moved to a separate JSON/TS file) ---
 const contentData = {
     'welcome': `<h1>Una Guía de Entrevistas Diferente</h1>
-        <p>Bienvenido a la guía de preparación para entrevistas técnicas de Code-E. Este no es solo un repositorio de algoritmos, es una herramienta viva construida con una filosofía de <strong>aprendizaje práctico y transparente</strong>.</p>
+        <p>Bienvenido a la guía de preparación para entrevistas técnicas de Kursor. Este no es solo un repositorio de algoritmos, es una herramienta viva construida con una filosofía de <strong>aprendizaje práctico y transparente</strong>.</p>
         
         <h3>Propósito y Visión</h3>
         <p>El objetivo es diseñar un sitio web para que desarrolladores, similares a ti y a mí, tengan un lugar gratuito para aprender y dominar los conceptos clave para una entrevista técnica. Requiere inicio de sesión con Google, lo que nos permite capturar métricas de uso de forma anónima. En el futuro, estos datos alimentarán dashboards para entender qué secciones son más útiles y dónde podemos mejorar. Todo el desarrollo se realiza en un <strong>repositorio público</strong>, fomentando la transparencia.</p>

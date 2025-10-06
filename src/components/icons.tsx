@@ -1,13 +1,13 @@
 import type { SVGProps } from "react";
 
-export function CodeELogo(props: SVGProps<SVGSVGElement>) {
+export function KursorLogo(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 220 50"
       width="110"
       height="25"
-      aria-label="Code-E Logo"
+      aria-label="Kursor Logo"
       {...props}
     >
       <text
@@ -19,7 +19,7 @@ export function CodeELogo(props: SVGProps<SVGSVGElement>) {
         fill="hsl(var(--primary))"
         className="dark:fill-hsl(var(--primary-foreground))"
       >
-        Code-E
+        Kursor
       </text>
     </svg>
   );

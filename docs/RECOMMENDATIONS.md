@@ -1,6 +1,6 @@
-# 50 Recomendaciones para Evolucionar Code-E
+# 50 Recomendaciones para Evolucionar Kursor
 
-Aquí tienes una lista de 50 ideas y recomendaciones para hacer crecer la plataforma Code-E, organizadas por categorías.
+Aquí tienes una lista de 50 ideas y recomendaciones para hacer crecer la plataforma Kursor, organizadas por categorías.
 
 ## Gamificación y Compromiso del Usuario
 
@@ -8,7 +8,7 @@ Aquí tienes una lista de 50 ideas y recomendaciones para hacer crecer la plataf
 2.  **Insignias (Badges):** Crear insignias por logros específicos (ej. "Madrugador" por estudiar 5 días seguidos a las 6 AM, "Finalizador" por completar un curso, "Políglota" por completar retos en 3 lenguajes distintos).
 3.  **Rachas de Estudio (Streaks):** Implementar un contador de días consecutivos estudiando para fomentar el hábito diario.
 4.  **Tabla de Clasificación (Leaderboard):** Mostrar rankings semanales, mensuales y globales basados en puntos para fomentar la competencia sana.
-5.  **Moneda Virtual:** Introducir "CodeCoins" que se ganen con el progreso y se puedan canjear por temas de perfil, acceso a eventos especiales o swag virtual.
+5.  **Moneda Virtual:** Introducir "KursorCoins" que se ganen con el progreso y se puedan canjear por temas de perfil, acceso a eventos especiales o swag virtual.
 6.  **Retos Diarios/Semanales Rápidos:** Pequeños desafíos de código que se puedan completar en 5-10 minutos.
 7.  **Avatares Personalizables:** Permitir a los usuarios personalizar su avatar con ítems comprados con la moneda virtual.
 8.  **Huevos de Pascua (Easter Eggs):** Esconder secretos o funcionalidades ocultas en la plataforma.
@@ -30,7 +30,7 @@ Aquí tienes una lista de 50 ideas y recomendaciones para hacer crecer la plataf
 18. **Cuestionarios Adaptativos:** Quizzes que ajustan la dificultad de la siguiente pregunta basándose en si la respuesta anterior fue correcta.
 19. **Certificados Verificables:** Generar certificados únicos por completar cursos o rutas, con un ID que pueda ser verificado por empleadores.
 20. **Proyectos del Mundo Real Guiados:** Proyectos más complejos donde se construye una aplicación completa (ej. un clon de Airbnb) paso a paso.
-21. **Integración con GitHub:** Conectar la cuenta de GitHub para mostrar proyectos del portafolio directamente en el perfil de Code-E.
+21. **Integración con GitHub:** Conectar la cuenta de GitHub para mostrar proyectos del portafolio directamente en el perfil de Kursor.
 22. **Contenido en Video Interactivo:** Pausar el video en ciertos puntos para hacer preguntas rápidas antes de continuar.
 23. **Transcripciones de Video:** Añadir transcripciones buscables para todos los videos de las lecciones.
 24. **Cursos en Audio (Audiocursos):** Lecciones teóricas disponibles en formato podcast para aprender en cualquier lugar.
@@ -52,10 +52,10 @@ Aquí tienes una lista de 50 ideas y recomendaciones para hacer crecer la plataf
 
 35. **Plan "Pro" o "Premium":** Ofrecer acceso a cursos avanzados, tutorías con IA ilimitadas o proyectos exclusivos por una suscripción.
 36. **Bolsa de Trabajo:** Un portal donde empresas puedan publicar ofertas y buscar perfiles de estudiantes destacados.
-37. **Cursos Creados por la Comunidad:** Permitir a usuarios expertos crear y vender sus propios cursos, con Code-E tomando una comisión.
+37. **Cursos Creados por la Comunidad:** Permitir a usuarios expertos crear y vender sus propios cursos, con Kursor tomando una comisión.
 38. **Programas para Empresas (B2B):** Vender licencias por volumen a empresas para que capaciten a sus empleados.
 39. **Programa de Afiliados:** Recompensar a los usuarios que traigan nuevos estudiantes a la plataforma.
-40. **"Code-E for Universities":** Programas especiales para instituciones educativas.
+40. **"Kursor for Universities":** Programas especiales para instituciones educativas.
 
 ## Mejoras Técnicas y de Backend
 
@@ -66,6 +66,6 @@ Aquí tienes una lista de 50 ideas y recomendaciones para hacer crecer la plataf
 45. **CI/CD Pipeline:** Automatizar las pruebas y el despliegue con herramientas como GitHub Actions.
 46. **Monitoreo y Observabilidad:** Integrar herramientas como Sentry o New Relic para detectar y diagnosticar errores en producción.
 47. **Pasar a una Arquitectura de Microservicios:** A medida que la plataforma crezca, separar funcionalidades (ej. notificaciones, gamificación) en servicios independientes.
-48. **API Pública:** Ofrecer una API para que otros desarrolladores puedan interactuar con los datos públicos de Code-E.
+48. **API Pública:** Ofrecer una API para que otros desarrolladores puedan interactuar con los datos públicos de Kursor.
 49. **Web Sockets para Notificaciones en Tiempo Real:** Reemplazar el "polling" de notificaciones por una conexión persistente.
 50. **Implementación de WebAssembly:** Para los "playgrounds" de código, explorar el uso de WebAssembly para compilar y ejecutar código de lenguajes como Python o C++ directamente en el navegador de forma segura y eficiente.

@@ -3,7 +3,7 @@
   "entities": {
     "UserProfile": {
       "title": "User Profile",
-      "description": "Represents a user of the Code-E platform.",
+      "description": "Represents a user of the Kursor platform.",
       "type": "object",
       "properties": {
         "name": { "type": "string" },
