@@ -1,84 +1,65 @@
 /**
- * @fileoverview Firestore Security Rules for Code-E platform.
- *
- * Core Philosophy:
- * This ruleset enforces a user-ownership model where users can only
- * read and write their own data, with specific exceptions for public
- * profiles and certain collections. The rules are designed to be
- * highly secure from an authorization standpoint while allowing for
- * flexible data shapes to facilitate rapid prototyping.
+ * @file Firestore Security Rules
+ * @description This ruleset enforces a strict user-ownership model for user profiles and allows the owner to read and write the enrolled courses for the user.
  *
  * Data Structure:
- * - `/users/{userId}`: Stores public user profile information.
- * - `/users/{userId}/notifications`: Stores private notifications for each user.
+ * - /users/{userId}: Stores public user profiles.
+ * - /users/{userId}/enrolledCourses/{courseId}: stores course ids enrolled for the user.
  *
  * Key Security Decisions:
- * - Users can only list their own notifications.
- * - Users can only create their profile with a matching `userId`.
- * - Users can only update their profile.
+ * - User profiles are readable by anyone, but only the owner can create, update, or delete their profile.
+ * - Enrolled courses are only readable and writable by the owner.
+ * - Listing of enrolled courses is allowed only for the owner.
  *
  * Denormalization for Authorization:
- *   No denormalization is needed as the authorization checks are based
- *   on the `userId` in the path.
+ *  - User ownership is enforced by matching the {userId} path segment with the `request.auth.uid`.
  *
  * Structural Segregation:
- *   User profiles are stored in a top-level collection (`/users/{userId}`)
- *   for public access, while private user data (e.g., notifications) is
- *   stored in user subcollections (`/users/{userId}/notifications`).
+ * - There are no private and public collections.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Allows users to read and write their own profile data.
+     * @description Allows anyone to read user profiles, but only the owner can create, update, or delete their profile.
      * @path /users/{userId}
-     * @allow (create) User with UID "user123" can create a profile at /users/user123. The profile data must also contain `id: "user123"`.
-     * @deny (create) User with UID "user456" cannot create a profile at /users/user123.
-     * @allow (get) Any user can read a user profile.
-     * @allow (update) User with UID "user123" can update their profile at /users/user123.
-     * @deny (update) User with UID "user456" cannot update the profile at /users/user123.
-     * @allow (delete) User with UID "user123" can delete their profile at /users/user123.
-     * @deny (delete) User with UID "user456" cannot delete the profile at /users/user123.
-     * @principle Enforces document ownership for writes; allows public reads.
+     * @allow (get, list): Anyone can read user profiles.
+     * @allow (create): User 'user_abc' can create their profile if request.auth.uid == 'user_abc'.
+     * @allow (update, delete): User 'user_abc' can update/delete their profile if request.auth.uid == 'user_abc' and the document exists.
+     * @deny (create, update, delete): User 'user_xyz' cannot create/update/delete profile 'user_abc'.
+     * @principle Enforces document ownership for writes, allows public reads.
      */
     match /users/{userId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if isSignedIn() && request.auth.uid == userId && request.resource.data.id == userId;
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      allow get, list: if true;
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Allows users to read and write their own notifications.
-     * @path /users/{userId}/notifications/{notificationId}
-     * @allow (list) User with UID "user123" can list notifications at /users/user123/notifications.
-     * @deny (list) User with UID "user456" cannot list notifications at /users/user123/notifications.
-     * @allow (create) User with UID "user123" can create a notification at /users/user123/notifications/notification1.
-     * @deny (create) User with UID "user456" cannot create a notification at /users/user123/notifications/notification1.
-     * @allow (get) User with UID "user123" can get a notification at /users/user123/notifications/notification1.
-     * @deny (get) User with UID "user456" cannot get a notification at /users/user123/notifications/notification1.
-     * @allow (update) User with UID "user123" can update a notification at /users/user123/notifications/notification1.
-     * @deny (update) User with UID "user456" cannot update a notification at /users/user123/notifications/notification1.
-     * @allow (delete) User with UID "user123" can delete a notification at /users/user123/notifications/notification1.
-     * @deny (delete) User with UID "user456" cannot delete a notification at /users/user123/notifications/notification1.
+     * @description Allows the owner of the user profile to read and list their enrolled courses.
+     * @path /users/{userId}/enrolledCourses/{courseId}
+     * @allow (get, list): User 'user_abc' can read/list their enrolled courses if request.auth.uid == 'user_abc'.
+     * @allow (create, update, delete): User 'user_abc' can create/update/delete enrolled courses if request.auth.uid == 'user_abc'.
+     * @deny (get, list, create, update, delete): User 'user_xyz' cannot read/write 'user_abc' enrolled courses.
      * @principle Restricts access to a user's own data tree.
      */
-    match /users/{userId}/notifications/{notificationId} {
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isExistingOwner(userId);
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+    match /users/{userId}/enrolledCourses/{courseId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
+    // Helper functions
     function isSignedIn() {
       return request.auth != null;
     }
 
     function isOwner(userId) {
-      return request.auth.uid == userId;
+      return isSignedIn() && request.auth.uid == userId;
     }
 
     function isExistingOwner(userId) {
