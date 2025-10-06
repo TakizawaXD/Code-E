@@ -1,230 +1,268 @@
 /**
- * @file Overview
- * This ruleset enforces a strict user-ownership model for private user data and allows public read access to certain collections.
- * All write operations require authentication and proper authorization. Data schema validation is relaxed for rapid prototyping.
+ * @fileoverview Firestore Security Rules for Code-E platform.
  *
- * @data_structure
- * - /users/{userId}: User profiles and private data.
- * - /learningPaths/{learningPathId}: Publicly readable learning paths.
- * - /courses/{courseId}: Publicly readable courses, organized into modules and lessons.
- * - /forumThreads/{threadId}: Publicly readable forum threads with nested posts.
- * - /channels/general/messages: Publicly readable messages.
+ * Core Philosophy:
+ * This ruleset implements a hybrid security model, balancing public read access for some content
+ * with strict ownership and role-based access control for user-specific data and administrative functions.
  *
- * @key_security_decisions
- * - User listing is disabled to prevent information disclosure.
- * - Public read access is granted to learning paths, courses, forum threads, and channels to enable open content consumption.
- * - All write operations are restricted to authenticated users with appropriate ownership or roles.
+ * Data Structure:
+ * - Top-level collections like /courses and /learningPaths are generally readable by anyone.
+ * - User-specific data (progress, notifications, badges) is nested under /users/{userId} and secured via ownership checks.
+ * - Forum discussions are publicly readable but writable only by authenticated users, with potential future moderation roles.
  *
- * @denormalization_for_authorization
- *  None.
+ * Key Security Decisions:
+ * - Listing all users is explicitly denied to protect user privacy.
+ * - Public read access is granted to courses and learning paths to facilitate discovery.
+ * - A 'channels' collection and subcollections were requested but are not defined in the schema. Rules will be generated but require review.
+ * - Writes to /users/{userId} and subcollections will be strictly limited to the authenticated user.
  *
- * @structural_segregation
- *  Private user data is stored under /users/{userId} to ensure clear ownership and access control.
+ * Denormalization for Authorization:
+ *  To avoid expensive `get()` operations in security rules, critical authorization data (such as ownership)
+ *  should be denormalized directly onto the documents being secured.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Allows read-only access to publicly available learning paths.
-     * @path /learningPaths/{learningPathId}
-     * @allow (get, list): Anyone can read learning paths.
-     * @deny (create, update, delete): No one can create, update, or delete learning paths through direct client access.
-     * @principle Allows public read access while restricting write access.
-     */
-    match /learningPaths/{learningPathId} {
-      allow get, list: if true;
-      allow create, update, delete: if false;
-    }
-
-    /**
-     * @description Allows read-only access to publicly available courses and restricts write operations.
+     * @description Allows anyone to read courses, but restricts creation, updates, and deletion to authenticated users.
      * @path /courses/{courseId}
-     * @allow (get, list): Anyone can read courses.
-     * @deny (create, update, delete): No one can create, update, or delete courses through direct client access.
-     * @principle Allows public read access while restricting write access.
+     * @allow get, list: if true;
+     * @allow create: if request.auth != null; // Anyone signed in can create. Review the security of this decision.
+     * @allow update: if false; // TODO: Implement role-based access for course updates.
+     * @allow delete: if false; // TODO: Implement role-based access for course deletion.
+     * @principle Public read, restricted write.
      */
     match /courses/{courseId} {
       allow get, list: if true;
-      allow create, update, delete: if false;
+      allow create: if isSignedIn();
+      allow update: if false; // TODO: Implement role-based access for course updates.
+      allow delete: if false; // TODO: Implement role-based access for course deletion.
+    }
+
+    /**
+     * @description Allows anyone to read learning paths, but restricts creation, updates, and deletion to authenticated users.
+     * @path /learningPaths/{learningPathId}
+     * @allow get, list: if true;
+     * @allow create: if request.auth != null; // Anyone signed in can create. Review the security of this decision.
+     * @allow update: if false; // TODO: Implement role-based access for learning path updates.
+     * @allow delete: if false; // TODO: Implement role-based access for learning path deletion.
+     * @principle Public read, restricted write.
+     */
+    match /learningPaths/{learningPathId} {
+      allow get, list: if true;
+      allow create: if isSignedIn();
+      allow update: if false; // TODO: Implement role-based access for learning path updates.
+      allow delete: if false; // TODO: Implement role-based access for learning path deletion.
+    }
+
+    /**
+     * @description Restricts access to user-specific data to the authenticated user.
+     * @path /users/{userId}
+     * @allow get: if isOwner(userId);
+     * @allow list: if false; // Explicitly deny listing all users.
+     * @allow create: if isOwner(userId);
+     * @allow update: if isExistingOwner(userId);
+     * @allow delete: if isExistingOwner(userId);
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false; // Prevent listing all users
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
 
       /**
-       * @description Allows read-only access to course modules within a specific course.
-       * @path /courses/{courseId}/modules/{moduleId}
-       * @allow (get, list): Anyone can read course modules.
-       * @deny (create, update, delete): No one can create, update, or delete course modules through direct client access.
-       * @principle Allows public read access while restricting write access.
+       * @description Restricts access to user progress data to the authenticated user.
+       * @path /users/{userId}/progress/{progressId}
+       * @allow get, list: if isOwner(userId);
+       * @allow create: if isOwner(userId);
+       * @allow update: if isExistingOwner(userId);
+       * @allow delete: if isExistingOwner(userId);
+       * @principle Enforces document ownership for all operations.
        */
-      match /modules/{moduleId} {
+      match /progress/{progressId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isExistingOwner(userId);
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Restricts access to user notifications to the authenticated user.
+       * @path /users/{userId}/notifications/{notificationId}
+       * @allow get, list: if isOwner(userId);
+       * @allow create: if isOwner(userId);
+       * @allow update: if isExistingOwner(userId);
+       * @allow delete: if isExistingOwner(userId);
+       * @principle Enforces document ownership for all operations.
+       */
+      match /notifications/{notificationId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isExistingOwner(userId);
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Restricts access to user gamification stats to the authenticated user.
+       * @path /users/{userId}/gamification/{statsId}
+       * @allow get, list: if isOwner(userId);
+       * @allow create: if isOwner(userId);
+       * @allow update: if isExistingOwner(userId);
+       * @allow delete: if isExistingOwner(userId);
+       * @principle Enforces document ownership for all operations.
+       */
+      match /gamification/{statsId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isExistingOwner(userId);
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Restricts access to user badges to the authenticated user.
+       * @path /users/{userId}/badges/{userBadgeId}
+       * @allow get, list: if isOwner(userId);
+       * @allow create: if isOwner(userId);
+       * @allow update: if isExistingOwner(userId);
+       * @allow delete: if isExistingOwner(userId);
+       * @principle Enforces document ownership for all operations.
+       */
+      match /badges/{userBadgeId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isExistingOwner(userId);
+        allow delete: if isExistingOwner(userId);
+      }
+    }
+
+    /**
+     * @description Allows anyone to read badges, but restricts creation, updates, and deletion to authenticated users.
+     * @path /badges/{badgeId}
+     * @allow get, list: if true;
+     * @allow create: if request.auth != null; // Anyone signed in can create. Review the security of this decision.
+     * @allow update: if false; // TODO: Implement role-based access for badge updates.
+     * @allow delete: if false; // TODO: Implement role-based access for badge deletion.
+     * @principle Public read, restricted write.
+     */
+    match /badges/{badgeId} {
+      allow get, list: if true;
+      allow create: if isSignedIn();
+      allow update: if false; // TODO: Implement role-based access for badge updates.
+      allow delete: if false; // TODO: Implement role-based access for badge deletion.
+    }
+
+    /**
+     * @description Allows anyone to read forum threads, but restricts creation, updates, and deletion to authenticated users.
+     * @path /forumThreads/{threadId}
+     * @allow get, list: if true;
+     * @allow create: if isSignedIn(); // Anyone signed in can create. Review the security of this decision.
+     * @allow update: if false; // TODO: Implement role-based access for thread updates.
+     * @allow delete: if false; // TODO: Implement role-based access for thread deletion.
+     * @principle Public read, restricted write.
+     */
+    match /forumThreads/{threadId} {
+      allow get, list: if true;
+      allow create: if isSignedIn();
+      allow update: if false; // TODO: Implement role-based access for thread updates.
+      allow delete: if false; // TODO: Implement role-based access for thread deletion.
+
+      /**
+       * @description Allows anyone to read forum posts, but restricts creation, updates, and deletion to authenticated users.
+       * @path /forumThreads/{threadId}/posts/{postId}
+       * @allow get, list: if true;
+       * @allow create: if isSignedIn(); // Anyone signed in can create. Review the security of this decision.
+       * @allow update: if false; // TODO: Implement role-based access for post updates.
+       * @allow delete: if false; // TODO: Implement role-based access for post deletion.
+       * @principle Public read, restricted write.
+       */
+      match /posts/{postId} {
         allow get, list: if true;
-        allow create, update, delete: if false;
+        allow create: if isSignedIn();
+        allow update: if false; // TODO: Implement role-based access for post updates.
+        allow delete: if false; // TODO: Implement role-based access for post deletion.
+      }
+    }
+
+    /**
+     * @description Rules for course modules. Read access is public, but writes are restricted.
+     * @path /courses/{courseId}/modules/{moduleId}
+     * @allow get, list: if true;
+     * @allow create: if isSignedIn(); // Anyone signed in can create. Review the security of this decision.
+     * @allow update: if false; // TODO: Implement role-based access for module updates.
+     * @allow delete: if false; // TODO: Implement role-based access for module deletion.
+     * @principle Public read, restricted write.
+     */
+    match /courses/{courseId}/modules/{moduleId} {
+      allow get, list: if true;
+      allow create: if isSignedIn();
+      allow update: if false; // TODO: Implement role-based access for module updates.
+      allow delete: if false; // TODO: Implement role-based access for module deletion.
+
+      /**
+       * @description Rules for lessons. Read access is public, but writes are restricted.
+       * @path /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}
+       * @allow get, list: if true;
+       * @allow create: if isSignedIn(); // Anyone signed in can create. Review the security of this decision.
+       * @allow update: if false; // TODO: Implement role-based access for lesson updates.
+       * @allow delete: if false; // TODO: Implement role-based access for lesson deletion.
+       * @principle Public read, restricted write.
+       */
+      match /lessons/{lessonId} {
+        allow get, list: if true;
+        allow create: if isSignedIn();
+        allow update: if false; // TODO: Implement role-based access for lesson updates.
+        allow delete: if false; // TODO: Implement role-based access for lesson deletion.
 
         /**
-         * @description Allows read-only access to lessons within a specific course module.
-         * @path /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}
-         * @allow (get, list): Anyone can read lessons.
-         * @deny (create, update, delete): No one can create, update, or delete lessons through direct client access.
-         * @principle Allows public read access while restricting write access.
+         * @description Rules for comments on lessons.  Read access is public, but writes are restricted.
+         * @path /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}/comments/{commentId}
+         * @allow get, list: if true;
+         * @allow create: if isSignedIn(); // Anyone signed in can create. Review the security of this decision.
+         * @allow update: if false; // TODO: Implement role-based access for comment updates.
+         * @allow delete: if false; // TODO: Implement role-based access for comment deletion.
+         * @principle Public read, restricted write.
          */
-        match /lessons/{lessonId} {
+        match /comments/{commentId} {
           allow get, list: if true;
-          allow create, update, delete: if false;
-
-           /**
-            * @description Allows read-only access to comments within a specific lesson.
-            * @path /courses/{courseId}/modules/{moduleId}/lessons/{lessonId}/comments/{commentId}
-            * @allow (get, list): Anyone can read comments.
-            * @deny (create, update, delete): No one can create, update, or delete comments through direct client access.
-            * @principle Allows public read access while restricting write access.
-            */
-          match /comments/{commentId} {
-            allow get, list: if true;
-            allow create, update, delete: if false;
-          }
+          allow create: if isSignedIn();
+          allow update: if false; // TODO: Implement role-based access for comment updates.
+          allow delete: if false; // TODO: Implement role-based access for comment deletion.
         }
       }
     }
 
     /**
-     * @description Enforces strict ownership for user-specific data, allowing each user to only access their own data.
-     * @path /users/{userId}
-     * @allow (create): A user can create their own profile if the userId matches their authentication UID.
-     * @allow (get, list, update, delete): A user can only read, update, or delete their own profile.
-     * @deny: Any access to other users' profiles or data is denied.
-     * @principle Enforces document ownership for all operations.
-     */
-    match /users/{userId} {
-      allow create: if isSignedIn() && isOwner(userId) ;
-      allow get, update, delete: if isSignedIn() && isExistingOwner(userId);
-      allow list: if false;
-
-      /**
-       * @description Enforces strict ownership for user progress data.
-       * @path /users/{userId}/progress/{progressId}
-       * @allow (get, list, create, update, delete): A user can only manage their own progress data.
-       * @deny: Any access to other users' progress data is denied.
-       * @principle Enforces document ownership for all operations.
-       */
-      match /progress/{progressId} {
-        allow create: if isSignedIn() && isOwner(userId);
-        allow get, update, delete: if isSignedIn() && isExistingOwner(userId);
-        allow list: if isSignedIn() && isOwner(userId);
-      }
-
-      /**
-       * @description Enforces strict ownership for user notifications.
-       * @path /users/{userId}/notifications/{notificationId}
-       * @allow (get, list, create, update, delete): A user can only manage their own notifications.
-       * @deny: Any access to other users' notifications is denied.
-       * @principle Enforces document ownership for all operations.
-       */
-      match /notifications/{notificationId} {
-        allow create: if isSignedIn() && isOwner(userId);
-        allow get, update, delete: if isSignedIn() && isExistingOwner(userId);
-        allow list: if isSignedIn() && isOwner(userId);
-      }
-
-      /**
-       * @description Enforces strict ownership for user gamification stats.
-       * @path /users/{userId}/gamification/{statsId}
-       * @allow (get, list, create, update, delete): A user can only manage their own gamification stats.
-       * @deny: Any access to other users' gamification stats is denied.
-       * @principle Enforces document ownership for all operations.
-       */
-      match /gamification/{statsId} {
-        allow create: if isSignedIn() && isOwner(userId);
-        allow get, update, delete: if isSignedIn() && isExistingOwner(userId);
-        allow list: if isSignedIn() && isOwner(userId);
-      }
-
-       /**
-        * @description Enforces strict ownership for user badges.
-        * @path /users/{userId}/badges/{userBadgeId}
-        * @allow (get, list, create, update, delete): A user can only manage their own badges.
-        * @deny: Any access to other users' badges is denied.
-        * @principle Enforces document ownership for all operations.
-        */
-      match /badges/{userBadgeId} {
-        allow create: if isSignedIn() && isOwner(userId);
-        allow get, update, delete: if isSignedIn() && isExistingOwner(userId);
-        allow list: if isSignedIn() && isOwner(userId);
-      }
-    }
-
-    /**
-     * @description Allows read-only access to publicly available badges.
-     * @path /badges/{badgeId}
-     * @allow (get, list): Anyone can read badges.
-     * @deny (create, update, delete): No one can create, update, or delete badges through direct client access.
-     * @principle Allows public read access while restricting write access.
-     */
-    match /badges/{badgeId} {
-      allow get, list: if true;
-      allow create, update, delete: if false;
-    }
-
-    /**
-     * @description Allows read-only access to publicly available forum threads.
-     * @path /forumThreads/{threadId}
-     * @allow (get, list): Anyone can read forum threads.
-     * @deny (create, update, delete): No one can create, update, or delete forum threads through direct client access.
-     * @principle Allows public read access while restricting write access.
-     */
-    match /forumThreads/{threadId} {
-      allow get, list: if true;
-      allow create, update, delete: if false;
-
-      /**
-       * @description Allows read-only access to forum posts within a specific thread.
-       * @path /forumThreads/{threadId}/posts/{postId}
-       * @allow (get, list): Anyone can read forum posts.
-       * @deny (create, update, delete): No one can create, update, or delete forum posts through direct client access.
-       * @principle Allows public read access while restricting write access.
-       */
-      match /posts/{postId} {
-        allow get, list: if true;
-        allow create, update, delete: if false;
-      }
-    }
-
-    /**
-     * @description Allows read-only access to messages within the general channel.
+     * @description Placeholder for channels and messages. These collections are not present in the data model.  Needs review and definition.
      * @path /channels/general/messages
-     * @allow (get, list): Anyone can read messages in the general channel.
-     * @deny (create, update, delete): No one can create, update, or delete messages in the general channel through direct client access.
-     * @principle Allows public read access while restricting write access.
+     * @allow get: if false;
+     * @allow list: if true;
+     * @allow create: if false;
+     * @allow update: if false;
+     * @allow delete: if false;
+     * @principle Placeholder for missing data model elements.
      */
-    match /channels/general/messages/{messageId} {
-      allow get, list: if true;
-      allow create, update, delete: if false;
+    match /channels/general/messages/{document} {
+        //TODO: Data model missing
+        allow get: if false;
+        allow list: if true;
+        allow create: if false;
+        allow update: if false;
+        allow delete: if false;
     }
   }
 
-  /**
-   * @description Checks if the user is signed in.
-   * @return {boolean} True if the user is signed in, false otherwise.
-   * @example isSignedIn() == true if request.auth != null
-   */
+  // Helper Functions
   function isSignedIn() {
     return request.auth != null;
   }
 
-  /**
-   * @description Checks if the authenticated user ID matches the provided user ID.
-   * @param {string} userId The user ID to compare against.
-   * @return {boolean} True if the user is the owner, false otherwise.
-   * @example isOwner('user123') == true if request.auth.uid == 'user123'
-   */
   function isOwner(userId) {
     return request.auth.uid == userId;
   }
 
-  /**
-   * @description Checks if the authenticated user is the owner of the existing document
-   * @param {string} userId The user ID to compare against.
-   * @return {boolean} True if the user is the owner of existing document, false otherwise.
-   * @example isExistingOwner('user123') == true if request.auth.uid == 'user123' and the document exists
-   */
   function isExistingOwner(userId) {
     return isOwner(userId) && resource != null;
   }
