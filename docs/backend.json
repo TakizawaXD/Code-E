@@ -1,45 +1,553 @@
 {
   "entities": {
-    "UserProfile": {
-      "title": "User Profile",
-      "description": "Public profile information for a user.",
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
       "type": "object",
+      "description": "Represents a user of the Code-E platform.",
       "properties": {
-        "name": { "type": "string" },
-        "username": { "type": "string" },
-        "email": { "type": "string", "format": "email" },
-        "avatarUrl": { "type": "string", "format": "uri" },
-        "description": { "type": "string" },
-        "points": { "type": "number" },
-        "createdAt": { "type": "string", "format": "date-time" }
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user."
+        },
+        "name": {
+          "type": "string",
+          "description": "User's full name."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "profilePicture": {
+          "type": "string",
+          "description": "URL to the user's profile picture.",
+          "format": "uri"
+        },
+        "enrolledCourseIds": {
+          "type": "array",
+          "description": "References to courses the user is enrolled in. (Relationship: User 1:N Course)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "completedCourseIds": {
+          "type": "array",
+          "description": "References to courses the user has completed.",
+          "items": {
+            "type": "string"
+          }
+        }
       },
-      "required": ["name", "username", "email", "createdAt"]
+      "required": [
+        "id",
+        "name",
+        "email"
+      ]
     },
-    "ChannelMessage": {
-      "title": "Channel Message",
-      "description": "A single message within a chat channel.",
+    "Course": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Course",
       "type": "object",
+      "description": "Represents a course offered on the Code-E platform.",
       "properties": {
-        "content": { "type": "string" },
-        "authorId": { "type": "string" },
-        "authorName": { "type": "string" },
-        "authorAvatarUrl": { "type": "string", "format": "uri" },
-        "createdAt": { "type": "string", "format": "date-time" }
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the course."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the course."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the course content."
+        },
+        "instructorId": {
+          "type": "string",
+          "description": "Reference to the instructor who created the course. (Relationship: Instructor 1:N Course)"
+        },
+        "learningPathId": {
+          "type": "string",
+          "description": "Reference to the learning path this course belongs to. (Relationship: LearningPath 1:N Course)"
+        },
+        "modules": {
+          "type": "array",
+          "description": "List of modules within the course.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the course."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL for the course image",
+          "format": "uri"
+        }
       },
-      "required": ["content", "authorId", "authorName", "createdAt"]
+      "required": [
+        "id",
+        "title",
+        "description",
+        "instructorId",
+        "learningPathId",
+        "modules"
+      ]
+    },
+    "LearningPath": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "LearningPath",
+      "type": "object",
+      "description": "Represents a learning path, categorizing courses.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the learning path."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the learning path."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the learning path."
+        },
+        "courseIds": {
+          "type": "array",
+          "description": "References to courses within this learning path. (Relationship: LearningPath 1:N Course)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description"
+      ]
+    },
+    "Instructor": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Instructor",
+      "type": "object",
+      "description": "Represents an instructor who creates and manages courses.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the instructor."
+        },
+        "name": {
+          "type": "string",
+          "description": "Instructor's full name."
+        },
+        "bio": {
+          "type": "string",
+          "description": "Brief biography of the instructor."
+        },
+        "email": {
+          "type": "string",
+          "description": "Instructor's email address.",
+          "format": "email"
+        },
+        "courseIds": {
+          "type": "array",
+          "description": "References to courses created by this instructor. (Relationship: Instructor 1:N Course)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email"
+      ]
+    },
+    "Module": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Module",
+      "type": "object",
+      "description": "Represents a module within a course, containing video lessons.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the module."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the module."
+        },
+        "courseId": {
+          "type": "string",
+          "description": "Reference to the course this module belongs to. (Relationship: Course 1:N Module)"
+        },
+        "videoLessonIds": {
+          "type": "array",
+          "description": "References to video lessons within this module. (Relationship: Module 1:N VideoLesson)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "courseId",
+        "videoLessonIds"
+      ]
+    },
+    "VideoLesson": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "VideoLesson",
+      "type": "object",
+      "description": "Represents a video lesson within a module.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the video lesson."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the video lesson."
+        },
+        "url": {
+          "type": "string",
+          "description": "URL of the video.",
+          "format": "uri"
+        },
+        "moduleId": {
+          "type": "string",
+          "description": "Reference to the module this video lesson belongs to. (Relationship: Module 1:N VideoLesson)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the video lesson"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "url",
+        "moduleId"
+      ]
+    },
+    "Comment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Comment",
+      "type": "object",
+      "description": "Represents a comment on a video lesson.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the comment."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the user who made the comment. (Relationship: User 1:N Comment)"
+        },
+        "videoLessonId": {
+          "type": "string",
+          "description": "Reference to the video lesson the comment belongs to. (Relationship: VideoLesson 1:N Comment)"
+        },
+        "text": {
+          "type": "string",
+          "description": "Text content of the comment."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp of when the comment was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "videoLessonId",
+        "text",
+        "timestamp"
+      ]
+    },
+    "Notification": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Notification",
+      "type": "object",
+      "description": "Represents a user notification.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the notification."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the user who the notification is for. (Relationship: User 1:N Notification)"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of the notification (e.g., course update, new comment)."
+        },
+        "message": {
+          "type": "string",
+          "description": "Text content of the notification."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp of when the notification was created.",
+          "format": "date-time"
+        },
+        "isRead": {
+          "type": "boolean",
+          "description": "Indicates whether the notification has been read by the user."
+        },
+        "referenceId": {
+          "type": "string",
+          "description": "Reference id used for when a user clicks a notification. Used for deep linking purposes."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "type",
+        "message",
+        "timestamp",
+        "isRead"
+      ]
+    },
+    "Subscription": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Subscription",
+      "type": "object",
+      "description": "Represents a user's subscription to the platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the subscription."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the user who owns the subscription. (Relationship: User 1:1 Subscription)"
+        },
+        "startDate": {
+          "type": "string",
+          "description": "Date the subscription started.",
+          "format": "date-time"
+        },
+        "endDate": {
+          "type": "string",
+          "description": "Date the subscription expires.",
+          "format": "date-time"
+        },
+        "planType": {
+          "type": "string",
+          "description": "The type of subscription plan (e.g., monthly, yearly)."
+        },
+        "paymentMethod": {
+          "type": "string",
+          "description": "The user's payment method."
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the subscription (e.g., active, cancelled)."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "startDate",
+        "endDate",
+        "planType",
+        "paymentMethod",
+        "status"
+      ]
     }
   },
   "auth": {
-    "providers": ["email"]
+    "providers": [
+      "password",
+      "anonymous"
+    ]
   },
   "firestore": {
-    "/users/{userId}": {
-      "schema": { "$ref": "#/entities/UserProfile" },
-      "description": "Stores public user profile information."
-    },
-    "/channels/{channelId}/messages/{messageId}": {
-      "schema": { "$ref": "#/entities/ChannelMessage" },
-      "description": "Stores messages for each chat channel."
-    }
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profile information.  Uses path-based ownership for security.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/notifications/{notificationId}",
+        "definition": {
+          "entityName": "Notification",
+          "schema": {
+            "$ref": "#/backend/entities/Notification"
+          },
+          "description": "Stores notifications for a specific user.  Uses path-based ownership for security.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "notificationId",
+              "description": "The unique identifier of the notification."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/subscriptions/{subscriptionId}",
+        "definition": {
+          "entityName": "Subscription",
+          "schema": {
+            "$ref": "#/backend/entities/Subscription"
+          },
+          "description": "Stores subscription information for a specific user. Uses path-based ownership for security.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "subscriptionId",
+              "description": "The unique identifier of the subscription."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/courses/{courseId}",
+        "definition": {
+          "entityName": "Course",
+          "schema": {
+            "$ref": "#/backend/entities/Course"
+          },
+          "description": "Stores course information.",
+          "params": [
+            {
+              "name": "courseId",
+              "description": "The unique identifier of the course."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/learning_paths/{learningPathId}",
+        "definition": {
+          "entityName": "LearningPath",
+          "schema": {
+            "$ref": "#/backend/entities/LearningPath"
+          },
+          "description": "Stores learning path information.",
+          "params": [
+            {
+              "name": "learningPathId",
+              "description": "The unique identifier of the learning path."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/instructors/{instructorId}",
+        "definition": {
+          "entityName": "Instructor",
+          "schema": {
+            "$ref": "#/backend/entities/Instructor"
+          },
+          "description": "Stores instructor information.",
+          "params": [
+            {
+              "name": "instructorId",
+              "description": "The unique identifier of the instructor."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/courses/{courseId}/modules/{moduleId}",
+        "definition": {
+          "entityName": "Module",
+          "schema": {
+            "$ref": "#/backend/entities/Module"
+          },
+          "description": "Stores module information for a specific course.",
+          "params": [
+            {
+              "name": "courseId",
+              "description": "The unique identifier of the course."
+            },
+            {
+              "name": "moduleId",
+              "description": "The unique identifier of the module."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/courses/{courseId}/modules/{moduleId}/video_lessons/{videoLessonId}",
+        "definition": {
+          "entityName": "VideoLesson",
+          "schema": {
+            "$ref": "#/backend/entities/VideoLesson"
+          },
+          "description": "Stores video lesson information for a specific module.",
+          "params": [
+            {
+              "name": "courseId",
+              "description": "The unique identifier of the course."
+            },
+            {
+              "name": "moduleId",
+              "description": "The unique identifier of the module."
+            },
+            {
+              "name": "videoLessonId",
+              "description": "The unique identifier of the video lesson."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/courses/{courseId}/modules/{moduleId}/video_lessons/{videoLessonId}/comments/{commentId}",
+        "definition": {
+          "entityName": "Comment",
+          "schema": {
+            "$ref": "#/backend/entities/Comment"
+          },
+          "description": "Stores comments for a specific video lesson.",
+          "params": [
+            {
+              "name": "courseId",
+              "description": "The unique identifier of the course."
+            },
+            {
+              "name": "moduleId",
+              "description": "The unique identifier of the module."
+            },
+            {
+              "name": "videoLessonId",
+              "description": "The unique identifier of the video lesson."
+            },
+            {
+              "name": "commentId",
+              "description": "The unique identifier of the comment."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure authorization independence, clarity, and scalability for the Code-E platform. It addresses the reported \"Missing or insufficient permissions\" error during the `list` operation on `/channels/general/messages` by implementing a membership-based access control model and path-based ownership where applicable.\n\n**Authorization Independence:**\nTo eliminate `get()` calls in security rules and enable atomic operations, access control lists (ACLs) are denormalized. For collaborative data like channels and their messages, the `members` map is included directly within the document or its subcollections.\n\n**Structural Segregation:**\nData with different access requirements are stored in separate collections. User-specific data is stored under the `/users/{userId}` path, ensuring that rules can easily enforce ownership. Public or shared data resides in top-level collections with appropriate access controls using membership maps.\n\n**Access Modeling:**\n*   **Path-Based Ownership:** User-specific data (e.g., `/users/{userId}/notifications`) uses path-based ownership for simple and secure rules.\n*   **Membership Map:** Collaborative resources (e.g., channels) utilize the `members` map for role-based access control.\n*   **Global Roles:** Dedicated collections (e.g., `/roles_admin/{uid}`) could be implemented in the future if global admin roles are needed.\n\n**QAPs (Rules Are Not Filters):**\nThe structure enables secure `list` operations by ensuring that all documents within a collection share the same security requirements. The `members` map in channel documents allows listing messages only for channel members.\n\nThe reported error occurred because the user `tzLNkvVUB8cYipm5o3Q5WYvjDXh2` was trying to `list` messages in `/channels/general/messages`, but lacked the necessary permissions. The suggested data structure implements an explicit access control model using membership maps to define authorized users for each channel."
   }
 }

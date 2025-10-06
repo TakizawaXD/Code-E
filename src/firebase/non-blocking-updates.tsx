@@ -1,4 +1,3 @@
-
 'use client';
     
 import {
@@ -88,5 +87,3 @@ export function deleteDocumentNonBlocking(docRef: DocumentReference) {
       )
     });
 }
-
-    
