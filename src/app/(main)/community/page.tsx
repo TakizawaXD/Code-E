@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -83,7 +84,8 @@ function ChatChannelsTab() {
             <CardContent>
                 <div className="space-y-4">
                     {channels.map(channel => (
-                        <Card key={channel.name} className="hover:bg-accent/50">
+                        <Card key={channel.name} className="hover:bg-accent/50 transition-colors">
+                           <Link href={`/community/channels/${channel.name}`}>
                             <CardContent className="p-4 flex items-center justify-between">
                                 <div>
                                     <div className="flex items-center gap-2">
@@ -92,8 +94,9 @@ function ChatChannelsTab() {
                                     </div>
                                     <p className="text-sm text-muted-foreground ml-7">{channel.description}</p>
                                 </div>
-                                <Button variant="outline" disabled>Unirse (Próximamente)</Button>
+                                <Button variant="outline">Unirse al Canal</Button>
                             </CardContent>
+                           </Link>
                         </Card>
                     ))}
                 </div>
