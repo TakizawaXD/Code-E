@@ -4,8 +4,8 @@
 import { useUser, useFirestore, useDoc, useMemoFirebase, useCollection } from "@/firebase";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Loader2, Edit, BookOpen, GraduationCap } from "lucide-react";
-import type { UserProfile, ForumThread, Course } from "@/lib/types";
+import { Loader2, Edit, BookOpen, GraduationCap, Trophy, HelpCircle, MessageSquare } from "lucide-react";
+import type { UserProfile, Course } from "@/lib/types";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { collection, query, where, doc } from "firebase/firestore";
@@ -21,34 +21,35 @@ function UserStats() {
         if (!user || !firestore) return null;
         return doc(firestore, "users", user.uid);
     }, [user, firestore]);
-    const { data: userProfile } = useDoc<UserProfile>(userProfileRef);
+    const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userProfileRef);
 
-    const userThreadsQuery = useMemoFirebase(() => {
-        if (!user || !firestore) return null;
-        return query(collection(firestore, "forumThreads"), where("authorId", "==", user.uid));
-    }, [user, firestore]);
-
-    const { data: userThreads } = useCollection<ForumThread>(userThreadsQuery);
-
-    const questionsCount = userThreads?.length ?? 0;
-    const repliesCount = 0; // Placeholder
+    if (isProfileLoading) {
+      return (
+        <Card className="grid grid-cols-3 gap-4 p-6">
+          <div className="text-center"><Loader2 className="animate-spin mx-auto"/></div>
+          <div className="text-center"><Loader2 className="animate-spin mx-auto"/></div>
+          <div className="text-center"><Loader2 className="animate-spin mx-auto"/></div>
+        </Card>
+      )
+    }
 
     return (
-        <Card className="bg-muted/50">
-            <CardContent className="p-4 flex justify-around text-center">
-                <div className="w-24">
-                    <p className="text-2xl font-bold text-green-500">{userProfile?.points ?? 0}</p>
-                    <p className="text-xs text-muted-foreground">Puntos</p>
-                </div>
-                <div className="w-24">
-                    <p className="text-2xl font-bold">{questionsCount}</p>
-                    <p className="text-xs text-muted-foreground">Preguntas</p>
-                </div>
-                <div className="w-24">
-                    <p className="text-2xl font-bold">{repliesCount}</p>
-                    <p className="text-xs text-muted-foreground">Respuestas</p>
-                </div>
-            </CardContent>
+        <Card className="grid grid-cols-3 divide-x">
+          <div className="p-6 text-center">
+            <Trophy className="mx-auto h-8 w-8 text-yellow-500 mb-2"/>
+            <p className="text-2xl font-bold">{userProfile?.points ?? 0}</p>
+            <p className="text-xs text-muted-foreground uppercase">Puntos</p>
+          </div>
+           <div className="p-6 text-center">
+            <BookOpen className="mx-auto h-8 w-8 text-blue-500 mb-2"/>
+            <p className="text-2xl font-bold">4</p>
+            <p className="text-xs text-muted-foreground uppercase">Cursos</p>
+          </div>
+           <div className="p-6 text-center">
+            <MessageSquare className="mx-auto h-8 w-8 text-green-500 mb-2"/>
+            <p className="text-2xl font-bold">12</p>
+            <p className="text-xs text-muted-foreground uppercase">Comentarios</p>
+          </div>
         </Card>
     );
 }
@@ -146,13 +147,10 @@ export default function DashboardPage() {
                     </section>
                     
                     <section>
-                        <h2 className="text-xl font-bold mb-4">Tus preguntas</h2>
+                        <h2 className="text-xl font-bold mb-4">Tu actividad reciente</h2>
                         <Card>
                              <CardContent className="p-6 text-center text-muted-foreground">
-                                 <p>Aún no has hecho preguntas en la comunidad.</p>
-                                 <Button variant="secondary" size="sm" asChild className="mt-4">
-                                    <Link href="/community">Ir a la comunidad</Link>
-                                 </Button>
+                                 <p>Aún no tienes actividad reciente en la comunidad.</p>
                              </CardContent>
                         </Card>
                     </section>

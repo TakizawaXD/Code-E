@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { CommentSection } from "@/components/comment-section";
 import { BottomBar } from "@/components/layout/bottom-bar";
 import { MobileCourseNav } from "@/components/layout/mobile-course-nav";
+import { awardPointsForLesson } from "./actions";
 
 function getNextLesson(modules: CourseModule[], currentModuleId: string, currentLessonId: string): { moduleId: string; lessonId: string } | null {
   const currentModuleIndex = modules.findIndex(m => m.id === currentModuleId);
@@ -105,9 +106,10 @@ function CourseDetailContent() {
         setIsNavOpen(false); // Close nav on selection
     };
 
-    const handleMarkAsCompleted = () => {
+    const handleMarkAsCompleted = async () => {
         if (!user || !course || !currentLesson || completedLessons.has(currentLesson.lessonId)) return;
         
+        await awardPointsForLesson(user.uid, currentLesson.lessonId);
         setCompletedLessons(prev => new Set(prev).add(currentLesson.lessonId));
 
         const nextLesson = getNextLesson(course.modules, currentLesson.moduleId, currentLesson.lessonId);

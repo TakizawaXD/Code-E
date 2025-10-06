@@ -1,27 +1,31 @@
 
 import * as admin from "firebase-admin";
 
-// Path to your service account key file
-// IMPORTANT: This path must be correct and the file must be present.
-// You can get this file from your Firebase project settings.
-import serviceAccount from './firebase.json';
+// IMPORTANT: The service account key is injected automatically by the hosting environment.
+// Do not manually set the service account file path.
+// The GOOGLE_APPLICATION_CREDENTIALS environment variable will be populated.
 
-// Ensure the service account has the correct type
-const typedServiceAccount = serviceAccount as admin.ServiceAccount;
+let app: admin.app.App | null = null;
 
-// This function initializes the Firebase Admin SDK.
-// It ensures that it's only initialized once.
 export function getAdminApp(): admin.app.App {
+  if (app) {
+    return app;
+  }
+
+  // Check if the app is already initialized, which can happen in some environments
   if (admin.apps.length > 0) {
-    return admin.apps[0]!;
+    app = admin.apps[0];
+    if (app) return app;
   }
 
   try {
-    return admin.initializeApp({
-      credential: admin.credential.cert(typedServiceAccount),
-    });
+    // initializeApp() will automatically use the GOOGLE_APPLICATION_CREDENTIALS
+    // environment variable to find the service account credentials.
+    app = admin.initializeApp();
+    return app;
   } catch (error: any) {
     console.error("Firebase Admin SDK initialization error:", error);
-    throw new Error("Could not initialize Firebase Admin SDK. Please check your service account credentials.");
+    // Throw a more generic error to avoid leaking implementation details
+    throw new Error("Could not initialize Firebase Admin SDK on the server.");
   }
 }
