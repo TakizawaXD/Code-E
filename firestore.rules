@@ -1,105 +1,70 @@
 /**
- * @fileoverview Firestore Security Rules for Kursor Platform
+ * @file Firebase Security Rules for Kursor Platform (Prototyping Mode)
  *
- * Core Philosophy: This ruleset enforces a strict user-ownership model for user profiles,
- * ensuring that only authenticated users can read and modify their own profile data.
+ * Core Philosophy:
+ * This ruleset prioritizes strict authorization. It focuses on preventing unauthorized data access and modification.
+ * Data validation is minimal to enable rapid prototyping and schema evolution.
  *
- * Data Structure: User profiles are stored under `/users/{userId}`.
+ * Data Structure:
+ * - /users/{userId}: User profile data, accessible only to the user themselves.
  *
  * Key Security Decisions:
- * - User listing is disallowed to protect user privacy.
- * - Only authenticated users can read profiles.
- * - Profiles can only be created, updated, or deleted by the owning user.
+ * - User listing is disabled.
+ * - The rules explicitly deny any potentially ambiguous operations.
+ * - All write operations require authentication.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Secure user profiles. Only the authenticated user can read and modify their own profile.
-     * @path /users/{userId}
-     * @allow (get) - Authenticated user can read their own profile.
-     *   auth.uid: "user123"
-     *   userId: "user123"
-     * @allow (create) - Authenticated user can create their own profile if the userId matches auth.uid.
-     *   auth.uid: "user123"
-     *   request.resource.data.id: "user123"
-     * @allow (update) - Authenticated user can update their own profile if the userId matches auth.uid.
-     *   auth.uid: "user123"
-     *   userId: "user123"
-     * @allow (delete) - Authenticated user can delete their own profile if the userId matches auth.uid.
-     *   auth.uid: "user123"
-     *   userId: "user123"
-     * @deny (get) - Authenticated user tries to read another user's profile.
-     *   auth.uid: "user123"
-     *   userId: "user456"
-     * @deny (create) - Authenticated user tries to create a profile with a mismatched userId.
-     *   auth.uid: "user123"
-     *   request.resource.data.id: "user456"
-     * @deny (update) - Authenticated user tries to update another user's profile.
-     *   auth.uid: "user123"
-     *   userId: "user456"
-     * @deny (delete) - Authenticated user tries to delete another user's profile.
-     *   auth.uid: "user123"
-     *   userId: "user456"
-     * @principle Enforces document ownership for all operations.
+     * @description Protects user profile data, ensuring only the user can read or write their own profile.
+     * @path /databases/{database}/documents/users/{userId}
+     * @allow (read) User 'testuser' can read their own profile: auth.uid == 'testuser'
+     * @allow (create) User 'testuser' can create their own profile: auth.uid == 'testuser'
+     * @allow (update) User 'testuser' can update their own profile: auth.uid == 'testuser'
+     * @allow (delete) User 'testuser' can delete their own profile: auth.uid == 'testuser'
+     * @deny (read) User 'otheruser' cannot read user 'testuser' profile: auth.uid != 'testuser'
+     * @deny (write) An unauthenticated user cannot modify any user profile.
+     * @principle Enforces document ownership for all operations on user profiles.
      */
     match /users/{userId} {
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      allow get: if isOwner(userId);
+      allow list: if false; // User listing is disabled for privacy.
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Secure real-time chat messages.
-     * @path /comunicacion/{messageId}
-     * @allow (get) - Any authenticated user can read the message.
-     *   auth.uid: "user123"
-     * @allow (list) - Any authenticated user can list messages.
-     *   auth.uid: "user123"
-     * @allow (create) - Any authenticated user can create a message.
-     *   auth.uid: "user123"
-     * @allow (update) - Any authenticated user can update a message.
-     *   auth.uid: "user123"
-     * @allow (delete) - Any authenticated user can delete a message.
-     *   auth.uid: "user123"
-     * @principle Allows any authenticated user to create, read, update, and delete messages.
+     * @description Protects comments subcollection, ensuring only authenticated users can list comments.
+     * @path /databases/{database}/documents/lessons/{lessonId}/comments
+     * @allow (list) Authenticated user can list comments: isSignedIn()
+     * @allow (get) Denied as it should inherit from the parent document
+     * @allow (create) Denied as it should inherit from the parent document
+     * @allow (update) Denied as it should inherit from the parent document
+     * @allow (delete) Denied as it should inherit from the parent document
+     * @deny (write) An unauthenticated user cannot modify any user profile.
+     * @principle Requires authentication to read comments.
      */
-    match /comunicacion/{messageId} {
-      allow get, list: if isSignedIn();
-      allow create: if isSignedIn();
-      allow update: if isSignedIn() && resource != null;
-      allow delete: if isSignedIn() && resource != null;
+    match /lessons/{lessonId}/comments/{commentId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
-    // --- Helper functions ---
-
-    /**
-     * @description Checks if the user is signed in.
-     * @return {bool} True if the user is signed in, false otherwise.
-     */
     function isSignedIn() {
       return request.auth != null;
     }
 
-    /**
-     * @description Checks if the user is the owner of the document.
-     * @param {string} userId The user ID to check.
-     * @return {bool} True if the user is the owner, false otherwise.
-     */
     function isOwner(userId) {
       return request.auth.uid == userId;
     }
 
-    /**
-     * @description Checks if the user is the owner of the document and the document exists.
-     * @param {string} userId The user ID to check.
-     * @return {bool} True if the user is the owner and the document exists, false otherwise.
-     */
     function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
+      return isOwner(userId) && resource != null;
     }
   }
 }
