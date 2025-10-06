@@ -1,74 +1,74 @@
 /**
- * @file Firestore Security Rules
- * @description This ruleset enforces a user-ownership model for user profiles.
+ * @file Firebase Security Rules for Kursor Platform
+ *
+ * Core Philosophy:
+ * This ruleset enforces a user-ownership model for user profiles,
+ * and allows public read access to lessons and comments.
  *
  * Data Structure:
- * - /users/{userId}: Stores public profile information for each user.
+ * - /users/{userId}: Stores public user profiles, accessible to all users.
+ * - /lessons/{lessonId}/comments/{commentId}: Stores comments for lessons. Open reads, owner writes only.
  *
  * Key Security Decisions:
- * - Users can only read their own profile data.
- * - Users can only create their own profile, with validation ensuring the userId in the path matches their authentication UID.
- * - Users can only update their own profile.
- * - Listing of all user profiles is disallowed for privacy reasons.
+ * - Users can only read data for lessons and their comments.
+ * - Users can only create, update, or delete comments if they are the owner.
+ * - User profiles are publicy accessible, but only the authenticated user can modify their own profile.
+ *
+ * Denormalization for Authorization:
+ * - The comment documents should ideally contain the user id as the author.
+ *
+ * Structural Segregation:
+ * - There are no private user subcollections. All collections are top-level.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to user profile documents.
+     * @description Allows access to user profile documents.
      * @path /users/{userId}
-     * @allow (get, create, update) Authenticated user with matching userId.
-     * @deny (get, create, update) Authenticated user with non-matching userId.
-     * @deny delete operations.
-     * @principle Enforces document ownership; users can only manage their own profile data.
+     * @allow (get, list) Any user can read any profile.
+     * @allow (create) User with matching ID can create their own profile.
+     * @allow (update, delete) User with matching ID can update/delete their own profile.
+     * @deny (create) User attempts to create a profile with an ID different from their own.
+     * @deny (update, delete) User attempts to update/delete a profile with an ID different from their own.
+     * @principle Enforces document ownership for writes; allows public reads.
      */
     match /users/{userId} {
-      // Helper function to check if the user is signed in.
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      // Helper function to check if the requesting user is the owner of the document.
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
-
-      // Helper function to check if the requesting user is the existing owner of the document.
-      function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-      }
-
-      // Allow anyone to read a user document, but only if it exists.
-      allow get: if true;
-
-      // Disallow listing all user documents.
-      allow list: if false;
-
-      // Only allow creating a user document if the authenticated user's ID matches the document ID.
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.email is string;
-
-      // Only allow updating a user document if the authenticated user is the owner and the document exists.
-      allow update: if isExistingOwner(userId);
-
-      // No user is allowed to delete a profile
-      allow delete: if false;
+      allow get, list: if true;
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.email == request.auth.token.email;
+      allow update: if isSignedIn() && isExistingOwner(userId) && (request.resource.data.email == resource.data.email);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
     }
 
     /**
-     * @description Placeholder for future rules on lessons and comments.  Access to comments is being denied.
+     * @description Allows public read access to lessons and only the author can create, update and delete their own comments.
      * @path /lessons/{lessonId}/comments/{commentId}
-     * @allow No operations are currently allowed.
-     * @deny All operations are denied.
+     * @allow (get, list) Any user can read lessons.
+     * @allow (create) Only the authenticated owner can create a comment with the correct authorId.
+     * @allow (update, delete) Only the authenticated owner can update or delete the comment.
+     * @deny (create) A user attempts to create a comment with an incorrect authorId.
+     * @deny (update, delete) A user attempts to update or delete a comment that they don't own.
+     * @principle Enforces owner-only writes for comments.
      */
     match /lessons/{lessonId}/comments/{commentId} {
-      // Deny all operations
-      allow get: if false;
-      allow list: if false;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
+      allow update: if isSignedIn() && isExistingOwner(resource.data.authorId);
+      allow delete: if isSignedIn() && isExistingOwner(resource.data.authorId);
     }
 
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
   }
 }
